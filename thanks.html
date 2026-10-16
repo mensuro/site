@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>You're on the list · Mensuro</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#14263D">
+<link rel="icon" href="assets/mensuro-favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Manrope:wght@500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body class="band-ink" style="background: var(--ink); min-height: 100vh">
+<div class="band band-ink">
+  <div class="wrap">
+    <header class="nav">
+      <a href="index.html" aria-label="Mensuro home"><img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148"></a>
+    </header>
+    <main class="thanks">
+      <form class="tcard" id="signup-details" name="signup-details" method="POST" data-netlify="true" netlify-honeypot="company-website">
+        <input type="hidden" name="form-name" value="signup-details">
+        <input type="hidden" name="email" value="">
+        <input type="hidden" name="role" value="">
+        <input type="hidden" name="current_tool" value="">
+        <input type="hidden" name="top_analysis" value="">
+        <p hidden><label>Leave this empty <input name="company-website"></label></p>
+
+        <div class="tok">
+          <div class="tick"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></div>
+          <h1>You're on the early-access list.</h1>
+        </div>
+        <p class="tsub">Three quick questions so we build your most-used analyses first. Takes 20 seconds.</p>
+
+        <fieldset>
+          <legend>What's your role? <span class="hint">Pick all that apply</span></legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="role_pick" value="Quality engineer" id="role-qe"><span>Quality engineer</span></label>
+            <label class="chip"><input type="checkbox" name="role_pick" value="Green Belt / Black Belt" id="role-belt"><span>Green Belt / Black Belt</span></label>
+            <label class="chip"><input type="checkbox" name="role_pick" value="Consultant" id="role-consultant"><span>Consultant</span></label>
+            <label class="chip"><input type="checkbox" name="role_pick" value="Manager" id="role-manager"><span>Manager</span></label>
+            <label class="chip"><input type="checkbox" name="role_pick" value="Other" id="role-other"><span>Other</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>What do you use today? <span class="hint">Pick all that apply</span></legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="tool_pick" value="Minitab" id="tool-minitab"><span>Minitab</span></label>
+            <label class="chip"><input type="checkbox" name="tool_pick" value="Excel templates" id="tool-excel"><span>Excel templates</span></label>
+            <label class="chip"><input type="checkbox" name="tool_pick" value="Excel add-in" id="tool-addin"><span>Excel add-in</span></label>
+            <label class="chip"><input type="checkbox" name="tool_pick" value="Nothing yet" id="tool-none"><span>Nothing yet</span></label>
+            <label class="chip"><input type="checkbox" name="tool_pick" value="Other" id="tool-other"><span>Other</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Which analyses do you run most? <span class="hint">Pick all that apply</span></legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="analysis_pick" value="Gage R&amp;R" id="an-grr"><span>Gage R&amp;R</span></label>
+            <label class="chip"><input type="checkbox" name="analysis_pick" value="Capability (Cpk)" id="an-cpk"><span>Capability (Cpk)</span></label>
+            <label class="chip"><input type="checkbox" name="analysis_pick" value="Type 1 study" id="an-t1"><span>Type 1 study</span></label>
+            <label class="chip"><input type="checkbox" name="analysis_pick" value="Control charts" id="an-spc"><span>Control charts</span></label>
+            <label class="chip"><input type="checkbox" name="analysis_pick" value="Hypothesis tests" id="an-tests"><span>Hypothesis tests</span></label>
+          </div>
+        </fieldset>
+
+        <div class="offer">
+          <div>
+            <h2>Lock in founding-member pricing</h2>
+            <p>$199 for your first year (normally $49/month). Fully refundable if we don't ship.</p>
+            <p id="reserve-note" hidden>The founding pre-sale opens soon. We'll email you the link.</p>
+          </div>
+          <a class="btn-deep" id="reserve" href="#reserve">Reserve for $199</a>
+        </div>
+
+        <div class="tfoot">
+          <span>Not ready? You'll still get one email when your spot opens.</span>
+          <button class="btn-ghost" type="submit">Save answers</button>
+        </div>
+        <p class="saved" id="details-status" role="status" hidden></p>
+      </form>
+    </main>
+  </div>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>
