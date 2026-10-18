@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Free Cp and Cpk Calculator (Cp, Cpk, Pp, Ppk, PPM) · Mensuro</title>
+<meta name="description" content="Free process capability calculator. Paste your readings and spec limits to get Cp, Cpk, Pp, Ppk, expected PPM and a normality check, with the formulas shown. Runs in your browser; nothing is uploaded.">
+<link rel="canonical" href="https://mensuro.netlify.app/cpk-calculator.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mensuro">
+<meta property="og:title" content="Free Cp and Cpk calculator">
+<meta property="og:description" content="Cp, Cpk, Pp, Ppk, expected PPM and a normality check, with the formulas shown. Runs in your browser; nothing is uploaded.">
+<meta property="og:url" content="https://mensuro.netlify.app/cpk-calculator.html">
+<meta property="og:image" content="https://mensuro.netlify.app/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#14263D">
+<link rel="icon" href="assets/mensuro-favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<div class="band band-ink">
+  <div class="wrap">
+    <header class="nav">
+      <a href="index.html" aria-label="Mensuro home"><img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148"></a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="index.html#how">How it works</a>
+        <a href="#method">How it's calculated</a>
+        <a class="nav-cta" href="#report">Get early access</a>
+      </nav>
+    </header>
+    <section class="calc-hero" aria-labelledby="calc-title">
+      <div class="eyebrow">Free tool</div>
+      <h1 id="calc-title">Cp and Cpk calculator</h1>
+      <p class="sub">Paste your readings and enter the spec limits. You get Cp, Cpk, Pp, Ppk, expected PPM and a normality check, with a plain-English verdict and the formulas behind it.</p>
+      <ul class="trust">
+        <li>Runs in your browser; readings are never uploaded</li>
+        <li>Checked against NIST and Montgomery examples</li>
+        <li>No signup</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<div class="band band-paper">
+  <main class="wrap calc" id="top">
+    <form class="calc-card calc-inputs" id="calc-form" novalidate>
+      <h2>Your data</h2>
+      <div class="field">
+        <label for="readings">Readings <span class="hint">in production order, one per line or pasted from Excel</span></label>
+        <textarea id="readings" rows="10" spellcheck="false" autocomplete="off" inputmode="decimal" placeholder="12.009&#10;11.997&#10;12.013&#10;..."></textarea>
+        <p class="count num" id="count" aria-live="polite">No readings yet</p>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="lsl">Lower spec limit (LSL)</label>
+          <input id="lsl" type="text" inputmode="decimal" autocomplete="off" placeholder="optional">
+        </div>
+        <div class="field">
+          <label for="usl">Upper spec limit (USL)</label>
+          <input id="usl" type="text" inputmode="decimal" autocomplete="off" placeholder="optional">
+        </div>
+      </div>
+      <div class="field">
+        <label for="subgroup">Subgroup size <span class="hint">1 for individual readings</span></label>
+        <input id="subgroup" type="number" min="1" max="25" step="1" value="1">
+      </div>
+      <fieldset class="field">
+        <legend>Verdict based on</legend>
+        <div class="seg">
+          <label><input type="radio" name="index" value="Ppk" checked><span>Ppk (overall)</span></label>
+          <label><input type="radio" name="index" value="Cpk"><span>Cpk (within)</span></label>
+        </div>
+      </fieldset>
+      <p class="calc-error" id="calc-error" role="alert" hidden></p>
+      <div class="calc-actions">
+        <button class="btn-deep" type="submit">Calculate</button>
+        <button class="btn-ghost" type="button" id="load-example">Load example</button>
+        <button class="btn-link" type="button" id="clear">Clear</button>
+      </div>
+      <p class="example-label" id="example-label" hidden></p>
+    </form>
+
+    <section class="calc-card calc-results" id="results" aria-labelledby="results-title" aria-live="polite">
+      <h2 id="results-title">Results</h2>
+      <div class="empty" id="empty">
+        <p>Your results appear here. No data? Load the example to see how it works.</p>
+      </div>
+      <div id="output" hidden>
+        <div class="verdict" id="verdict">
+          <span class="vpill" id="vpill"></span>
+          <p id="vreason"></p>
+        </div>
+        <div class="idx">
+          <div><span class="iv num" id="ppk"></span><span class="il">Ppk</span></div>
+          <div><span class="iv num" id="pp"></span><span class="il">Pp</span></div>
+          <div><span class="iv num" id="cpk"></span><span class="il">Cpk</span></div>
+          <div><span class="iv num" id="cp"></span><span class="il">Cp</span></div>
+        </div>
+        <figure class="hist">
+          <svg id="hist" viewBox="0 0 640 260" role="img" aria-labelledby="hist-title"><title id="hist-title">Histogram of readings with specification limits</title></svg>
+          <figcaption class="legend"><span class="k-bar">Readings</span><span class="k-curve">Normal fit (overall)</span><span class="k-spec">Spec limits</span></figcaption>
+        </figure>
+        <table class="stats num">
+          <caption class="sr">Details</caption>
+          <tbody id="stats"></tbody>
+        </table>
+        <ul class="notes" id="notes"></ul>
+        <div class="calc-actions">
+          <button class="btn-ghost" type="button" id="copy">Copy results</button>
+          <span class="copied" id="copied" role="status"></span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="band band-ink" id="report">
+  <div class="wrap">
+    <section class="final" aria-labelledby="report-title">
+      <div class="eyebrow">Get this as a full report</div>
+      <h2 class="h2" id="report-title">Turn these numbers into a customer-ready capability report.</h2>
+      <p class="lede">Mensuro builds the full study: histogram, normality test, control chart, verdict and the method behind every number, formatted for your PPAP package. Join the early-access list to be first in when the beta opens.</p>
+      <form class="join join-form" name="early-access" action="thanks.html" method="POST" data-netlify="true" netlify-honeypot="company-website" novalidate>
+        <input type="hidden" name="form-name" value="early-access">
+        <input type="hidden" name="source" value="calculator">
+        <p hidden><label>Leave this empty <input name="company-website"></label></p>
+        <label class="join-label" for="email-calc">Join the early-access list <span class="when">Beta opens early 2027</span></label>
+        <div class="join-row">
+          <input id="email-calc" name="email_address" type="email" autocomplete="email" placeholder="you@company.com" required>
+          <button class="btn" type="submit">Get my early access
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+        <p class="form-error" role="alert" hidden></p>
+        <p class="micro"><b>Free to join.</b> We only email you about Mensuro, and you can unsubscribe anytime. Your readings above are not sent with this form.</p>
+      </form>
+    </section>
+  </div>
+</div>
+
+<div class="band band-white">
+  <div class="wrap section" id="method">
+    <div class="head">
+      <div class="eyebrow">How it's calculated</div>
+      <h2 class="h2">The formulas, and where they come from.</h2>
+      <p class="lede">Standard definitions, nothing proprietary. Every number above comes from these steps.</p>
+    </div>
+    <div class="method">
+      <div class="mcard">
+        <h3>Overall: Pp and Ppk</h3>
+        <p>Overall sigma is the sample standard deviation of all readings, <span class="f">s = &radic;[&Sigma;(x &minus; x&#772;)&sup2; / (n &minus; 1)]</span>.</p>
+        <p class="f">Pp = (USL &minus; LSL) / 6s</p>
+        <p class="f">Ppk = min(USL &minus; x&#772;, x&#772; &minus; LSL) / 3s</p>
+      </div>
+      <div class="mcard">
+        <h3>Within: Cp and Cpk</h3>
+        <p>Within sigma measures short-term variation. For individual readings it is the average moving range divided by d<sub>2</sub> = 1.128. For subgroups it is the average subgroup range divided by d<sub>2</sub> for that subgroup size.</p>
+        <p class="f">&sigma;<sub>within</sub> = MR&#772; / 1.128 or R&#772; / d<sub>2</sub></p>
+        <p>Cp and Cpk use the Pp and Ppk formulas with &sigma;<sub>within</sub> in place of s.</p>
+      </div>
+      <div class="mcard">
+        <h3>Expected and observed PPM</h3>
+        <p>Expected PPM is the share of a normal distribution beyond each limit, times one million: <span class="f">&Phi;((LSL &minus; x&#772;) / &sigma;) + 1 &minus; &Phi;((USL &minus; x&#772;) / &sigma;)</span>, shown for both sigmas. Observed PPM counts the readings actually outside the limits.</p>
+      </div>
+      <div class="mcard">
+        <h3>Normality check</h3>
+        <p>An Anderson-Darling test with the D'Agostino-Stephens small-sample adjustment, run when there are 8 or more readings. If p is below 0.05 the data may not be normal, and the indices and expected PPM should be read with caution.</p>
+      </div>
+      <div class="mcard">
+        <h3>Verdict</h3>
+        <p>PPAP-style initial process study criteria, on Ppk by default: <b>above 1.67</b> acceptable, <b>1.33 to 1.67</b> may be acceptable with customer approval, <b>below 1.33</b> not acceptable. Your customer may set different limits; theirs apply.</p>
+      </div>
+      <div class="mcard">
+        <h3>Assumptions</h3>
+        <p>The process should be stable (in statistical control) and the readings in production order, because the moving range and subgroups depend on order. Use 30 or more readings for a dependable estimate; with fewer, the result carries a warning.</p>
+      </div>
+    </div>
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>NIST/SEMATECH e-Handbook of Statistical Methods, Section 6.1.6, <a href="https://itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm" rel="noopener">What is process capability?</a></li>
+        <li>D. C. Montgomery, <i>Introduction to Statistical Quality Control</i>, 6th ed. (Wiley, 2009), Sections 6.2 and 8.3; d<sub>2</sub> constants from Appendix VI.</li>
+        <li>AIAG, <i>Production Part Approval Process (PPAP)</i>, 4th ed., initial process study acceptance criteria.</li>
+        <li>R. B. D'Agostino and M. A. Stephens, <i>Goodness-of-Fit Techniques</i> (Marcel Dekker, 1986), Anderson-Darling adjustment and p-value.</li>
+      </ul>
+      <h3>How we check it</h3>
+      <p>On every change, automated tests check this calculator against the NIST worked example and reject-rate table, Montgomery Examples 6.1 and 8.1&ndash;8.2, and the Mensuro statistics engine (built on SciPy and statsmodels). It must agree with the engine to at least 9 significant digits. <a href="https://github.com/mensuro/site/tree/main/tests" rel="noopener">See the tests</a>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="band band-paper">
+  <div class="wrap section">
+    <div class="head">
+      <div class="eyebrow">Quick reference</div>
+      <h2 class="h2">Cp, Cpk, Pp and Ppk in one minute.</h2>
+    </div>
+    <div class="faq">
+      <details><summary>What's the difference between Cp and Cpk?</summary><p>Cp compares the width of the tolerance with the spread of the process, ignoring where the process is centered. Cpk also accounts for centering: it measures the distance from the mean to the nearer spec limit. A process can have a high Cp and a low Cpk if it runs off-center.</p></details>
+      <details><summary>What's the difference between Cpk and Ppk?</summary><p>Both use the same formula. Cpk uses within (short-term) sigma, estimated from moving ranges or subgroup ranges. Ppk uses overall sigma, the standard deviation of all readings, so it includes shifts and drift over the study. Ppk is usually the one customers ask for in an initial PPAP study.</p></details>
+      <details><summary>What's a good Cpk?</summary><p>Many automotive customers require 1.33 or more for ongoing production and 1.67 or more for initial studies and special characteristics. Always check your customer's specific requirements.</p></details>
+      <details><summary>What if I only have one spec limit?</summary><p>Leave the other limit blank. You'll get the one-sided index (Ppu or Ppl, and Cpu or Cpl); Cp and Pp need both limits and aren't shown.</p></details>
+      <details><summary>Is my data stored anywhere?</summary><p>No. The calculation runs in your browser with JavaScript. The readings and limits you enter are never sent to Mensuro or anyone else, and this page doesn't save them.</p></details>
+    </div>
+  </div>
+</div>
+
+<div class="band band-ink">
+  <div class="wrap">
+    <footer class="footer">
+      <img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148">
+      <nav aria-label="Footer">
+        <a href="index.html">Home</a>
+        <a href="privacy.html">Privacy</a>
+        <span>hello@mensuro.ai</span>
+        <span>© 2026 Mensuro</span>
+      </nav>
+    </footer>
+  </div>
+</div>
+
+<script src="assets/cpk.js"></script>
+<script src="assets/calculator.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>
