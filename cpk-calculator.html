@@ -11,7 +11,10 @@
 <meta property="og:title" content="Free Cp and Cpk calculator">
 <meta property="og:description" content="Cp, Cpk, Pp, Ppk, expected PPM and a normality check, with the formulas shown. Runs in your browser; nothing is uploaded.">
 <meta property="og:url" content="https://mensuro.netlify.app/cpk-calculator.html">
-<meta property="og:image" content="https://mensuro.netlify.app/assets/og-image.jpg">
+<meta property="og:image" content="https://mensuro.netlify.app/assets/og-calculator.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mensuro free Cp and Cpk calculator showing a verdict, capability indices and a histogram">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#14263D">
 <link rel="icon" href="assets/mensuro-favicon.svg" type="image/svg+xml">
@@ -154,6 +157,7 @@
         <form class="join join-form" name="early-access" action="thanks.html" method="POST" data-netlify="true" netlify-honeypot="company-website" novalidate>
           <input type="hidden" name="form-name" value="early-access">
           <input type="hidden" name="source" value="calculator">
+          <input type="hidden" name="ref" value="">
           <p hidden><label>Leave this empty <input name="company-website"></label></p>
           <label class="join-label" for="email-calc">Join the early-access list <span class="when">Beta opens early 2027</span></label>
           <div class="join-row">
@@ -184,11 +188,11 @@
 </div>
 
 <div class="band band-white">
-  <div class="wrap section" id="method">
+  <section class="wrap section" id="method" aria-labelledby="method-title">
     <div class="method">
       <div class="method-intro">
         <div class="eyebrow">How it's calculated</div>
-        <h2 class="h2">The formulas, in plain English.</h2>
+        <h2 class="h2" id="method-title">The formulas, in plain English.</h2>
         <p class="lede">Standard definitions, nothing proprietary. Open any topic for the formula and what it means for your process.</p>
         <div class="checked">
           <h3>How we check it</h3>
@@ -253,7 +257,7 @@
         </div></details>
       </div>
     </div>
-  </div>
+  </section>
 </div>
 
 <div class="band band-ink">
