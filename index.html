@@ -44,7 +44,10 @@
           <h1 id="hero-title">From spreadsheet to customer-ready report in minutes.</h1>
           <p class="sub">Gage R&amp;R, capability and Type 1 studies, explained in plain English and formatted for your customer's SQE.</p>
 
-          <form class="join join-form" id="join" action="thanks.html" novalidate>
+          <form class="join join-form" id="join" name="early-access" action="thanks.html" method="POST" data-netlify="true" netlify-honeypot="company-website" novalidate>
+            <input type="hidden" name="form-name" value="early-access">
+            <input type="hidden" name="source" value="hero">
+            <p hidden><label>Leave this empty <input name="company-website"></label></p>
             <label class="join-label" for="email-hero">Join the early-access list <span class="when">Beta opens early 2027</span></label>
             <div class="join-row">
               <input id="email-hero" name="email_address" type="email" autocomplete="email" placeholder="you@company.com" required>
@@ -274,7 +277,10 @@
     <section class="final" aria-labelledby="final-title">
       <div class="eyebrow">Early access</div>
       <h2 class="h2" id="final-title">Get your next PPAP report done in minutes, not an afternoon.</h2>
-      <form class="join join-form" action="thanks.html" novalidate>
+      <form class="join join-form" name="early-access" action="thanks.html" method="POST" data-netlify="true" netlify-honeypot="company-website" novalidate>
+        <input type="hidden" name="form-name" value="early-access">
+        <input type="hidden" name="source" value="final">
+        <p hidden><label>Leave this empty <input name="company-website"></label></p>
         <label class="join-label" for="email-final">Join the early-access list <span class="when">Beta opens early 2027</span></label>
         <div class="join-row">
           <input id="email-final" name="email_address" type="email" autocomplete="email" placeholder="you@company.com" required>

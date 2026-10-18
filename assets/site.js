@@ -1,6 +1,7 @@
 /* Mensuro site behavior.
-   Fill in MENSURO_CONFIG once the accounts exist; until then the forms run in preview mode
-   and simply move to the thank-you page without sending anything. */
+   On the live site, signups and thank-you answers are saved in Netlify Forms ("early-access"
+   and "signup-details"). Setting kitFormAction sends signups to Kit instead. Anywhere else
+   (a local preview) the forms send nothing and just move to the thank-you page. */
 var MENSURO_CONFIG = {
   // Kit (ConvertKit) form endpoint, from the form's HTML embed code, e.g.
   // "https://app.kit.com/forms/1234567/subscriptions". In Kit, set the form's
@@ -8,7 +9,7 @@ var MENSURO_CONFIG = {
   kitFormAction: "",
   // Stripe Payment Link for the $199 founding membership, e.g. "https://buy.stripe.com/..."
   stripeLink: "",
-  // Hosts where the Netlify form on the thank-you page should really submit.
+  // Hosts where the Netlify forms should really submit (any *.netlify.app address also counts).
   liveHosts: ["mensuro.ai", "www.mensuro.ai"]
 };
 
@@ -41,7 +42,23 @@ var MENSURO_CONFIG = {
         return; // native POST to Kit; Kit redirects to thanks.html
       }
       event.preventDefault();
-      location.href = "thanks.html";
+      if (!isLive) { location.href = "thanks.html"; return; }
+      // Save the signup in Netlify Forms ("early-access") before moving to the thank-you page.
+      var button = form.querySelector('button[type="submit"]');
+      if (button) { button.disabled = true; }
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(new FormData(form)).toString()
+      })
+        .then(function (r) {
+          if (!r.ok) { throw new Error(r.status); }
+          location.href = "thanks.html";
+        })
+        .catch(function () {
+          if (button) { button.disabled = false; }
+          if (error) { error.hidden = false; error.textContent = "We couldn't save your email. Check your connection and try again."; }
+        });
     });
   });
 
