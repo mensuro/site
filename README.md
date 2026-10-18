@@ -21,6 +21,7 @@ The product itself (stats engine and app) lives in the private `mensuro/mensuro`
 - **Founding pre-sale:** the "Reserve for $199" button uses `stripeLink` in `assets/site.js`.
 - On a local preview (not the live host), the forms send nothing.
 - **Cp/Cpk calculator:** runs entirely in the browser; it makes no network requests and stores nothing. Run its tests with `node --test "tests/*.test.js"` (Node 22). They check it against NIST and Montgomery reference results and against the Mensuro engine (`tests/reference/engine_parity.json`, generated from the engine). If the engine's capability math changes, regenerate that file.
+- **Caching:** CSS and JS revalidate on every visit, so deploys show up at once. Pages link them with `?v=...`; bump that value when you want browsers that cached an older copy to refetch.
 - **No third-party requests:** fonts are self-hosted (`assets/fonts`, SIL Open Font License). Keep it that way, or update the privacy page.
 
 ## Local preview

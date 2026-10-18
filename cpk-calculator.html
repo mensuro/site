@@ -17,8 +17,8 @@
 <link rel="icon" href="assets/mensuro-favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="stylesheet" href="assets/fonts.css">
-<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/fonts.css?v=20261018b">
+<link rel="stylesheet" href="assets/site.css?v=20261018b">
 </head>
 <body>
 
@@ -35,9 +35,9 @@
     <section class="calc-hero" aria-labelledby="calc-title">
       <div class="eyebrow">Free tool</div>
       <h1 id="calc-title">Cp and Cpk calculator</h1>
-      <p class="sub">Paste your readings and enter the spec limits. You get Cp, Cpk, Pp, Ppk, expected PPM and a normality check, with a plain-English verdict and the formulas behind it.</p>
+      <p class="sub">Paste your measurements and enter the spec limits. You get Cp, Cpk, Pp, Ppk, expected PPM and a normality check, with a plain-English verdict and the formulas behind it.</p>
       <ul class="trust">
-        <li>Runs in your browser; readings are never uploaded</li>
+        <li>Runs in your browser; nothing is uploaded</li>
         <li>Checked against NIST and Montgomery examples</li>
         <li>No signup</li>
       </ul>
@@ -50,9 +50,10 @@
     <form class="calc-card calc-inputs" id="calc-form" novalidate>
       <h2>Your data</h2>
       <div class="field">
-        <label for="readings">Readings <span class="hint">in production order, one per line or pasted from Excel</span></label>
-        <textarea id="readings" rows="10" spellcheck="false" autocomplete="off" inputmode="decimal" placeholder="12.009&#10;11.997&#10;12.013&#10;..."></textarea>
-        <p class="count num" id="count" aria-live="polite">No readings yet</p>
+        <label for="readings">Measurements</label>
+        <p class="hint" id="readings-hint">Paste a column from Excel, or type one value per line, in the order they were measured.</p>
+        <textarea id="readings" rows="9" spellcheck="false" autocomplete="off" inputmode="decimal" aria-describedby="readings-hint" placeholder="12.009&#10;11.997&#10;12.013&#10;..."></textarea>
+        <p class="count num" id="count" aria-live="polite">No measurements yet</p>
       </div>
       <div class="field-row">
         <div class="field">
@@ -64,16 +65,26 @@
           <input id="usl" type="text" inputmode="decimal" autocomplete="off" placeholder="optional">
         </div>
       </div>
-      <div class="field">
-        <label for="subgroup">Subgroup size <span class="hint">1 for individual readings</span></label>
-        <input id="subgroup" type="number" min="1" max="25" step="1" value="1">
-      </div>
       <fieldset class="field">
-        <legend>Verdict based on</legend>
-        <div class="seg">
-          <label><input type="radio" name="index" value="Ppk" checked><span>Ppk (overall)</span></label>
-          <label><input type="radio" name="index" value="Cpk"><span>Cpk (within)</span></label>
+        <legend>How were the parts measured?</legend>
+        <div class="choice">
+          <label><input type="radio" name="sampling" value="single" checked><span><b>One at a time</b><small>Each measurement is its own part, taken in sequence.</small></span></label>
+          <label><input type="radio" name="sampling" value="groups"><span><b>In small groups</b><small>A few parts pulled together, for example 5 every hour.</small></span></label>
         </div>
+        <div class="group-size" id="group-size" hidden>
+          <label for="subgroup">Parts per group</label>
+          <input id="subgroup" type="number" min="2" max="25" step="1" value="5">
+          <span class="hint">Statisticians call these subgroups.</span>
+        </div>
+        <p class="hint">This sets how short-term variation (Cp, Cpk) is estimated. Not sure? Choose one at a time.</p>
+      </fieldset>
+      <fieldset class="field">
+        <legend>Base the verdict on</legend>
+        <div class="seg">
+          <label><input type="radio" name="index" value="Ppk" checked><span>Ppk, long-term</span></label>
+          <label><input type="radio" name="index" value="Cpk"><span>Cpk, short-term</span></label>
+        </div>
+        <p class="hint">Most initial PPAP studies use Ppk.</p>
       </fieldset>
       <p class="calc-error" id="calc-error" role="alert" hidden></p>
       <div class="calc-actions">
@@ -93,6 +104,12 @@
         <div class="verdict" id="verdict">
           <span class="vpill" id="vpill"></span>
           <p id="vreason"></p>
+          <div class="scale" id="scale" role="img">
+            <div class="zones"><span class="z-fail"></span><span class="z-cond"></span><span class="z-pass"></span></div>
+            <div class="marker" id="marker"><span id="marker-label"></span></div>
+            <div class="scale-ticks"><span style="left:41.5%">1.33</span><span style="left:58.5%">1.67</span></div>
+            <div class="scale-names"><span>Not acceptable</span><span>Conditional</span><span>Acceptable</span></div>
+          </div>
         </div>
         <div class="idx">
           <div><span class="iv num" id="ppk"></span><span class="il">Ppk</span></div>
@@ -102,7 +119,7 @@
         </div>
         <figure class="hist">
           <svg id="hist" viewBox="0 0 640 260" role="img" aria-labelledby="hist-title"><title id="hist-title">Histogram of readings with specification limits</title></svg>
-          <figcaption class="legend"><span class="k-bar">Readings</span><span class="k-curve">Normal fit (overall)</span><span class="k-spec">Spec limits</span></figcaption>
+          <figcaption class="legend"><span class="k-bar">Your measurements</span><span class="k-curve">Normal curve (long-term)</span><span class="k-spec">Spec limits</span><span class="k-mean">Mean</span></figcaption>
         </figure>
         <table class="stats num">
           <caption class="sr">Details</caption>
@@ -136,7 +153,7 @@
           </button>
         </div>
         <p class="form-error" role="alert" hidden></p>
-        <p class="micro"><b>Free to join.</b> We only email you about Mensuro, and you can unsubscribe anytime. Your readings above are not sent with this form.</p>
+        <p class="micro"><b>Free to join.</b> We only email you about Mensuro, and you can unsubscribe anytime. Your measurements above are not sent with this form.</p>
       </form>
     </section>
   </div>
@@ -144,67 +161,73 @@
 
 <div class="band band-white">
   <div class="wrap section" id="method">
-    <div class="head">
-      <div class="eyebrow">How it's calculated</div>
-      <h2 class="h2">The formulas, and where they come from.</h2>
-      <p class="lede">Standard definitions, nothing proprietary. Every number above comes from these steps.</p>
-    </div>
     <div class="method">
-      <div class="mcard">
-        <h3>Overall: Pp and Ppk</h3>
-        <p>Overall sigma is the sample standard deviation of all readings, <span class="f">s = &radic;[&Sigma;(x &minus; x&#772;)&sup2; / (n &minus; 1)]</span>.</p>
-        <p class="f">Pp = (USL &minus; LSL) / 6s</p>
-        <p class="f">Ppk = min(USL &minus; x&#772;, x&#772; &minus; LSL) / 3s</p>
+      <div class="method-intro">
+        <div class="eyebrow">How it's calculated</div>
+        <h2 class="h2">The formulas, in plain English.</h2>
+        <p class="lede">Standard definitions, nothing proprietary. Open any topic for the formula and what it means for your process.</p>
+        <div class="checked">
+          <h3>How we check it</h3>
+          <p>On every change, automated tests compare this calculator with the NIST worked example and reject-rate table, Montgomery Examples 6.1 and 8.1&ndash;8.2, and the Mensuro statistics engine (built on SciPy and statsmodels). It must agree with the engine to at least 9 significant digits. <a href="https://github.com/mensuro/site/tree/main/tests" rel="noopener">See the tests</a>.</p>
+        </div>
+        <div class="checked">
+          <h3>Sources</h3>
+          <ul>
+            <li>NIST/SEMATECH e-Handbook of Statistical Methods, 6.1.6, <a href="https://itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm" rel="noopener">What is process capability?</a></li>
+            <li>D. C. Montgomery, <i>Introduction to Statistical Quality Control</i>, 6th ed. (Wiley, 2009), Sections 6.2 and 8.3; d<sub>2</sub> from Appendix VI.</li>
+            <li>AIAG, <i>Production Part Approval Process (PPAP)</i>, 4th ed., initial process study criteria.</li>
+            <li>R. B. D'Agostino and M. A. Stephens, <i>Goodness-of-Fit Techniques</i> (Marcel Dekker, 1986).</li>
+          </ul>
+        </div>
       </div>
-      <div class="mcard">
-        <h3>Within: Cp and Cpk</h3>
-        <p>Within sigma measures short-term variation. For individual readings it is the average moving range divided by d<sub>2</sub> = 1.128. For subgroups it is the average subgroup range divided by d<sub>2</sub> for that subgroup size.</p>
-        <p class="f">&sigma;<sub>within</sub> = MR&#772; / 1.128 or R&#772; / d<sub>2</sub></p>
-        <p>Cp and Cpk use the Pp and Ppk formulas with &sigma;<sub>within</sub> in place of s.</p>
+      <div class="faq method-faq">
+        <details open><summary>Cp and Cpk: short-term capability</summary><div class="ans">
+          <p>Cp and Cpk use within (short-term) sigma: the variation from one part to the next, without slow drift or shifts.</p>
+          <p class="f">&sigma;<sub>within</sub> = MR&#772; / 1.128 &nbsp;(one at a time)<br>&sigma;<sub>within</sub> = R&#772; / d<sub>2</sub> &nbsp;(in groups; d<sub>2</sub> depends on group size)</p>
+          <p class="f">Cp = (USL &minus; LSL) / 6&sigma;<sub>within</sub><br>Cpk = min(USL &minus; x&#772;, x&#772; &minus; LSL) / 3&sigma;<sub>within</sub></p>
+          <p>MR&#772; is the average difference between consecutive measurements; R&#772; is the average range within each group.</p>
+        </div></details>
+        <details><summary>Pp and Ppk: long-term capability</summary><div class="ans">
+          <p>Pp and Ppk use the standard deviation of every measurement, so they include drift and shifts over the whole study.</p>
+          <p class="f">s = &radic;[&Sigma;(x &minus; x&#772;)&sup2; / (n &minus; 1)]</p>
+          <p class="f">Pp = (USL &minus; LSL) / 6s<br>Ppk = min(USL &minus; x&#772;, x&#772; &minus; LSL) / 3s</p>
+        </div></details>
+        <details><summary>Cpk or Ppk: which does my customer want?</summary><div class="ans">
+          <p>Same formula, different sigma. Ppk is usually the one asked for in an initial PPAP study; Cpk shows what the process can do short-term. If Ppk is much lower than Cpk, the process is drifting or shifting over time.</p>
+        </div></details>
+        <details><summary>Cp vs Cpk: why centering matters</summary><div class="ans">
+          <p>Cp compares the tolerance width with the process spread and ignores where the process sits. Cpk measures from the mean to the nearer limit. A high Cp with a low Cpk means the process is capable but off-center, often an easy fix.</p>
+        </div></details>
+        <details><summary>What's a good Cpk? (the verdict)</summary><div class="ans">
+          <p>The verdict uses PPAP-style criteria on Ppk by default:</p>
+          <ul class="bands">
+            <li><span class="dot dot-pass"></span><b>Above 1.67</b> acceptable</li>
+            <li><span class="dot dot-cond"></span><b>1.33 to 1.67</b> may be acceptable with customer approval</li>
+            <li><span class="dot dot-fail"></span><b>Below 1.33</b> not acceptable</li>
+          </ul>
+          <p>Many automotive customers require 1.33 or more for ongoing production and 1.67 or more for initial studies. Your customer's limits apply if they differ.</p>
+        </div></details>
+        <details><summary>Expected and observed PPM</summary><div class="ans">
+          <p>Expected PPM is the share of a normal distribution beyond each limit, in parts per million, shown for both sigmas:</p>
+          <p class="f">PPM = [&Phi;((LSL &minus; x&#772;) / &sigma;) + 1 &minus; &Phi;((USL &minus; x&#772;) / &sigma;)] &times; 1,000,000</p>
+          <p>Observed PPM counts the measurements actually outside the limits.</p>
+        </div></details>
+        <details><summary>Is my data normal? (Anderson-Darling)</summary><div class="ans">
+          <p>With 8 or more measurements, an Anderson-Darling test checks whether a normal curve fits, using the D'Agostino-Stephens small-sample adjustment. If p is below 0.05, the data may not be normal, and the indices and expected PPM should be read with caution.</p>
+        </div></details>
+        <details><summary>One at a time or in groups?</summary><div class="ans">
+          <p>Choose <b>one at a time</b> if each measurement is a separate part taken in sequence. Choose <b>in small groups</b> if you pulled several parts together at each check, for example 5 parts every hour, and enter the measurements group by group. This only changes the short-term sigma behind Cp and Cpk; Pp and Ppk are the same either way.</p>
+        </div></details>
+        <details><summary>What if I only have one spec limit?</summary><div class="ans">
+          <p>Leave the other limit blank. You get the one-sided index (Ppu or Ppl, Cpu or Cpl); Cp and Pp need both limits and aren't shown.</p>
+        </div></details>
+        <details><summary>What has to be true for the results to hold?</summary><div class="ans">
+          <p>The process should be stable (in statistical control), and the measurements in the order they were taken, because the short-term sigma depends on order. Use 30 or more measurements for a dependable estimate; with fewer, the result carries a warning.</p>
+        </div></details>
+        <details><summary>Is my data stored anywhere?</summary><div class="ans">
+          <p>No. The calculation runs in your browser. The measurements and limits you enter are never sent to Mensuro or anyone else, and this page doesn't save them.</p>
+        </div></details>
       </div>
-      <div class="mcard">
-        <h3>Expected and observed PPM</h3>
-        <p>Expected PPM is the share of a normal distribution beyond each limit, times one million: <span class="f">&Phi;((LSL &minus; x&#772;) / &sigma;) + 1 &minus; &Phi;((USL &minus; x&#772;) / &sigma;)</span>, shown for both sigmas. Observed PPM counts the readings actually outside the limits.</p>
-      </div>
-      <div class="mcard">
-        <h3>Normality check</h3>
-        <p>An Anderson-Darling test with the D'Agostino-Stephens small-sample adjustment, run when there are 8 or more readings. If p is below 0.05 the data may not be normal, and the indices and expected PPM should be read with caution.</p>
-      </div>
-      <div class="mcard">
-        <h3>Verdict</h3>
-        <p>PPAP-style initial process study criteria, on Ppk by default: <b>above 1.67</b> acceptable, <b>1.33 to 1.67</b> may be acceptable with customer approval, <b>below 1.33</b> not acceptable. Your customer may set different limits; theirs apply.</p>
-      </div>
-      <div class="mcard">
-        <h3>Assumptions</h3>
-        <p>The process should be stable (in statistical control) and the readings in production order, because the moving range and subgroups depend on order. Use 30 or more readings for a dependable estimate; with fewer, the result carries a warning.</p>
-      </div>
-    </div>
-    <div class="sources">
-      <h3>Sources</h3>
-      <ul>
-        <li>NIST/SEMATECH e-Handbook of Statistical Methods, Section 6.1.6, <a href="https://itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm" rel="noopener">What is process capability?</a></li>
-        <li>D. C. Montgomery, <i>Introduction to Statistical Quality Control</i>, 6th ed. (Wiley, 2009), Sections 6.2 and 8.3; d<sub>2</sub> constants from Appendix VI.</li>
-        <li>AIAG, <i>Production Part Approval Process (PPAP)</i>, 4th ed., initial process study acceptance criteria.</li>
-        <li>R. B. D'Agostino and M. A. Stephens, <i>Goodness-of-Fit Techniques</i> (Marcel Dekker, 1986), Anderson-Darling adjustment and p-value.</li>
-      </ul>
-      <h3>How we check it</h3>
-      <p>On every change, automated tests check this calculator against the NIST worked example and reject-rate table, Montgomery Examples 6.1 and 8.1&ndash;8.2, and the Mensuro statistics engine (built on SciPy and statsmodels). It must agree with the engine to at least 9 significant digits. <a href="https://github.com/mensuro/site/tree/main/tests" rel="noopener">See the tests</a>.</p>
-    </div>
-  </div>
-</div>
-
-<div class="band band-paper">
-  <div class="wrap section">
-    <div class="head">
-      <div class="eyebrow">Quick reference</div>
-      <h2 class="h2">Cp, Cpk, Pp and Ppk in one minute.</h2>
-    </div>
-    <div class="faq">
-      <details><summary>What's the difference between Cp and Cpk?</summary><p>Cp compares the width of the tolerance with the spread of the process, ignoring where the process is centered. Cpk also accounts for centering: it measures the distance from the mean to the nearer spec limit. A process can have a high Cp and a low Cpk if it runs off-center.</p></details>
-      <details><summary>What's the difference between Cpk and Ppk?</summary><p>Both use the same formula. Cpk uses within (short-term) sigma, estimated from moving ranges or subgroup ranges. Ppk uses overall sigma, the standard deviation of all readings, so it includes shifts and drift over the study. Ppk is usually the one customers ask for in an initial PPAP study.</p></details>
-      <details><summary>What's a good Cpk?</summary><p>Many automotive customers require 1.33 or more for ongoing production and 1.67 or more for initial studies and special characteristics. Always check your customer's specific requirements.</p></details>
-      <details><summary>What if I only have one spec limit?</summary><p>Leave the other limit blank. You'll get the one-sided index (Ppu or Ppl, and Cpu or Cpl); Cp and Pp need both limits and aren't shown.</p></details>
-      <details><summary>Is my data stored anywhere?</summary><p>No. The calculation runs in your browser with JavaScript. The readings and limits you enter are never sent to Mensuro or anyone else, and this page doesn't save them.</p></details>
     </div>
   </div>
 </div>
@@ -223,8 +246,8 @@
   </div>
 </div>
 
-<script src="assets/cpk.js"></script>
-<script src="assets/calculator.js"></script>
-<script src="assets/site.js"></script>
+<script src="assets/cpk.js?v=20261018b"></script>
+<script src="assets/calculator.js?v=20261018b"></script>
+<script src="assets/site.js?v=20261018b"></script>
 </body>
 </html>

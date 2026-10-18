@@ -7,7 +7,9 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
+# Stylesheets, scripts and images use Netlify's default (revalidate on every visit, cheap 304s),
+# so a deploy shows up immediately. Fonts never change, so they cache for a year.
 [[headers]]
-  for = "/assets/*"
+  for = "/assets/fonts/*"
   [headers.values]
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=31536000, immutable"
