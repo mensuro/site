@@ -20,6 +20,18 @@ var MENSURO_CONFIG = {
   function read(key) {
     try { return sessionStorage.getItem(key) || ""; } catch (e) { return ""; }
   }
+  // Campaign tag from the link a visitor arrived on (e.g. ?utm_source=linkedin&utm_campaign=post1),
+  // kept for this tab only and sent with the early-access form so we know which posts bring signups.
+  (function () {
+    var q = new URLSearchParams(location.search), parts = [];
+    ["utm_source", "utm_medium", "utm_campaign", "utm_content", "ref"].forEach(function (k) {
+      var v = q.get(k);
+      if (v) { parts.push(k.replace("utm_", "") + "=" + v.slice(0, 60)); }
+    });
+    if (parts.length && !read("mensuro_ref")) { store("mensuro_ref", parts.join("; ")); }
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="ref"]'), function (input) { input.value = read("mensuro_ref"); });
+  })();
+
   var isLive = MENSURO_CONFIG.liveHosts.indexOf(location.hostname) !== -1 || /\.netlify\.app$/.test(location.hostname);
 
   // Early-access forms (hero and final band)
