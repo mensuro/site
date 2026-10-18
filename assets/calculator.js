@@ -202,6 +202,17 @@
     return lines.join("\n");
   }
 
+  // "Get the full report": smooth-scroll to the report section (CSS handles the motion and
+  // respects reduced-motion), then move keyboard focus to its heading without jumping.
+  $("to-report").addEventListener("click", function (e) {
+    e.preventDefault();
+    var target = $("report");
+    var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    target.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+    try { $("report-title").focus({ preventScroll: true }); } catch (err) { /* older browsers: scrolling is enough */ }
+    if (history.replaceState) { history.replaceState(null, "", "#report"); }
+  });
+
   $("copy").addEventListener("click", function () {
     var done = function () { $("copied").textContent = "Copied"; };
     if (navigator.clipboard && navigator.clipboard.writeText) {
