@@ -127,15 +127,15 @@ test("pasted text: columns, rows, commas and tabs", () => {
 test("input checks", () => {
   assert.throws(() => C.capability({ values: [1, 2, 3] }), /at least one specification limit/);
   assert.throws(() => C.capability({ values: [1, 2, 3], lsl: 5, usl: 1 }), /must be below/);
-  assert.throws(() => C.capability({ values: [1], usl: 5 }), /at least 2 readings/);
+  assert.throws(() => C.capability({ values: [1], usl: 5 }), /at least 2 measurements/);
   assert.throws(() => C.capability({ values: [2, 2, 2], usl: 5 }), /identical/);
   assert.throws(() => C.capability({ values: [1, 2, 3, 4, 5], subgroupSize: 2, usl: 9 }), /don't divide/);
-  assert.throws(() => C.capability({ values: [1, 2, 3, 4], subgroupSize: 26, usl: 9 }), /Subgroup size/);
+  assert.throws(() => C.capability({ values: [1, 2, 3, 4], subgroupSize: 26, usl: 9 }), /Parts per group/);
 });
 
 test("notes for small samples and non-normal data", () => {
   const few = C.capability({ values: [1, 2, 3, 4, 5], usl: 10 });
-  assert.ok(few.notes.some((n) => n.includes("Only 5 readings")));
+  assert.ok(few.notes.some((n) => n.includes("Only 5 measurements")));
   assert.ok(few.notes.some((n) => n.includes("Normality isn't checked")));
   const skew = parity.cases.find((c) => c.name.startsWith("skewed"));
   const r = C.capability({ values: skew.values, usl: 200 });

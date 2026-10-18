@@ -77,7 +77,7 @@
     for (var i = 0; i < tokens.length; i++) {
       var v = Number(tokens[i]);
       if (!isFinite(v) || !/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(tokens[i])) {
-        throw new CalcError("“" + tokens[i] + "” (entry " + (i + 1) + ") isn't a number. Paste readings only, " +
+        throw new CalcError("“" + tokens[i] + "” (entry " + (i + 1) + ") isn't a number. Paste measurements only, " +
           "without headers, and use a period as the decimal mark.");
       }
       values.push(v);
@@ -159,13 +159,13 @@
     if (lsl == null && usl == null) { throw new CalcError("Enter at least one specification limit (lower, upper, or both)."); }
     if (lsl != null && usl != null && !(lsl < usl)) { throw new CalcError("The lower specification limit must be below the upper one."); }
     for (var k = 0; k < values.length; k++) {
-      if (typeof values[k] !== "number" || !isFinite(values[k])) { throw new CalcError("Some readings are blank or not numbers."); }
+      if (typeof values[k] !== "number" || !isFinite(values[k])) { throw new CalcError("Some measurements are blank or not numbers."); }
     }
     if (size !== 1 && !(size >= 2 && size <= 25 && Math.floor(size) === size)) {
-      throw new CalcError("Subgroup size must be 1 (individual readings) or a whole number from 2 to 25.");
+      throw new CalcError("Parts per group must be a whole number from 2 to 25.");
     }
     var n = values.length;
-    if (n < 2) { throw new CalcError("Enter at least 2 readings; 30 or more are recommended."); }
+    if (n < 2) { throw new CalcError("Enter at least 2 measurements; 30 or more are recommended."); }
 
     var notes = [];
     var sigmaWithin, withinMethod, k2 = null;
@@ -176,10 +176,10 @@
       withinMethod = "MR-bar / d2, moving range of 2 consecutive readings (d2 = 1.128)";
     } else {
       if (n % size !== 0) {
-        throw new CalcError(n + " readings don't divide into subgroups of " + size + ". Each subgroup must be complete, in order.");
+        throw new CalcError(n + " measurements don't divide into groups of " + size + ". Each group must be complete and entered in order.");
       }
       k2 = n / size;
-      if (k2 < 2) { throw new CalcError("Enter at least 2 subgroups."); }
+      if (k2 < 2) { throw new CalcError("Enter at least 2 groups."); }
       var rsum = 0;
       for (var g = 0; g < k2; g++) {
         var sub = values.slice(g * size, (g + 1) * size);
@@ -191,8 +191,8 @@
 
     var m = mean(values);
     var sOverall = sampleSd(values, m);
-    if (sOverall === 0) { throw new CalcError("Every reading is identical, so capability can't be computed. Check the gage resolution."); }
-    if (n < 30) { notes.push("Only " + n + " readings. Capability estimated from fewer than 30 readings is uncertain."); }
+    if (sOverall === 0) { throw new CalcError("Every measurement is identical, so capability can't be computed. Check the gage resolution."); }
+    if (n < 30) { notes.push("Only " + n + " measurements. Capability estimated from fewer than 30 measurements is uncertain."); }
 
     var overall = indicesFromSummary(m, sOverall, lsl, usl);
     var within = sigmaWithin > 0 ? indicesFromSummary(m, sigmaWithin, lsl, usl) : null;
@@ -211,7 +211,7 @@
           "expected PPM assume a normal distribution, so treat them with caution.");
       }
     } else {
-      notes.push("Normality isn't checked with fewer than 8 readings.");
+      notes.push("Normality isn't checked with fewer than 8 measurements.");
     }
 
     if (index === "Cpk" && !within) { throw new CalcError("Cpk can't be used for the verdict because within-subgroup variation is zero."); }
@@ -241,7 +241,7 @@
   // Example for the "Load example" button: simulated bore diameter (mm), 20 subgroups of 5,
   // generated with numpy (seed 42). tests/cpk.test.js checks it against the engine.
   var EXAMPLE = {
-    label: "Simulated bore diameter (mm), 20 subgroups of 5",
+    label: "Simulated bore diameter (mm), 20 groups of 5",
     subgroupSize: 5,
     lsl: "11.975",
     usl: "12.035",

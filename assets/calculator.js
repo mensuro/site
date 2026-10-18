@@ -30,7 +30,7 @@
   function updateCount() {
     try {
       var n = C.parseReadings(readingsEl.value).length;
-      countEl.textContent = n === 0 ? "No readings yet" : n + (n === 1 ? " reading" : " readings");
+      countEl.textContent = n === 0 ? "No measurements yet" : n + (n === 1 ? " measurement" : " measurements");
     } catch (e) {
       countEl.textContent = "Some entries aren't numbers";
     }
@@ -45,7 +45,8 @@
     errorEl.hidden = true;
     try {
       var values = C.parseReadings(readingsEl.value);
-      var size = Number(sgEl.value || "1");
+      var grouped = form.querySelector('input[name="sampling"]:checked').value === "groups";
+      var size = grouped ? Number(sgEl.value) : 1;
       var idxChoice = form.querySelector('input[name="index"]:checked').value;
       var res = C.capability({
         values: values,
@@ -63,7 +64,7 @@
         box.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
       }
     } catch (e) {
-      if (e && e.name === "CalcError") { showError(e.message); } else { showError("Something went wrong with that data. Check the readings and limits."); }
+      if (e && e.name === "CalcError") { showError(e.message); } else { showError("Something went wrong with that data. Check the measurements and limits."); }
     }
   }
 
@@ -79,22 +80,23 @@
     $("pp").textContent = idx(r.overall.cp);
     $("cpk").textContent = idx(r.within ? r.within.cpk : null);
     $("cp").textContent = idx(r.within ? r.within.cp : null);
+    drawScale(r);
 
     var w = r.within, o = r.overall;
     var rows = [
-      ["Readings", r.subgroups ? r.n + " (" + r.subgroups + " subgroups of " + r.subgroupSize + ")" : String(r.n)],
+      ["Measurements", r.subgroups ? r.n + " (" + r.subgroups + " groups of " + r.subgroupSize + ")" : String(r.n)],
       ["Mean", fixed(r.mean, d + 1)],
       ["Min / max", fixed(r.min, d) + " / " + fixed(r.max, d)],
       ["LSL / USL", (r.lsl == null ? "none" : fixed(r.lsl, d)) + " / " + (r.usl == null ? "none" : fixed(r.usl, d))],
-      ["Sigma, overall (s)", fixed(o.sigma, d + 2)],
-      ["Sigma, within", w ? fixed(w.sigma, d + 2) + " · " + r.withinMethod : "–"],
+      ["Long-term sigma (overall, s)", fixed(o.sigma, d + 2)],
+      ["Short-term sigma (within)", w ? fixed(w.sigma, d + 2) + " · " + r.withinMethod : "–"],
       ["Ppl / Ppu", idx(o.cpl) + " / " + idx(o.cpu)],
       ["Cpl / Cpu", w ? idx(w.cpl) + " / " + idx(w.cpu) : "–"],
       ["Expected PPM, overall", ppm(o.ppmTotal) + "  (below " + ppm(o.ppmBelow) + ", above " + ppm(o.ppmAbove) + ")"],
       ["Expected PPM, within", w ? ppm(w.ppmTotal) : "–"],
       ["Observed PPM", ppm(r.ppmObserved) + "  (" + r.outside + " of " + r.n + " outside the limits)"],
       ["Normality (Anderson-Darling)", r.normality ? "A² = " + r.normality.a2.toFixed(3) + ", p = " +
-        (r.normality.p < 0.001 ? "< 0.001" : r.normality.p.toFixed(3)) : "not checked (fewer than 8 readings)"]
+        (r.normality.p < 0.001 ? "< 0.001" : r.normality.p.toFixed(3)) : "not checked (fewer than 8 measurements)"]
     ];
     var tbody = $("stats");
     tbody.textContent = "";
@@ -162,6 +164,9 @@
       var c = pdfPeak * Math.exp(-0.5 * Math.pow((v - m) / s, 2));
       dPath += (i ? "L" : "M") + x(v).toFixed(1) + " " + y(c).toFixed(1);
     }
+    // Soft filled curve over the bars, so both stay readable.
+    var base = (H - mB).toFixed(1);
+    svg.appendChild(el("path", { d: dPath + "L" + x(hi).toFixed(1) + " " + base + "L" + x(lo).toFixed(1) + " " + base + "Z", "class": "h-area" }));
     svg.appendChild(el("path", { d: dPath, "class": "h-curve" }));
     svg.appendChild(el("line", { x1: mL, x2: W - mR, y1: H - mB, y2: H - mB, "class": "h-axis" }));
 
@@ -176,9 +181,12 @@
       svg.appendChild(el("text", { x: x(v) + (anchor === "end" ? -4 : anchor === "start" ? 4 : 0), y: mT - 12,
         "text-anchor": anchor, "class": "h-label" }, label));
     }
-    marker(m, "Mean " + m.toFixed(d + 1), "h-mean", "middle");
     if (r.lsl != null) { marker(r.lsl, "LSL " + r.lsl.toFixed(d), "h-spec", "start"); }
     if (r.usl != null) { marker(r.usl, "USL " + r.usl.toFixed(d), "h-spec", "end"); }
+    // Mean: dashed line, labelled just inside the plot so it never collides with the LSL/USL labels.
+    svg.appendChild(el("line", { x1: x(m), x2: x(m), y1: mT, y2: H - mB, "class": "h-mean" }));
+    var right = x(m) < W * 0.7;
+    svg.appendChild(el("text", { x: x(m) + (right ? 6 : -6), y: mT + 12, "text-anchor": right ? "start" : "end", "class": "h-label h-label-mean" }, "Mean " + m.toFixed(d + 1)));
   }
 
   // ----------------------------------------------------------------- copy
@@ -215,6 +223,8 @@
     lslEl.value = C.EXAMPLE.lsl;
     uslEl.value = C.EXAMPLE.usl;
     sgEl.value = String(C.EXAMPLE.subgroupSize);
+    form.querySelector('input[name="sampling"][value="groups"]').checked = true;
+    syncGroups();
     var label = $("example-label");
     label.textContent = "Example data: " + C.EXAMPLE.label + ".";
     label.hidden = false;
@@ -223,6 +233,7 @@
   });
   $("clear").addEventListener("click", function () {
     form.reset();
+    syncGroups();
     last = null;
     output.hidden = true;
     empty.hidden = false;
@@ -231,6 +242,26 @@
     updateCount();
     readingsEl.focus();
   });
+  function syncGroups() {
+    var grouped = form.querySelector('input[name="sampling"]:checked').value === "groups";
+    $("group-size").hidden = !grouped;
+  }
+  Array.prototype.forEach.call(form.querySelectorAll('input[name="sampling"]'), function (radio) {
+    radio.addEventListener("change", function () { syncGroups(); if (last) { calculate(); } });
+  });
+
+  // Verdict scale: where the index sits against the 1.33 / 1.67 bands (the scale runs 0.5 to 2.5).
+  function drawScale(r) {
+    var value = r.verdictIndex === "Cpk" ? r.within.cpk : r.overall.cpk;
+    var lo = 0.5, hi = 2.5, pos = (Math.min(hi, Math.max(lo, value)) - lo) / (hi - lo) * 100;
+    var mk = $("marker");
+    mk.style.left = pos + "%";
+    mk.className = "marker" + (pos < 12 ? " at-start" : pos > 88 ? " at-end" : "");
+    $("marker-label").textContent = r.verdictIndex + " " + value.toFixed(2);
+    $("scale").className = "scale scale-" + r.verdict.key;
+    $("scale").setAttribute("aria-label", r.verdictIndex + " " + value.toFixed(2) + " on a scale where below 1.33 is not acceptable, 1.33 to 1.67 is conditional and above 1.67 is acceptable.");
+  }
+
   var resizeTimer;
   window.addEventListener("resize", function () {
     clearTimeout(resizeTimer);
