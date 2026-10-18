@@ -1,0 +1,48 @@
+{
+ "name": "Capability index definitions and centered-process reject rates (NIST/SEMATECH e-Handbook 6.1.6)",
+ "source": {
+  "primary": "NIST/SEMATECH e-Handbook of Statistical Methods, Section 6.1.6 'What is Process Capability?': https://itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm",
+  "retrieved": "2026-10-18",
+  "notes": [
+   "Worked example: USL = 20, LSL = 8, mean = 16, s = 2.",
+   "Reject table for a process centered between the limits: Cp 1.00 -> 0.27%, 1.33 -> 64 ppm, 1.66 -> 0.6 ppm, 2.00 -> 2 ppb (as printed).",
+   "The reject table is defined by spec width in sigmas (6, 8, 10, 12); its Cp column is that width divided by 6, printed to 2 decimals (1.33 means 8/6)."
+  ]
+ },
+ "example": {
+  "usl": 20,
+  "lsl": 8,
+  "mean": 16,
+  "s": 2,
+  "cp": 1.0,
+  "cpk": 0.6667,
+  "cpu": 0.6667,
+  "cpl": 1.3333
+ },
+ "rejects_centered": [
+  {
+   "cp": 1.0,
+   "ppm": 2700,
+   "atol_ppm": 5,
+   "spec_width_sigma": 6
+  },
+  {
+   "cp": 1.33,
+   "ppm": 64,
+   "atol_ppm": 1,
+   "spec_width_sigma": 8
+  },
+  {
+   "cp": 1.66,
+   "ppm": 0.6,
+   "atol_ppm": 0.05,
+   "spec_width_sigma": 10
+  },
+  {
+   "cp": 2.0,
+   "ppm": 0.002,
+   "atol_ppm": 0.0005,
+   "spec_width_sigma": 12
+  }
+ ]
+}

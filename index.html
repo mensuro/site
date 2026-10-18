@@ -17,9 +17,7 @@
 <link rel="icon" href="assets/mensuro-favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Manrope:wght@500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/site.css">
 <!-- Analytics: once Plausible (or similar) is set up, add its one-line script tag here. -->
 </head>
@@ -33,6 +31,7 @@
         <a href="#how">How it works</a>
         <a href="#validation">Validation</a>
         <a href="#pricing">Pricing</a>
+        <a href="cpk-calculator.html">Free Cpk calculator</a>
         <a class="nav-cta" href="#join">Get early access</a>
       </nav>
     </header>
@@ -177,7 +176,7 @@
         <h3>At launch</h3>
         <div class="row"><div class="row-text"><strong>Gage R&amp;R, crossed</strong><span>ANOVA and Average &amp; Range, ndc, interaction check</span></div><span class="tag">AIAG MSA</span></div>
         <div class="row"><div class="row-text"><strong>Process capability</strong><span>Cp, Cpk, Pp, Ppk, normality test, PPM estimate</span></div><span class="tag">PPAP 11</span></div>
-        <div class="row"><div class="row-text"><strong>Type 1 gage study</strong><span>Cg and Cgk against a reference master</span></div><span class="tag">VDA 5</span></div>
+        <div class="row"><div class="row-text"><strong>Type 1 gage study</strong><span>Cg and Cgk against a reference master</span></div><span class="tag">Bosch No. 10</span></div>
       </div>
       <div class="panel">
         <h3>Coming next</h3>
@@ -199,7 +198,7 @@
     </div>
     <div class="checks">
       <div class="vcard"><h3>Reference results first</h3><p>Before an analysis ships, it must reproduce published reference results to several decimal places, and those tests rerun on every change.</p></div>
-      <div class="vcard"><h3>Published methods</h3><p>Gage studies follow AIAG MSA 4th edition and VDA 5. Each report names the method, the constants and the decision rules it used.</p></div>
+      <div class="vcard"><h3>Published methods</h3><p>Gage R&amp;R follows AIAG MSA 4th edition and Type 1 studies follow Bosch Booklet No. 10. Each report names the method, the constants and the decision rules it used.</p></div>
       <div class="vcard"><h3>A receipt on every result</h3><p>Method, alpha, sample size and corrections appear with every result, so an SQE can trace any number back to how it was made.</p></div>
       <div class="vcard"><h3>Your data, deleted by default</h3><p>Uploads are used to compute your report and then deleted, unless you choose to save the study to your library.</p></div>
     </div>
@@ -262,8 +261,8 @@
       <h2 class="h2" id="faq-title">Before you join</h2>
     </div>
     <div class="faq">
-      <details><summary>Is my measurement data safe?</summary><p>Uploads are used only to compute your report and are deleted afterward unless you save the study. Sigmi sees column names, summary statistics and results, not your raw measurements. We never sell or share your data.</p></details>
-      <details><summary>Which methods and standards does it follow?</summary><p>Gage R&amp;R follows AIAG MSA 4th edition with both the ANOVA and Average &amp; Range methods. Type 1 studies follow VDA 5. Capability uses the standard Cp, Cpk, Pp and Ppk definitions with a normality check.</p></details>
+      <details><summary>Is my measurement data safe?</summary><p>Uploads are used only to compute your report and are deleted afterward unless you save the study. Sigmi sees column names, summary statistics and results, not your raw measurements. We never sell your data, and we share it only with the services that run Mensuro, listed on our <a href="privacy.html">privacy page</a>.</p></details>
+      <details><summary>Which methods and standards does it follow?</summary><p>Gage R&amp;R follows AIAG MSA 4th edition with both the ANOVA and Average &amp; Range methods. Type 1 studies use the Cg and Cgk method of Bosch Booklet No. 10. Capability uses the standard Cp, Cpk, Pp and Ppk definitions with a normality check.</p></details>
       <details><summary>Does it work on a Mac or a locked-down company laptop?</summary><p>Yes. Mensuro runs in any modern browser, so there is nothing to install and nothing for IT to approve on your machine.</p></details>
       <details><summary>Can I put my company's logo on reports?</summary><p>Yes, on Pro, Team and founding memberships. The customer-facing report leads with your brand; Mensuro appears only in a small footer line.</p></details>
       <details><summary>When does the beta open?</summary><p>Early 2027. Everyone on the early-access list hears first, in the order they joined.</p></details>
@@ -295,6 +294,7 @@
     <footer class="footer">
       <img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148">
       <nav aria-label="Footer">
+        <a href="cpk-calculator.html">Free Cpk calculator</a>
         <a href="privacy.html">Privacy</a>
         <span>hello@mensuro.ai</span>
         <span>© 2026 Mensuro</span>

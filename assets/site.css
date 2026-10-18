@@ -247,3 +247,86 @@ legend .hint { font-weight: 400; color: var(--muted); font-size: 13.5px; margin-
 .legal h2 { font-size: 20px; margin-top: 14px; }
 .legal p, .legal li { color: var(--muted); }
 .legal ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+
+/* free Cp/Cpk calculator */
+:root { --fail: #B42318; }
+.calc-hero { display: flex; flex-direction: column; gap: 16px; padding-block: 24px 56px; max-width: 760px; }
+.calc-hero h1 { font-size: clamp(36px, 5vw, 52px); line-height: 1.05; color: var(--on-dark); }
+.calc-hero .sub { font-size: 18px; color: var(--on-dark-2); }
+.calc { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 20px; align-items: start; padding-block: 40px 72px; }
+.calc-card { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: clamp(20px, 3vw, 28px); display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.calc-card h2 { font-size: 22px; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field label, .field legend { font-weight: 600; font-size: 14.5px; }
+.field .hint { font-weight: 400; color: var(--muted); font-size: 13px; }
+.field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.calc input[type="text"], .calc input[type="number"], .calc textarea { font: inherit; font-size: 15px; color: var(--text); background: var(--white); border: 1px solid #C3CDD9; border-radius: 10px; padding: 10px 12px; width: 100%; min-width: 0; }
+.calc textarea { font-variant-numeric: tabular-nums; resize: vertical; min-height: 180px; line-height: 1.4; }
+.calc input:focus-visible, .calc textarea:focus-visible { outline: 3px solid var(--teal); outline-offset: 1px; border-color: var(--teal-deep); }
+.count { font-size: 13px; color: var(--muted); }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 8px; }
+.seg label { position: relative; font-weight: 500; }
+.seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.seg span { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3CDD9; font-size: 14px; }
+.seg input:checked + span { background: var(--teal-deep); border-color: var(--teal-deep); color: var(--white); }
+.seg input:focus-visible + span { outline: 3px solid var(--teal); outline-offset: 2px; }
+.calc-error { font-size: 14.5px; color: var(--fail); background: #FDECEA; border-radius: 10px; padding: 10px 12px; }
+.calc-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.btn-link { background: none; border: 0; color: var(--teal-deep); font: inherit; font-weight: 600; cursor: pointer; padding: 10px 6px; text-decoration: underline; text-underline-offset: 3px; }
+.example-label { font-size: 13px; color: var(--muted); }
+.empty { border: 1px dashed #C3CDD9; border-radius: 12px; padding: 40px 20px; text-align: center; color: var(--muted); }
+#output { display: flex; flex-direction: column; gap: 18px; }
+#output[hidden] { display: none; }
+.verdict { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.verdict p { font-size: 15px; color: var(--text); }
+.vpill { padding: 6px 12px; border-radius: 6px; color: var(--white); font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.vpill-pass { background: var(--pass); }
+.vpill-cond { background: var(--cond); }
+.vpill-fail { background: var(--fail); }
+.idx { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.idx > div { background: var(--paper); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.idx > div:first-child { background: var(--teal-tint); }
+.iv { font-family: var(--body); font-weight: 700; font-size: clamp(24px, 3vw, 32px); line-height: 1.1; }
+.il { font-size: 13px; color: var(--muted); font-weight: 600; }
+.hist { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.hist svg { width: 100%; height: 260px; display: block; }
+.h-bar { fill: var(--teal-deep); opacity: 0.85; }
+.h-curve { fill: none; stroke: var(--ink); stroke-width: 2; }
+.h-axis { stroke: #9AA7B8; stroke-width: 1; }
+.h-tick { font: 12px var(--body); fill: var(--muted); font-variant-numeric: tabular-nums; }
+.h-label { font: 600 12px var(--body); fill: var(--text); font-variant-numeric: tabular-nums; }
+.h-spec { stroke: var(--fail); stroke-width: 2; }
+.h-mean { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend span::before { content: ""; width: 14px; height: 10px; border-radius: 2px; }
+.k-bar::before { background: var(--teal-deep); opacity: 0.85; }
+.k-curve::before { height: 2px !important; background: var(--ink); }
+.k-spec::before { width: 2px !important; height: 14px !important; background: var(--fail); }
+.stats { width: 100%; border-collapse: collapse; font-size: 14px; }
+.stats th { text-align: left; font-weight: 500; color: var(--muted); padding: 8px 12px 8px 0; vertical-align: top; width: 42%; }
+.stats td { padding: 8px 0; overflow-wrap: anywhere; }
+.stats tr + tr th, .stats tr + tr td { border-top: 1px solid var(--line); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.notes { margin: 0; padding: 12px 14px 12px 32px; background: var(--cond-tint); border-radius: 10px; font-size: 14px; color: #5C3D00; display: flex; flex-direction: column; gap: 6px; }
+.notes[hidden] { display: none; }
+.copied { font-size: 14px; color: var(--pass); font-weight: 600; }
+.method { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.mcard { border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+.mcard h3 { font-size: 18px; }
+.mcard p { color: var(--muted); font-size: 15px; }
+.mcard b { color: var(--text); }
+.f { font-variant-numeric: tabular-nums; color: var(--text) !important; font-weight: 500; }
+p.f { background: var(--paper); border-radius: 8px; padding: 8px 12px; overflow-wrap: anywhere; }
+.sources { display: flex; flex-direction: column; gap: 10px; max-width: 860px; }
+.sources h3 { font-size: 17px; margin-top: 8px; }
+.sources ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; color: var(--muted); font-size: 15px; }
+.sources p { color: var(--muted); font-size: 15px; }
+@media (max-width: 900px) {
+  .calc, .method { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .idx { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .field-row { grid-template-columns: minmax(0, 1fr); }
+  .stats th { width: 46%; }
+}
