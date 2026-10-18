@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mensuro</title>
+<meta name="description" content="Gage R&amp;R, capability and Type 1 studies, explained in plain English and formatted for your customer's SQE. Join the early-access list.">
+<link rel="canonical" href="https://mensuro.netlify.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mensuro">
+<meta property="og:title" content="Mensuro: from spreadsheet to customer-ready report in minutes">
+<meta property="og:description" content="Statistical analysis for quality teams. Gage R&amp;R, capability and Type 1 studies in plain English. Join the early-access list.">
+<meta property="og:url" content="https://mensuro.netlify.app/">
+<meta property="og:image" content="https://mensuro.netlify.app/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#14263D">
+<link rel="icon" href="assets/mensuro-favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Manrope:wght@500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<!-- Analytics: once Plausible (or similar) is set up, add its one-line script tag here. -->
+</head>
+<body>
+
+<div class="band band-ink">
+  <div class="wrap">
+    <header class="nav">
+      <a href="#top" aria-label="Mensuro home"><img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148"></a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="#how">How it works</a>
+        <a href="#validation">Validation</a>
+        <a href="#pricing">Pricing</a>
+        <a class="nav-cta" href="#join">Get early access</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="eyebrow">Statistical analysis for quality teams</div>
+          <h1 id="hero-title">From spreadsheet to customer-ready report in minutes.</h1>
+          <p class="sub">Gage R&amp;R, capability and Type 1 studies, explained in plain English and formatted for your customer's SQE.</p>
+
+          <form class="join join-form" id="join" action="thanks.html" novalidate>
+            <label class="join-label" for="email-hero">Join the early-access list <span class="when">Beta opens early 2027</span></label>
+            <div class="join-row">
+              <input id="email-hero" name="email_address" type="email" autocomplete="email" placeholder="you@company.com" required>
+              <button class="btn" type="submit">Get my early access
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+            <p class="form-error" role="alert" hidden></p>
+            <p class="micro"><b>Free to join.</b> Founding members get the first year for <b class="price">$199</b> (normally $49/month). No spam.</p>
+          </form>
+
+          <p class="founder">Built by quality engineers, for quality engineers.</p>
+          <ul class="trust">
+            <li>Methods follow AIAG MSA 4th edition</li>
+            <li>Plain-English answers</li>
+            <li>Nothing to install</li>
+          </ul>
+        </div>
+
+        <div class="hero-visual" aria-label="Example Mensuro result with a customer-ready report behind it">
+          <div class="sheet-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#36C2AE" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>PDF · PPAP element 8
+          </div>
+          <div class="sheet"><img src="assets/report-page.jpg" alt="Example page 1 of a Gage R&amp;R report" width="960" height="1242" loading="eager"></div>
+
+          <div class="card">
+            <div class="card-top">
+              <div><div class="card-label">Gage R&amp;R study · ANOVA</div><div class="card-title">Bore diameter · 72-1045-B</div></div>
+              <span class="pill-cond">CONDITIONAL</span>
+            </div>
+            <div class="kpis">
+              <div><div class="kv" style="color: var(--cond)">14.5%</div><div class="kl">GRR of tolerance</div></div>
+              <div><div class="kv" style="color: var(--pass)">13</div><div class="kl">Distinct categories</div></div>
+              <div><div class="kv">0.63</div><div class="kl">Interaction p-value</div></div>
+            </div>
+            <div class="bars">
+              <div class="bar"><span>Gage R&amp;R</span><div class="track"><div class="fill" style="width: 14.5%"></div></div><span class="v">14.5%</span></div>
+              <div class="bar"><span>Repeatability</span><div class="track"><div class="fill" style="width: 10.2%"></div></div><span class="v">10.2%</span></div>
+              <div class="bar"><span>Reproducibility</span><div class="track"><div class="fill" style="width: 10.3%"></div></div><span class="v">10.3%</span></div>
+            </div>
+            <div class="card-foot"><img src="assets/mensuro-mark-mono-ink.svg" alt="" width="14" height="14">Generated with Mensuro · AIAG MSA 4th ed.</div>
+          </div>
+
+          <div class="bubble">
+            <img src="assets/sigmi-avatar.svg" alt="" width="34" height="34">
+            <div>
+              <div class="who">Sigmi</div>
+              <div class="said">Conditionally acceptable at 14.5% of tolerance. Operator C shows the most spread, so start there.</div>
+              <div class="receipt">Ran: two-way ANOVA, AIAG MSA 4th ed.</div>
+            </div>
+          </div>
+          <div class="example-note">Example report · sample data</div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="band band-white">
+  <section class="wrap section" id="how" aria-labelledby="how-title">
+    <div class="head">
+      <div class="eyebrow">How it works</div>
+      <h2 class="h2" id="how-title">Three steps from raw measurements to a report you can send.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-visual">
+          <div class="file-chip">bore_dia_GRR.xlsx<small>90 readings · 10 parts × 3 operators × 3 trials</small></div>
+          <div class="check">Balanced design, nothing missing</div>
+          <div class="check">Gage resolution fits the tolerance</div>
+        </div>
+        <div class="step-head"><span class="step-num">1</span><h3>Upload your data</h3></div>
+        <p>Drop a CSV or Excel file, or paste straight from Excel. Mensuro checks the study design and flags problems in plain English.</p>
+      </div>
+      <div class="step">
+        <div class="step-visual">
+          <div class="mini-msg">Is this gage good enough for a ±0.1 mm tolerance?</div>
+          <div class="mini-reply"><img src="assets/sigmi-avatar.svg" alt="" width="26" height="26"><div>Conditionally. GRR is 14.5% of tolerance, inside the 10–30% band. Operator C is the main source of spread.</div></div>
+        </div>
+        <div class="step-head"><span class="step-num">2</span><h3>Ask Sigmi</h3></div>
+        <p>Sigmi picks the right method, runs it on the validated engine and explains the result. You can still run every study from a form.</p>
+      </div>
+      <div class="step">
+        <div class="step-visual report"><img src="assets/report-page.jpg" alt="" width="960" height="1242" loading="lazy"></div>
+        <div class="step-head"><span class="step-num">3</span><h3>Send the report</h3></div>
+        <p>Download a PDF with your logo, a clear verdict, every chart and the method behind it, tagged to its PPAP element.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="band band-ink">
+  <section class="wrap section" aria-labelledby="sigmi-title">
+    <div class="sigmi">
+      <div class="head">
+        <div class="eyebrow">Meet Sigmi</div>
+        <h2 class="h2" id="sigmi-title">An assistant that explains the statistics and never invents them.</h2>
+        <ul class="rules">
+          <li><span><b>Every number comes from the engine.</b> Sigmi chooses and explains the analysis; the validated stats engine does the math.</span></li>
+          <li><span><b>Every answer shows its receipt.</b> Method, alpha, sample size and any corrections, right under the result.</span></li>
+          <li><span><b>Your raw data stays out of the chat.</b> Sigmi works from column names, summary statistics and results.</span></li>
+        </ul>
+      </div>
+      <div class="chat" aria-label="Example conversation with Sigmi">
+        <div class="you">Compare bore diameter across our three suppliers.</div>
+        <div class="her"><img src="assets/sigmi-avatar.svg" alt="" width="34" height="34">
+          <div><div class="who">Sigmi</div>Supplier B runs 0.012 mm larger on average than A and C, and the difference is real (p &lt; 0.001). Spread is similar across all three.<div class="receipt">Ran: one-way ANOVA, α = 0.05, n = 90 · example data</div></div>
+        </div>
+        <div class="you">Add a boxplot to the report and send me the PDF.</div>
+        <div class="her"><img src="assets/sigmi-avatar.svg" alt="" width="34" height="34">
+          <div><div class="who">Sigmi</div>Done. The boxplot is on page 2, after the ANOVA table.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="band band-paper">
+  <section class="wrap section" aria-labelledby="analyses-title">
+    <div class="head">
+      <div class="eyebrow">Analyses</div>
+      <h2 class="h2" id="analyses-title">The studies your customers ask for, first.</h2>
+      <p class="lede">Beta launches with the core measurement and capability studies, then grows into the full Green Belt toolbox.</p>
+    </div>
+    <div class="analyses">
+      <div class="panel">
+        <h3>At launch</h3>
+        <div class="row"><div class="row-text"><strong>Gage R&amp;R, crossed</strong><span>ANOVA and Average &amp; Range, ndc, interaction check</span></div><span class="tag">AIAG MSA</span></div>
+        <div class="row"><div class="row-text"><strong>Process capability</strong><span>Cp, Cpk, Pp, Ppk, normality test, PPM estimate</span></div><span class="tag">PPAP 11</span></div>
+        <div class="row"><div class="row-text"><strong>Type 1 gage study</strong><span>Cg and Cgk against a reference master</span></div><span class="tag">VDA 5</span></div>
+      </div>
+      <div class="panel">
+        <h3>Coming next</h3>
+        <ul class="soon">
+          <li>Control charts</li><li>Non-normal capability</li><li>Attribute agreement</li><li>Bias and linearity</li>
+          <li>Hypothesis tests</li><li>Regression</li><li>Pareto and histograms</li><li>Sample size</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="band band-white">
+  <section class="wrap section" id="validation" aria-labelledby="validation-title">
+    <div class="head">
+      <div class="eyebrow">Validation</div>
+      <h2 class="h2" id="validation-title">How we check the math.</h2>
+      <p class="lede">A wrong verdict on a customer report is the one mistake that matters. These rules apply to every analysis we ship.</p>
+    </div>
+    <div class="checks">
+      <div class="vcard"><h3>Reference results first</h3><p>Before an analysis ships, it must reproduce published reference results to several decimal places, and those tests rerun on every change.</p></div>
+      <div class="vcard"><h3>Published methods</h3><p>Gage studies follow AIAG MSA 4th edition and VDA 5. Each report names the method, the constants and the decision rules it used.</p></div>
+      <div class="vcard"><h3>A receipt on every result</h3><p>Method, alpha, sample size and corrections appear with every result, so an SQE can trace any number back to how it was made.</p></div>
+      <div class="vcard"><h3>Your data, deleted by default</h3><p>Uploads are used to compute your report and then deleted, unless you choose to save the study to your library.</p></div>
+    </div>
+  </section>
+</div>
+
+<div class="band band-paper">
+  <section class="wrap section" aria-labelledby="problem-title">
+    <div class="head">
+      <div class="eyebrow">Why Mensuro</div>
+      <h2 class="h2" id="problem-title">Quality reporting shouldn't need a statistics degree or an enterprise license.</h2>
+    </div>
+    <div class="problems">
+      <div class="problem"><h3>Excel templates that break</h3><p>Inherited spreadsheets with hidden formulas, wrong constants and nobody left who knows how they work.</p></div>
+      <div class="problem"><h3>Licenses priced for enterprises</h3><p>Desktop statistics suites cost thousands per seat per year, so the one person who needs them often goes without.</p></div>
+      <div class="problem"><h3>Reports that bounce back</h3><p>Numbers are right but the format isn't, so the PPAP package comes back from the customer for another round.</p></div>
+    </div>
+  </section>
+</div>
+
+<div class="band band-white">
+  <section class="wrap section" id="pricing" aria-labelledby="pricing-title">
+    <div class="head">
+      <div class="eyebrow">Pricing</div>
+      <h2 class="h2" id="pricing-title">Priced for the person who actually runs the studies.</h2>
+    </div>
+    <div class="founding">
+      <div>
+        <h3>Founding membership</h3>
+        <p>Pro features for your first year. Fully refundable if we don't ship.</p>
+      </div>
+      <div class="amount">$199 <small>first year, then $49/month</small></div>
+      <a class="btn" href="#join">Get my early access</a>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free</h3>
+        <div class="price">$0</div>
+        <ul><li>3 reports a month, watermarked</li><li>Every launch analysis</li><li>Plain-English verdicts</li></ul>
+      </div>
+      <div class="plan featured">
+        <h3>Pro</h3>
+        <div class="price">$49 <small>/month or $490/year</small></div>
+        <ul><li>Unlimited reports</li><li>Sigmi, the analysis assistant</li><li>Your logo on every report</li><li>Study library</li></ul>
+      </div>
+      <div class="plan">
+        <h3>Team</h3>
+        <div class="price">$149 <small>/month</small></div>
+        <ul><li>5 seats</li><li>Shared study library</li><li>Gage history and re-study reminders</li><li>Purchase orders accepted</li></ul>
+      </div>
+    </div>
+    <p class="compare">For comparison, Minitab Statistical Software single-user subscriptions list at around $2,400 per year (<a href="https://www.minitab.com/try-buy/" target="_blank" rel="noopener">minitab.com</a>, October 2026).</p>
+  </section>
+</div>
+
+<div class="band band-paper">
+  <section class="wrap section" aria-labelledby="faq-title">
+    <div class="head">
+      <div class="eyebrow">Questions</div>
+      <h2 class="h2" id="faq-title">Before you join</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Is my measurement data safe?</summary><p>Uploads are used only to compute your report and are deleted afterward unless you save the study. Sigmi sees column names, summary statistics and results, not your raw measurements. We never sell or share your data.</p></details>
+      <details><summary>Which methods and standards does it follow?</summary><p>Gage R&amp;R follows AIAG MSA 4th edition with both the ANOVA and Average &amp; Range methods. Type 1 studies follow VDA 5. Capability uses the standard Cp, Cpk, Pp and Ppk definitions with a normality check.</p></details>
+      <details><summary>Does it work on a Mac or a locked-down company laptop?</summary><p>Yes. Mensuro runs in any modern browser, so there is nothing to install and nothing for IT to approve on your machine.</p></details>
+      <details><summary>Can I put my company's logo on reports?</summary><p>Yes, on Pro, Team and founding memberships. The customer-facing report leads with your brand; Mensuro appears only in a small footer line.</p></details>
+      <details><summary>When does the beta open?</summary><p>Early 2027. Everyone on the early-access list hears first, in the order they joined.</p></details>
+      <details><summary>Is the founding price refundable?</summary><p>Yes. If we don't ship, you get a full refund. Joining the early-access list itself is free.</p></details>
+    </div>
+  </section>
+</div>
+
+<div class="band band-ink">
+  <div class="wrap">
+    <section class="final" aria-labelledby="final-title">
+      <div class="eyebrow">Early access</div>
+      <h2 class="h2" id="final-title">Get your next PPAP report done in minutes, not an afternoon.</h2>
+      <form class="join join-form" action="thanks.html" novalidate>
+        <label class="join-label" for="email-final">Join the early-access list <span class="when">Beta opens early 2027</span></label>
+        <div class="join-row">
+          <input id="email-final" name="email_address" type="email" autocomplete="email" placeholder="you@company.com" required>
+          <button class="btn" type="submit">Get my early access
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+        <p class="form-error" role="alert" hidden></p>
+        <p class="micro"><b>Free to join.</b> Founding members get the first year for <b class="price">$199</b> (normally $49/month). No spam.</p>
+      </form>
+    </section>
+    <footer class="footer">
+      <img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148">
+      <nav aria-label="Footer">
+        <a href="privacy.html">Privacy</a>
+        <span>hello@mensuro.ai</span>
+        <span>© 2026 Mensuro</span>
+      </nav>
+    </footer>
+  </div>
+</div>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
