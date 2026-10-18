@@ -17,8 +17,8 @@
 <link rel="icon" href="assets/mensuro-favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="stylesheet" href="assets/fonts.css?v=20261018b">
-<link rel="stylesheet" href="assets/site.css?v=20261018b">
+<link rel="stylesheet" href="assets/fonts.css?v=20261018c">
+<link rel="stylesheet" href="assets/site.css?v=20261018c">
 </head>
 <body>
 
@@ -137,24 +137,45 @@
 
 <div class="band band-ink" id="report">
   <div class="wrap">
-    <section class="final" aria-labelledby="report-title">
-      <div class="eyebrow">Get this as a full report</div>
-      <h2 class="h2" id="report-title">Turn these numbers into a customer-ready capability report.</h2>
-      <p class="lede">Mensuro builds the full study: histogram, normality test, control chart, verdict and the method behind every number, formatted for your PPAP package. Join the early-access list to be first in when the beta opens.</p>
-      <form class="join join-form" name="early-access" action="thanks.html" method="POST" data-netlify="true" netlify-honeypot="company-website" novalidate>
-        <input type="hidden" name="form-name" value="early-access">
-        <input type="hidden" name="source" value="calculator">
-        <p hidden><label>Leave this empty <input name="company-website"></label></p>
-        <label class="join-label" for="email-calc">Join the early-access list <span class="when">Beta opens early 2027</span></label>
-        <div class="join-row">
-          <input id="email-calc" name="email_address" type="email" autocomplete="email" placeholder="you@company.com" required>
-          <button class="btn" type="submit">Get my early access
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </button>
+    <section class="final cta-grid" aria-labelledby="report-title">
+      <div class="cta-copy">
+        <div class="eyebrow">Get this as a full report</div>
+        <h2 class="h2" id="report-title">Turn these numbers into a customer-ready report, and get Sigmi.</h2>
+        <p class="lede">A screenshot shows the number. Your customer wants the full study, and you want to know what to do about it. That's what Mensuro is for.</p>
+        <ul class="perks">
+          <li><img src="assets/sigmi-avatar.svg" alt="" width="28" height="28"><span><b>Sigmi, your statistics assistant.</b> Ask in plain English. Sigmi picks the right study, runs it on the validated engine and explains the result. Every number comes from the engine.</span></li>
+          <li><span class="pk" aria-hidden="true">PDF</span><span><b>A report built for your customer.</b> Your logo, the verdict, every chart and the method behind each number, tagged to its PPAP element.</span></li>
+          <li><span class="pk" aria-hidden="true">R&amp;R</span><span><b>Is your gage good enough to trust this Cpk?</b> Gage R&amp;R and Type 1 gage studies, in the same place.</span></li>
+          <li><span class="pk pk-plus" aria-hidden="true">+</span><span><b>More than one number.</b> Save studies to your library and rerun them as new data comes in. Control charts, non-normal capability and more are coming next.</span></li>
+        </ul>
+        <form class="join join-form" name="early-access" action="thanks.html" method="POST" data-netlify="true" netlify-honeypot="company-website" novalidate>
+          <input type="hidden" name="form-name" value="early-access">
+          <input type="hidden" name="source" value="calculator">
+          <p hidden><label>Leave this empty <input name="company-website"></label></p>
+          <label class="join-label" for="email-calc">Join the early-access list <span class="when">Beta opens early 2027</span></label>
+          <div class="join-row">
+            <input id="email-calc" name="email_address" type="email" autocomplete="email" placeholder="you@company.com" required>
+            <button class="btn" type="submit">Get my early access
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+          <p class="form-error" role="alert" hidden></p>
+          <p class="micro"><b>Free to join.</b> Founding members get the first year for <b class="price">$199</b>. We only email you about Mensuro, and you can unsubscribe anytime. Your measurements above are not sent with this form.</p>
+        </form>
+      </div>
+      <figure class="cta-chat">
+        <div class="chat" aria-label="Example conversation with Sigmi about the example data">
+          <div class="you">Is this good enough for PPAP?</div>
+          <div class="her"><img src="assets/sigmi-avatar.svg" alt="" width="34" height="34">
+            <div><div class="who">Sigmi</div>Conditionally. Ppk is 1.41, between 1.33 and 1.67, so it needs your customer's approval. The process is well centered and Cpk is close at 1.46, so reducing spread, not re-centering, is what will raise it.<div class="receipt">Ran: process capability, normal, n = 100 · example data</div></div>
+          </div>
+          <div class="you">Can I trust the gage on a tolerance this tight?</div>
+          <div class="her"><img src="assets/sigmi-avatar.svg" alt="" width="34" height="34">
+            <div><div class="who">Sigmi</div>Worth checking before you submit. Upload your Gage R&amp;R data and I'll compare %GRR with this 0.060 mm tolerance and add it to the same report.</div>
+          </div>
         </div>
-        <p class="form-error" role="alert" hidden></p>
-        <p class="micro"><b>Free to join.</b> We only email you about Mensuro, and you can unsubscribe anytime. Your measurements above are not sent with this form.</p>
-      </form>
+        <figcaption>Example conversation using the example data above. Sigmi arrives with the beta.</figcaption>
+      </figure>
     </section>
   </div>
 </div>
@@ -246,8 +267,8 @@
   </div>
 </div>
 
-<script src="assets/cpk.js?v=20261018b"></script>
-<script src="assets/calculator.js?v=20261018b"></script>
-<script src="assets/site.js?v=20261018b"></script>
+<script src="assets/cpk.js?v=20261018c"></script>
+<script src="assets/calculator.js?v=20261018c"></script>
+<script src="assets/site.js?v=20261018c"></script>
 </body>
 </html>

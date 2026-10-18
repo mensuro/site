@@ -375,3 +375,17 @@ p.f { background: var(--paper); border-left: 3px solid var(--teal-deep); border-
   .field-row, .choice { grid-template-columns: minmax(0, 1fr); }
   .stats th { width: 46%; }
 }
+
+/* calculator: report and Sigmi call to action */
+.cta-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(32px, 5vw, 64px); align-items: center; }
+.cta-copy { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.cta-copy .lede { max-width: 600px; }
+.perks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; max-width: 620px; }
+.perks li { display: flex; gap: 14px; align-items: flex-start; color: var(--on-dark-2); font-size: 15.5px; line-height: 1.5; }
+.perks b { color: var(--on-dark); font-weight: 600; }
+.perks img { width: 28px; height: 28px; flex: none; margin-top: 1px; }
+.perks .pk { flex: none; width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--ink-line); background: var(--ink-2); color: var(--teal); font-size: 9.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; letter-spacing: 0.02em; margin-top: 1px; }
+.cta-chat { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.cta-chat figcaption { font-size: 12.5px; color: var(--on-dark-3); }
+@media (max-width: 900px) { .cta-grid { grid-template-columns: minmax(0, 1fr); } }
+.perks .pk-plus { font-size: 17px; font-weight: 600; }
