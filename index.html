@@ -19,8 +19,8 @@
 <link rel="icon" href="assets/mensuro-favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="stylesheet" href="assets/fonts.css?v=20261018d">
-<link rel="stylesheet" href="assets/site.css?v=20261018d">
+<link rel="stylesheet" href="assets/fonts.css?v=20261020a">
+<link rel="stylesheet" href="assets/site.css?v=20261020a">
 <!-- Analytics: once Plausible (or similar) is set up, add its one-line script tag here. -->
 </head>
 <body>
@@ -167,6 +167,59 @@
   </section>
 </div>
 
+<div class="band band-white">
+  <section class="wrap section" id="engine" aria-labelledby="engine-title">
+    <div class="head">
+      <div class="eyebrow">Under the hood</div>
+      <h2 class="h2" id="engine-title">Not a chatbot doing math. A validated engine with an assistant on top.</h2>
+      <p class="lede">Your measurements go straight to the statistics engine. Sigmi only ever sees results, and every number in your report comes from the engine.</p>
+    </div>
+
+    <figure class="flow" aria-labelledby="flow-caption">
+      <figcaption id="flow-caption" class="sr">How data moves through Mensuro: your data goes to the validated statistics engine, the engine produces the report, and Sigmi works alongside using results only.</figcaption>
+      <div class="flow-row">
+        <div class="node">
+          <div class="node-k">1 · Your data</div>
+          <h3>Measurements</h3>
+          <p>CSV, Excel, or pasted from Excel. Design checks in plain English before anything runs.</p>
+        </div>
+        <div class="link"><span>Readings</span><svg class="arr" viewBox="0 0 48 16" aria-hidden="true"><path d="M2 8h40M36 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="node node-engine">
+          <div class="node-k">2 · Validated statistics engine</div>
+          <h3>The math</h3>
+          <ul class="stds">
+            <li><b>AIAG MSA 4th ed.</b> Gage R&amp;R</li>
+            <li><b>Bosch Booklet No. 10</b> Type 1</li>
+            <li><b>NIST/SEMATECH, Montgomery</b> Capability</li>
+            <li><b>AIAG PPAP 4th ed.</b> Acceptance criteria</li>
+          </ul>
+          <p class="node-note">Checked against published reference results on every change.</p>
+        </div>
+        <div class="link"><span>Results + receipt</span><svg class="arr" viewBox="0 0 48 16" aria-hidden="true"><path d="M2 8h40M36 2l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="node">
+          <div class="node-k">3 · Customer-ready report</div>
+          <h3>The PDF</h3>
+          <p>Your logo, a plain-English verdict, every chart, and the method behind each number. Tagged to its PPAP element.</p>
+        </div>
+      </div>
+
+      <div class="flow-sigmi">
+        <div class="wall"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg><span><b>Raw readings never reach Sigmi.</b> The AI works from column names, summary statistics and results.</span></div>
+        <div class="link link-v"><span>Sigmi asks the engine to run · reads its results</span><svg class="arr arr-v" viewBox="0 0 16 40" aria-hidden="true"><path d="M8 3v34M2 9l6-6 6 6M2 31l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="node node-sigmi">
+          <img src="assets/sigmi-avatar.svg" alt="" width="34" height="34">
+          <div>
+            <div class="node-k">Alongside · Sigmi</div>
+            <h3>The assistant</h3>
+            <p>Picks the right study, explains results, and edits the report's layout and notes. Never calculates, and can't change a number or a verdict.</p>
+          </div>
+        </div>
+        <div class="link link-diag"><svg class="arr arr-d" viewBox="0 0 48 40" aria-hidden="true"><path d="M5 35 41 7M29 6h12v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>To the report: layout and notes, never numbers</span></div>
+      </div>
+    </figure>
+  </section>
+</div>
+
 <div class="band band-paper">
   <section class="wrap section" aria-labelledby="analyses-title">
     <div class="head">
@@ -307,6 +360,6 @@
   </div>
 </div>
 
-<script src="assets/site.js?v=20261018d"></script>
+<script src="assets/site.js?v=20261020a"></script>
 </body>
 </html>
