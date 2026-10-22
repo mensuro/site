@@ -42,6 +42,6 @@ Open `index.html` in a browser, or run `python3 -m http.server` in this folder a
 
 - Recheck the Minitab price line in the pricing section against minitab.com.
 - The site lives at https://mensuro.tech. Netlify redirects `www.mensuro.tech` and `mensuro.netlify.app` to it once the domain is set as primary.
-- Contact address: `hello@mensuro.tech` (footer and privacy page). Keep the mailbox working; the privacy page promises a reply within 30 days.
+- Contact address: `nick@mensuro.tech` (footer and privacy page). Keep the mailbox working; the privacy page promises a reply within 30 days.
 - If the domain ever changes: update the canonical, `og:url` and `og:image` URLs in `index.html` and `cpk-calculator.html`, the URLs in `sitemap.xml` and `robots.txt`, and `liveHosts` in `assets/site.js`. Then re-check link previews with LinkedIn's Post Inspector.
 - Add the analytics script tag to each page's `<head>` if you use Plausible or similar.
