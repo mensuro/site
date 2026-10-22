@@ -5,12 +5,12 @@
 var MENSURO_CONFIG = {
   // Kit (ConvertKit) form endpoint, from the form's HTML embed code, e.g.
   // "https://app.kit.com/forms/1234567/subscriptions". In Kit, set the form's
-  // "After subscribing" option to redirect to https://mensuro.ai/thanks.html
+  // "After subscribing" option to redirect to https://mensuro.tech/thanks.html
   kitFormAction: "",
   // Stripe Payment Link for the $199 founding membership, e.g. "https://buy.stripe.com/..."
   stripeLink: "",
   // Hosts where the Netlify forms should really submit (any *.netlify.app address also counts).
-  liveHosts: ["mensuro.ai", "www.mensuro.ai"]
+  liveHosts: ["mensuro.tech", "www.mensuro.tech"]
 };
 
 (function () {

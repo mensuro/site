@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /thanks.html
 
-Sitemap: https://mensuro.netlify.app/sitemap.xml
+Sitemap: https://mensuro.tech/sitemap.xml
