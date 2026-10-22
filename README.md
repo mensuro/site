@@ -29,7 +29,7 @@ The product itself (stats engine and app) lives in the private `mensuro/mensuro`
 There's no analytics tool yet. Instead, tag every link you post:
 
 ```
-https://mensuro.netlify.app/cpk-calculator.html?utm_source=linkedin&utm_campaign=post-01
+https://mensuro.tech/cpk-calculator.html?utm_source=linkedin&utm_campaign=post-01
 ```
 
 The tag is kept for the visitor's tab and saved with their early-access signup in Netlify Forms (field `ref`, e.g. `source=linkedin; campaign=post-01`). The `source` field says which form they used (hero, final or calculator).
@@ -41,6 +41,7 @@ Open `index.html` in a browser, or run `python3 -m http.server` in this folder a
 ## Before launch
 
 - Recheck the Minitab price line in the pricing section against minitab.com.
-- Create the `hello@mensuro.ai` mailbox (footer and privacy page).
-- When mensuro.ai is live: update the canonical, `og:url` and `og:image` URLs in `index.html` and `cpk-calculator.html`, the URLs in `sitemap.xml` and `robots.txt`, and add the domain to `liveHosts` in `assets/site.js`. Then re-check link previews with LinkedIn's Post Inspector.
+- The site lives at https://mensuro.tech. Netlify redirects `www.mensuro.tech` and `mensuro.netlify.app` to it once the domain is set as primary.
+- Contact address: `hello@mensuro.tech` (footer and privacy page). Keep the mailbox working; the privacy page promises a reply within 30 days.
+- If the domain ever changes: update the canonical, `og:url` and `og:image` URLs in `index.html` and `cpk-calculator.html`, the URLs in `sitemap.xml` and `robots.txt`, and `liveHosts` in `assets/site.js`. Then re-check link previews with LinkedIn's Post Inspector.
 - Add the analytics script tag to each page's `<head>` if you use Plausible or similar.
