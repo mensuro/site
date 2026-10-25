@@ -55,4 +55,5 @@ only works with an access code checked by the API (see `api/README.md` in the en
 - Set the API address in `app/app-config.js` (`apiBase`) once the API is deployed.
 - Local testing: run the API with `MENSURO_DEV=1`, serve this folder, and open
   `http://localhost:8000/app/gage-rr.html?api=http://localhost:8000` (adjust ports).
-- Sample files in `app/samples/` are the published AIAG MSA 4th edition worked example.
+- Pages: `gage-rr.html` and `capability.html`, both built on `core.js` (access code, upload, drag-and-drop mapping, chart helpers, the PDF report form).
+- Sample files in `app/samples/`: the published AIAG MSA 4th edition worked example (Gage R&R) and the calculator's simulated bore-diameter data (capability).
