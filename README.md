@@ -45,3 +45,14 @@ Open `index.html` in a browser, or run `python3 -m http.server` in this folder a
 - Contact address: `nick@mensuro.tech` (footer and privacy page). Keep the mailbox working; the privacy page promises a reply within 30 days.
 - If the domain ever changes: update the canonical, `og:url` and `og:image` URLs in `index.html` and `cpk-calculator.html`, the URLs in `sitemap.xml` and `robots.txt`, and `liveHosts` in `assets/site.js`. Then re-check link previews with LinkedIn's Post Inspector.
 - Add the analytics script tag to each page's `<head>` if you use Plausible or similar.
+
+## App preview (private)
+
+`app/gage-rr.html` is the Gage R&R upload, column mapping and results screen. It isn't
+linked from the site, is excluded in `robots.txt` and sends `X-Robots-Tag: noindex`, and it
+only works with an access code checked by the API (see `api/README.md` in the engine repo).
+
+- Set the API address in `app/app-config.js` (`apiBase`) once the API is deployed.
+- Local testing: run the API with `MENSURO_DEV=1`, serve this folder, and open
+  `http://localhost:8000/app/gage-rr.html?api=http://localhost:8000` (adjust ports).
+- Sample files in `app/samples/` are the published AIAG MSA 4th edition worked example.
