@@ -48,6 +48,7 @@
       if (role === "value") { S.rows.cols[col] = true; } else if (role === "subgroup") { S.rows.label = col; }
     }
     renderMap();
+    if (role) { M.flash(col); }
   }
 
   function renderPalette() {
@@ -206,6 +207,8 @@
     html += "<ul>" + s.items.map(function (it) { return '<li class="' + (it.cls === "ok" ? "" : it.cls) + '">' + esc(it.text) + "</li>"; }).join("") + "</ul>";
     if (s.readout.length) { html += '<div class="readout"><span>How Mensuro reads it:</span>' + s.readout.map(function (r) { return "<span>" + r + "</span>"; }).join("") + "</div>"; }
     box.innerHTML = html;
+    if (s.big && s.big !== S.lastBig) { M.replay($(".big", box), "m-pulse"); }
+    S.lastBig = s.big;
     $("#to-settings").disabled = !s.ok;
     S.summary = s;
   }
@@ -248,7 +251,7 @@
     var settings;
     showError($("#run-error"), "");
     try { settings = readSettings(); } catch (err) { showError($("#run-error"), err.message); return; }
-    $("#run").disabled = true; $("#run-busy").hidden = false;
+    $("#run").disabled = true; $("#run-busy").hidden = false; M.busy($("#s-settings"), true);
     api("POST", "/v1/capability/analyze", { filename: S.file.name, content: S.file.content, sheet: S.sheet, mapping: mappingBody(), settings: settings })
       .then(function (res) {
         S.result = res; S.settings = settings;
@@ -257,7 +260,7 @@
       }, function (err) {
         if (!handleAuth(err)) { showError($("#run-error"), err.message); }
       })
-      .then(function () { $("#run").disabled = false; $("#run-busy").hidden = true; });
+      .then(function () { $("#run").disabled = false; $("#run-busy").hidden = true; M.busy($("#s-settings"), false); });
   });
 
   // ------------------------------------------------------------------ charts
@@ -279,7 +282,7 @@
     counts.forEach(function (c, k) {
       if (!c) { return; }
       var x0 = sx(b0 + k * w), x1 = sx(b0 + (k + 1) * w);
-      svg += '<rect x="' + (x0 + 0.5).toFixed(1) + '" y="' + sy(c).toFixed(1) + '" width="' + Math.max(1, x1 - x0 - 1).toFixed(1) + '" height="' + (sy(0) - sy(c)).toFixed(1) + '" fill="#237E71" fill-opacity=".72"/>';
+      svg += '<rect class="bar" style="--i:' + k + '" x="' + (x0 + 0.5).toFixed(1) + '" y="' + sy(c).toFixed(1) + '" width="' + Math.max(1, x1 - x0 - 1).toFixed(1) + '" height="' + (sy(0) - sy(c)).toFixed(1) + '" fill="#237E71" fill-opacity=".72"/>';
     });
     function curve(sd, dash, color) {
       var d = "", steps = 120;
@@ -287,7 +290,7 @@
         var x = lo + (hi - lo) * k / steps, z = (x - r.mean) / sd, y = n * w * Math.exp(-0.5 * z * z) / (sd * Math.sqrt(2 * Math.PI));
         d += (k ? "L" : "M") + sx(x).toFixed(1) + " " + sy(y).toFixed(1);
       }
-      return '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="1.8"' + (dash ? ' stroke-dasharray="5 4"' : "") + "/>";
+      return '<path' + (dash ? "" : ' class="draw" pathLength="1"') + ' d="' + d + '" fill="none" stroke="' + color + '" stroke-width="1.8"' + (dash ? ' stroke-dasharray="5 4"' : "") + "/>";
     }
     svg += curve(r.overall.sigma, false, "#14263D");
     if (r.within) { svg += curve(r.within.sigma, true, "#3B6FB6"); }
@@ -325,7 +328,7 @@
     });
     var d = "";
     vals.forEach(function (v, k) { d += (k ? "L" : "M") + sx(k).toFixed(1) + " " + sy(v).toFixed(1); });
-    svg += '<path d="' + d + '" fill="none" stroke="#237E71" stroke-width="1.4"/>';
+    svg += '<path class="draw" pathLength="1" d="' + d + '" fill="none" stroke="#237E71" stroke-width="1.4"/>';
     pts.forEach(function (p, k) {
       var sig = kind === "range" ? p.range_signal : p.mean_signal;
       svg += mark("circle", sx(k), sy(vals[k]), sig ? 4.2 : 3, sig ? "#B42318" : "#237E71");

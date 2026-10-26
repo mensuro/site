@@ -243,3 +243,61 @@ dl.receipt dd { margin: 0; color: var(--text); }
 .app-nav a[aria-current="page"] { color: var(--on-dark); background: var(--ink-2); }
 .group-size { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
 .group-size input { width: 64px; height: 34px; border-radius: 8px; border: 1px solid #C9D3E0; font: inherit; font-size: 14px; padding: 0 8px; }
+
+/* ------------------------------------------------------------------ motion
+   Short, purposeful, and off for anyone who asks for reduced motion. */
+@keyframes m-in-fwd { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes m-in-back { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+@keyframes m-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes m-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes m-pop { 0% { transform: scale(.55); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes m-growY { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes m-growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes m-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes m-flash { 0% { background: #CFEDE8; box-shadow: inset 0 0 0 2px var(--teal); } 100% { } }
+@keyframes m-pulse-k { 0% { transform: scale(.97); opacity: .4; } 100% { transform: none; opacity: 1; } }
+@keyframes m-load { from { background-position: -45% 0; } to { background-position: 145% 0; } }
+
+.m-enter-fwd { animation: m-in-fwd .36s cubic-bezier(.2, .8, .2, 1) both; }
+.m-enter-back { animation: m-in-back .36s cubic-bezier(.2, .8, .2, 1) both; }
+#s-results.m-enter-fwd, #s-results.m-enter-back { animation: none; }
+
+.stepper li { transition: background-color .3s ease, color .3s ease; }
+.stepper li::before { transition: background-color .3s ease, border-color .3s ease, color .3s ease; }
+.stepper li.just-done::before { animation: m-pop .45s cubic-bezier(.2, .8, .2, 1); }
+
+th.flash { animation: m-flash .9s ease-out; }
+.mcheck .big.m-pulse { animation: m-pulse-k .35s ease-out; }
+
+.panel { position: relative; }
+.panel.loading::before { content: ""; position: absolute; top: 0; left: 14px; right: 14px; height: 3px; border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, transparent, var(--teal), transparent) no-repeat; background-size: 45% 100%; animation: m-load 1.1s linear infinite; }
+
+/* results: sections rise in turn, charts draw themselves once */
+#s-results.m-fresh > * { animation: m-rise .5s cubic-bezier(.2, .8, .2, 1) both; }
+#s-results.m-fresh > :nth-child(2) { animation-delay: .07s; }
+#s-results.m-fresh > :nth-child(3) { animation-delay: .14s; }
+#s-results.m-fresh > :nth-child(4) { animation-delay: .21s; }
+#s-results.m-fresh > :nth-child(n+5) { animation-delay: .28s; }
+#s-results.m-fresh .verdict .pill { animation: m-pop .5s .18s cubic-bezier(.2, .8, .2, 1) both; }
+#s-results.m-fresh .verdict .headline { animation: m-rise .5s .22s cubic-bezier(.2, .8, .2, 1) both; }
+#s-results.m-fresh .kpi { animation: m-rise .45s cubic-bezier(.2, .8, .2, 1) both; }
+#s-results.m-fresh .kpi:nth-child(1) { animation-delay: .2s; } #s-results.m-fresh .kpi:nth-child(2) { animation-delay: .25s; }
+#s-results.m-fresh .kpi:nth-child(3) { animation-delay: .3s; } #s-results.m-fresh .kpi:nth-child(4) { animation-delay: .35s; }
+#s-results.m-fresh svg.plot .bar { transform-box: fill-box; transform-origin: 50% 100%; animation: m-growY .65s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(.3s + var(--i, 0) * 18ms); }
+#s-results.m-fresh svg.plot .hbar { transform-box: fill-box; transform-origin: 0 50%; animation: m-growX .7s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(.3s + var(--i, 0) * 45ms); }
+#s-results.m-fresh svg.plot .draw { stroke-dasharray: 1; animation: m-draw 1.1s .35s cubic-bezier(.4, 0, .2, 1) both; }
+
+.btn { transition: background-color .15s ease, box-shadow .15s ease, transform .12s ease; }
+.btn:not([disabled]):hover { box-shadow: 0 4px 14px rgba(20, 38, 61, .14); }
+.btn:not([disabled]):active { transform: translateY(1px) scale(.985); box-shadow: none; }
+.role { transition: box-shadow .15s ease, transform .12s ease; }
+.role:active { transform: scale(.96); }
+.layout-opt, .method, .chip-btn { transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .m-enter-fwd, .m-enter-back, .stepper li.just-done::before, th.flash, .mcheck .big.m-pulse,
+  #s-results.m-fresh *, #s-results.m-fresh > * { animation: none !important; }
+  .panel.loading::before { animation: none; background-position: 50% 0; }
+  .btn, .role, .stepper li, .stepper li::before, .layout-opt, .method, .chip-btn { transition: none; }
+}

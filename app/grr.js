@@ -60,6 +60,7 @@
       if (S.wide.cols[col]) { S.wide.cols[col].use = false; }
     }
     renderMap();
+    if (role) { M.flash(col); }
   }
 
   function renderPalette() {
@@ -273,6 +274,8 @@
     }
     if (s.readout.length) { html += '<div class="readout"><span>How Mensuro reads it:</span>' + s.readout.map(function (r) { return "<span>" + r + "</span>"; }).join("") + "</div>"; }
     box.innerHTML = html;
+    if (s.big && s.big !== S.lastBig) { M.replay($(".big", box), "m-pulse"); }
+    S.lastBig = s.big;
     $$("input[data-rename]", box).forEach(function (inp) {
       inp.addEventListener("change", function () {
         var from = inp.dataset.rename, to = inp.value.trim();
@@ -344,7 +347,7 @@
     var settings;
     showError($("#run-error"), "");
     try { settings = readSettings(); } catch (err) { showError($("#run-error"), err.message); return; }
-    $("#run").disabled = true; $("#run-busy").hidden = false;
+    $("#run").disabled = true; $("#run-busy").hidden = false; M.busy($("#s-settings"), true);
     api("POST", "/v1/grr/analyze", { filename: S.file.name, content: S.file.content, sheet: S.sheet, mapping: mappingBody(), settings: settings })
       .then(function (res) {
         S.result = res; S.settings = settings;
@@ -353,7 +356,7 @@
       }, function (err) {
         if (!handleAuth(err)) { showError($("#run-error"), err.message); }
       })
-      .then(function () { $("#run").disabled = false; $("#run-busy").hidden = true; });
+      .then(function () { $("#run").disabled = false; $("#run-busy").hidden = true; M.busy($("#s-settings"), false); });
   });
 
   // ------------------------------------------------------------------ charts
@@ -383,11 +386,11 @@
       var y = top + k * rowH + 6;
       svg += '<text x="' + (L - 10) + '" y="' + (y + (tol ? 17 : 11)) + '" text-anchor="end" style="font-weight:600;font-size:12.5px;fill:#14263D" class="tick">' + x[0] + "</text>";
       var h = tol ? 15 : 18;
-      svg += '<rect x="' + L + '" y="' + y + '" width="' + Math.max(1, sx(x[1].pct_study_var) - L) + '" height="' + h + '" rx="3" fill="#14263D"/>';
+      svg += '<rect class="hbar" style="--i:' + (2 * k) + '" x="' + L + '" y="' + y + '" width="' + Math.max(1, sx(x[1].pct_study_var) - L) + '" height="' + h + '" rx="3" fill="#14263D"/>';
       svg += '<text x="' + (sx(x[1].pct_study_var) + 6) + '" y="' + (y + h - 4) + '" class="tick" style="fill:#14263D;font-weight:600">' + fmtFixed(x[1].pct_study_var, 1) + "%</text>";
       if (tol) {
         var y2 = y + h + 3;
-        svg += '<rect x="' + L + '" y="' + y2 + '" width="' + Math.max(1, sx(x[1].pct_tolerance) - L) + '" height="' + h + '" rx="3" fill="#36C2AE"/>';
+        svg += '<rect class="hbar" style="--i:' + (2 * k + 1) + '" x="' + L + '" y="' + y2 + '" width="' + Math.max(1, sx(x[1].pct_tolerance) - L) + '" height="' + h + '" rx="3" fill="#36C2AE"/>';
         svg += '<text x="' + (sx(x[1].pct_tolerance) + 6) + '" y="' + (y2 + h - 4) + '" class="tick" style="fill:#237E71;font-weight:600">' + fmtFixed(x[1].pct_tolerance, 1) + "%</text>";
       }
     });
@@ -415,7 +418,7 @@
     ops.forEach(function (o, k) {
       var col = OP_COLORS[k % OP_COLORS.length], d = "";
       ch.averages[o].forEach(function (v, j) { d += (j ? "L" : "M") + px(parts[j], k).toFixed(1) + " " + sy(v).toFixed(1); });
-      svg += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="1.6" stroke-opacity=".7"/>';
+      svg += '<path class="draw" pathLength="1" d="' + d + '" fill="none" stroke="' + col + '" stroke-width="1.6" stroke-opacity=".7"/>';
     });
     r.readings.forEach(function (x) {
       var k = ops.indexOf(x[1]);
@@ -451,7 +454,7 @@
     ops.forEach(function (o, k) {
       var col = OP_COLORS[k % OP_COLORS.length], d = "";
       data[o].forEach(function (v, j) { d += (j ? "L" : "M") + sx(k, j).toFixed(1) + " " + sy(v).toFixed(1); });
-      svg += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="1.4"/>';
+      svg += '<path class="draw" pathLength="1" d="' + d + '" fill="none" stroke="' + col + '" stroke-width="1.4"/>';
       data[o].forEach(function (v, j) {
         var out = kind === "range" ? v > ucl + 1e-12 : false;
         svg += mark(SHAPES[k % 4], sx(k, j), sy(v), out ? 4.2 : 3, out ? "#B42318" : col);

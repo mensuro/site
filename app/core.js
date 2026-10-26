@@ -59,18 +59,43 @@ window.MensuroCore = function (opts) {
     return false;
   }
   function showError(box, msg) { box.textContent = msg; box.hidden = !msg; }
+  // A thin moving bar along the top of a panel while the server works.
+  function busy(el, on) { if (el) { el.classList.toggle("loading", !!on); } }
+  // Briefly highlight a column that just got a role.
+  function flash(col) {
+    if (col == null) { return; }
+    replay($('#table-wrap th[data-col="' + col + '"]'), "flash");
+  }
 
   // ------------------------------------------------------------------- steps
   var sections = { 1: "#s-upload", 2: "#s-map", 3: "#s-settings", 4: "#s-results" };
+  // Motion is decoration only: skipped entirely for people who ask for reduced motion.
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function replay(el, cls) {
+    if (reduceMotion || !el) { return; }
+    el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
+    el.addEventListener("animationend", function done(e) { if (e.target === el) { el.classList.remove(cls); el.removeEventListener("animationend", done); } });
+  }
   function setStep(n) {
+    var prev = S.step;
     S.step = n;
+    var gateWasOpen = !$("#gate").hidden;
     $("#gate").hidden = true;
     Object.keys(sections).forEach(function (k) { $(sections[k]).hidden = Number(k) !== n; });
     $$("#stepper li").forEach(function (li) {
       var s = Number(li.dataset.step);
-      li.className = s < n ? "done" : (s === n ? "current" : "");
+      li.classList.remove("done", "current");
+      if (s < n) { li.classList.add("done"); } else if (s === n) { li.classList.add("current"); }
+      if (s < n && s >= prev && !gateWasOpen) { replay(li, "just-done"); }
       if (s === n) { li.setAttribute("aria-current", "step"); } else { li.removeAttribute("aria-current"); }
     });
+    var sec = $(sections[n]);
+    if (prev !== n || gateWasOpen) { replay(sec, n >= prev ? "m-enter-fwd" : "m-enter-back"); }
+    if (n === 4 && !reduceMotion) {
+      sec.classList.add("m-fresh");
+      clearTimeout(setStep.fresh);
+      setStep.fresh = setTimeout(function () { sec.classList.remove("m-fresh"); }, 2000);
+    }
     var h = $(sections[n] + " h2");
     if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -132,15 +157,15 @@ window.MensuroCore = function (opts) {
   }
 
   function inspect(sheet) {
-    $("#upload-busy").hidden = false;
+    $("#upload-busy").hidden = false; busy($("#s-upload"), true);
     api("POST", "/v1/tables/inspect", { filename: S.file.name, content: S.file.content, sheet: sheet })
       .then(function (res) {
-        $("#upload-busy").hidden = true;
+        $("#upload-busy").hidden = true; busy($("#s-upload"), false);
         S.insp = res; S.sheet = res.sheet;
         opts.onInspected(res);
         setStep(2);
       }, function (err) {
-        $("#upload-busy").hidden = true;
+        $("#upload-busy").hidden = true; busy($("#s-upload"), false);
         if (!handleAuth(err)) { setStep(1); showError($("#upload-error"), err.message); }
       });
   }
@@ -306,14 +331,14 @@ window.MensuroCore = function (opts) {
       Object.keys(v).forEach(function (k) { if (v[k]) { info[k] = v[k]; } });
       if (logo) { info.logo = logo; }
       var body = cfg.body(); body.info = info;
-      btn.disabled = true; $("#report-busy").hidden = false;
+      btn.disabled = true; $("#report-busy").hidden = false; busy(form.closest(".panel"), true);
       request("POST", cfg.path, body).then(function (r) { return r.blob(); }).then(function (blob) {
         var url = URL.createObjectURL(blob), a = document.createElement("a");
         a.href = url; a.download = cfg.filename(v); document.body.appendChild(a); a.click(); a.remove();
         setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
       }, function (err) {
         if (!handleAuth(err)) { showError($("#report-error"), err.message); }
-      }).then(function () { btn.disabled = false; $("#report-busy").hidden = true; });
+      }).then(function () { btn.disabled = false; $("#report-busy").hidden = true; busy(form.closest(".panel"), false); });
     });
   }
   function safeName(s) { return String(s || "").replace(/[\\/:*?"<>|]+/g, "-").replace(/\s+/g, " ").trim().slice(0, 60); }
@@ -335,7 +360,7 @@ window.MensuroCore = function (opts) {
   return {
     $: $, $$: $$, esc: esc, store: store, NUM: NUM, SUMMARY: SUMMARY,
     fmt: fmt, fmtFixed: fmtFixed, fmtP: fmtP, plural: plural, parseNum: parseNum,
-    S: S, api: api, handleAuth: handleAuth, showError: showError, setStep: setStep,
+    S: S, api: api, handleAuth: handleAuth, showError: showError, setStep: setStep, busy: busy, flash: flash, replay: replay,
     renderFilebar: renderFilebar, bindDrag: bindDrag, bindHeaderTaps: bindHeaderTaps, disarm: disarm,
     COLORS: COLORS, SHAPES: SHAPES, mark: mark, niceTicks: niceTicks,
     reportPanel: reportPanel, bindReport: bindReport, safeName: safeName, start: start
