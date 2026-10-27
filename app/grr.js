@@ -509,7 +509,7 @@
         html += "<tr" + (row.source === "Total" ? ' class="total"' : "") + "><td>" + esc(row.source) + "</td><td>" + row.df + "</td><td>" + fmt(row.ss, 5) + "</td><td>" + fmt(row.ms, 5) + "</td><td>" + fmt(row.f, 4) + "</td><td>" + fmtP(row.p) + "</td></tr>";
       });
       html += "</tbody></table></div>";
-      if (r.interaction_p_value != null) { html += '<p class="hint">Part × Operator interaction p = ' + fmtP(r.interaction_p_value) + (r.interaction_pooled ? ": not significant, so it was pooled into repeatability." : ": significant, so it stays in the model.") + "</p>"; }
+      if (r.interaction_p_value != null) { html += '<p class="hint">Part × Operator interaction ' + (r.interaction_p_value < 0.001 ? "p < 0.001" : "p = " + fmtP(r.interaction_p_value)) + (r.interaction_pooled ? ": not significant, so it was pooled into repeatability." : ": significant, so it stays in the model.") + "</p>"; }
       html += "</section>";
     }
 

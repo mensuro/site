@@ -21,7 +21,7 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/fonts.css?v=20261021a">
 <link rel="stylesheet" href="assets/site.css?v=20261021a">
-<!-- Analytics: once Plausible (or similar) is set up, add its one-line script tag here. -->
+<!-- Analytics: cookie-free Cloudflare Web Analytics, loaded by assets/site.js when MENSURO_CONFIG.analyticsToken is set. -->
 </head>
 <body>
 
@@ -101,7 +101,7 @@
               <div class="receipt">Ran: two-way ANOVA, AIAG MSA 4th ed.</div>
             </div>
           </div>
-          <div class="example-note">Example report · sample data</div>
+          <div class="example-note">Example report · sample data · <a href="assets/samples/mensuro-sample-gage-rr.pdf" style="color:#36C2AE">Download the full sample (PDF)</a></div>
         </div>
       </section>
     </main>
@@ -318,7 +318,8 @@
     </div>
     <div class="faq">
       <details><summary>Is my measurement data safe?</summary><p>Uploads are used only to compute your report and are deleted afterward unless you save the study. Sigmi sees column names, summary statistics and results, not your raw measurements. We never sell your data, and we share it only with the services that run Mensuro, listed on our <a href="privacy.html">privacy page</a>.</p></details>
-      <details><summary>Which methods and standards does it follow?</summary><p>Gage R&amp;R follows AIAG MSA 4th edition with both the ANOVA and Average &amp; Range methods. Type 1 studies use the Cg and Cgk method of Bosch Booklet No. 10. Capability uses the standard Cp, Cpk, Pp and Ppk definitions with a normality check.</p></details>
+      <details><summary>Which methods and standards does it follow?</summary><p>Gage R&amp;R follows AIAG MSA 4th edition with both the ANOVA and Average &amp; Range methods. Type 1 studies use the Cg and Cgk method of Bosch Booklet No. 10. Capability uses the standard Cp, Cpk, Pp and Ppk definitions with a normality check. Each one is checked against the published worked examples; see <a href="validation.html">how we validate</a>.</p></details>
+      <details><summary>Why not just ask ChatGPT?</summary><p>A chatbot writes likely-sounding text. It can get the arithmetic wrong without telling you, and the same data can give a different answer next time, which is a risk you can't put on a customer report. In Mensuro every number comes from a statistics engine that reproduces the published AIAG, Bosch and NIST examples, and every result shows how it was made. Sigmi, the built-in assistant, explains the results; it never calculates them.</p></details>
       <details><summary>Does it work on a Mac or a locked-down company laptop?</summary><p>Yes. Mensuro runs in any modern browser, so there is nothing to install and nothing for IT to approve on your machine.</p></details>
       <details><summary>Can I put my company's logo on reports?</summary><p>Yes, on Pro, Team and founding memberships. The customer-facing report leads with your brand; Mensuro appears only in a small footer line.</p></details>
       <details><summary>When does the beta open?</summary><p>Early 2027. Everyone on the early-access list hears first, in the order they joined.</p></details>
@@ -352,6 +353,7 @@
       <img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148">
       <nav aria-label="Footer">
         <a href="cpk-calculator.html">Free Cpk calculator</a>
+        <a href="validation.html">How we validate</a>
         <a href="privacy.html">Privacy</a>
         <span>nick@mensuro.tech</span>
         <span>© 2026 Mensuro</span>
@@ -360,6 +362,6 @@
   </div>
 </div>
 
-<script src="assets/site.js?v=20261021a"></script>
+<script src="assets/site.js?v=20261027a"></script>
 </body>
 </html>
