@@ -13,7 +13,7 @@ var MENSURO_CONFIG = {
   liveHosts: ["mensuro.tech", "www.mensuro.tech"],
   // Cloudflare Web Analytics site token (public, not a secret). Cookie-free page counts; only
   // loads on the live site. Empty = no analytics. The privacy page describes it.
-  analyticsToken: ""
+  analyticsToken: "620eb911d8bf4365ac46958161fefdca"
 };
 
 (function () {
