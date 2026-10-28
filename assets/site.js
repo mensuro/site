@@ -10,7 +10,10 @@ var MENSURO_CONFIG = {
   // Stripe Payment Link for the $199 founding membership, e.g. "https://buy.stripe.com/..."
   stripeLink: "",
   // Hosts where the Netlify forms should really submit (any *.netlify.app address also counts).
-  liveHosts: ["mensuro.tech", "www.mensuro.tech"]
+  liveHosts: ["mensuro.tech", "www.mensuro.tech"],
+  // Cloudflare Web Analytics site token (public, not a secret). Cookie-free page counts; only
+  // loads on the live site. Empty = no analytics. The privacy page describes it.
+  analyticsToken: ""
 };
 
 (function () {
@@ -33,6 +36,15 @@ var MENSURO_CONFIG = {
   })();
 
   var isLive = MENSURO_CONFIG.liveHosts.indexOf(location.hostname) !== -1 || /\.netlify\.app$/.test(location.hostname);
+
+  // Visit counts (Cloudflare Web Analytics): no cookies, no personal data, live site only.
+  if (MENSURO_CONFIG.analyticsToken && MENSURO_CONFIG.liveHosts.indexOf(location.hostname) !== -1) {
+    var beacon = document.createElement("script");
+    beacon.defer = true;
+    beacon.src = "https://static.cloudflareinsights.com/beacon.min.js";
+    beacon.setAttribute("data-cf-beacon", JSON.stringify({ token: MENSURO_CONFIG.analyticsToken }));
+    document.head.appendChild(beacon);
+  }
 
   // Early-access forms (hero and final band)
   Array.prototype.forEach.call(document.querySelectorAll("form.join-form"), function (form) {

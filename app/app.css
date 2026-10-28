@@ -301,3 +301,10 @@ th.flash { animation: m-flash .9s ease-out; }
   .panel.loading::before { animation: none; background-position: 50% 0; }
   .btn, .role, .stepper li, .stepper li::before, .layout-opt, .method, .chip-btn { transition: none; }
 }
+
+/* Type 1 */
+details.more summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--teal-deep); width: fit-content; }
+details.more summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
+.verdict.info { background: #EEF3F8; border: 1px solid #C9D3E0; }
+.pill.info { background: var(--ink); }
+.field small { font-size: 12.5px; color: var(--muted); }

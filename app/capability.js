@@ -394,7 +394,7 @@
       ["Expected PPM, overall", fmt(o.ppm_total, 3) + " (below " + fmt(o.ppm_below || 0, 3) + ", above " + fmt(o.ppm_above || 0, 3) + ")"],
       ["Expected PPM, within", w ? fmt(w.ppm_total, 3) : "–"],
       ["Observed PPM", fmt(r.ppm_observed, 3)],
-      ["Normality (Anderson–Darling)", r.normality.ad != null ? "A² = " + fmtFixed(r.normality.ad, 3) + ", p = " + fmtP(r.normality.p) : "not tested (fewer than 8 readings)"]
+      ["Normality (Anderson–Darling)", r.normality.ad != null ? "A² = " + fmtFixed(r.normality.ad, 3) + ", " + (r.normality.p < 0.001 ? "p < 0.001" : "p = " + fmtP(r.normality.p)) : "not tested (fewer than 8 readings)"]
     ];
     html += '<section class="panel" aria-labelledby="st-title"><h3 id="st-title">Statistics</h3><div class="scroll-x"><table class="num"><tbody>' +
       rows.map(function (x) { return "<tr><td>" + esc(x[0]) + "</td><td>" + esc(x[1]) + "</td></tr>"; }).join("") + "</tbody></table></div></section>";

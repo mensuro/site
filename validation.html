@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How we validate · Mensuro</title>
+<meta name="description" content="Every Mensuro analysis must reproduce published reference results (AIAG MSA, Bosch Booklet No. 10, Montgomery, NIST) before it ships. Here are the cases and the results.">
+<link rel="canonical" href="https://mensuro.tech/validation.html">
+<meta name="theme-color" content="#14263D">
+<link rel="icon" href="assets/mensuro-favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/fonts.css?v=20261021a">
+<link rel="stylesheet" href="assets/site.css?v=20261021a">
+<style>
+.legal.wide { max-width: 920px; }
+.vcase { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.vcase h2 { font-size: 19px; }
+.vcase .src, .vcase .note { font-size: 14px; color: var(--muted); }
+.vscroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--white); }
+.vtable { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.vtable th, .vtable td { padding: 8px 12px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.vtable th:first-child, .vtable td:first-child { text-align: left; }
+.vtable thead th { font-size: 12.5px; color: var(--muted); font-weight: 600; background: var(--paper); }
+.vtable tr:last-child td { border-bottom: 0; }
+.vtable.two th:nth-child(2), .vtable.two td:nth-child(2) { text-align: left; }
+.vtable td.ok { color: var(--pass); font-weight: 700; text-align: center; }
+.lead { font-size: 18px; color: var(--text) !important; }
+.callout { background: var(--white); border: 1px solid var(--line); border-left: 3px solid var(--teal-deep); border-radius: 10px; padding: 14px 16px; }
+</style>
+</head>
+<body>
+<div class="band band-ink">
+  <div class="wrap">
+    <header class="nav">
+      <a href="index.html" aria-label="Mensuro home"><img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148"></a>
+      <nav class="nav-links" aria-label="Main"><a href="cpk-calculator.html">Cpk calculator</a><a class="nav-cta" href="index.html#join">Get early access</a></nav>
+    </header>
+  </div>
+</div>
+<div class="band band-paper">
+  <main class="wrap legal wide">
+    <h1>How we validate</h1>
+    <p class="lead">A wrong verdict on a customer report is the most expensive mistake a quality tool can make. So every analysis in Mensuro has to reproduce published reference results before it ships.</p>
+    <div class="callout">
+      <p><b>The rule:</b> each analysis is checked against worked examples from the standards and textbooks quality engineers already trust (AIAG MSA 4th edition, Bosch Booklet No. 10, Montgomery's <i>Introduction to Statistical Quality Control</i> and the NIST/SEMATECH e-Handbook), to the precision those sources print. The checks run automatically on every change to the engine. Statistics come from proven libraries (SciPy and statsmodels); Mensuro adds only the domain formulas, and those are what the checks cover.</p>
+    </div>
+    <p>Below is the current result for each reference case, published value next to Mensuro's. Small differences are the source's rounding. Engine version 0.1.0, checked October 27, 2026.</p>
+    <section class="vcase"><h2>AIAG MSA 4th edition Gage R&amp;R example (appraisers A, B, C; 10 parts; 3 trials)</h2><p class="src">Source: AIAG Measurement Systems Analysis Reference Manual, 4th edition (2010), Gage R&amp;R worked example. Values as transcribed in SPC for Excel, 'Three Methods to Analyze Gage R&amp;R Studies', Tables 1, 2, 4 and 5.</p><div class="vscroll"><table class="vtable two"><thead><tr><th scope="col">Method</th><th scope="col">Quantity</th><th scope="col">Published</th><th scope="col">Mensuro</th><th scope="col">Match</th></tr></thead><tbody><tr><td>Average &amp; Range</td><td>EV</td><td>0.202</td><td>0.20186</td><td class="ok">✓</td></tr><tr><td>Average &amp; Range</td><td>AV</td><td>0.23</td><td>0.22967</td><td class="ok">✓</td></tr><tr><td>Average &amp; Range</td><td>GRR</td><td>0.306</td><td>0.30577</td><td class="ok">✓</td></tr><tr><td>Average &amp; Range</td><td>PV</td><td>1.105</td><td>1.10460</td><td class="ok">✓</td></tr><tr><td>Average &amp; Range</td><td>TV</td><td>1.146</td><td>1.14613</td><td class="ok">✓</td></tr><tr><td>Average &amp; Range</td><td>%EV</td><td>17.61</td><td>17.612</td><td class="ok">✓</td></tr><tr><td>Average &amp; Range</td><td>%AV</td><td>20.04</td><td>20.038</td><td class="ok">✓</td></tr><tr><td>Average &amp; Range</td><td>%GRR</td><td>26.68</td><td>26.678</td><td class="ok">✓</td></tr><tr><td>Average &amp; Range</td><td>%PV</td><td>96.37</td><td>96.376</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>SS Part</td><td>88.362</td><td>88.3619</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>SS Operator</td><td>3.167</td><td>3.1673</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>SS Repeatability</td><td>3.118</td><td>3.1179</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>SS Total</td><td>94.647</td><td>94.6471</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>variance gage_rr</td><td>0.0914</td><td>0.09143</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>variance repeatability</td><td>0.04</td><td>0.03997</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>variance reproducibility</td><td>0.0515</td><td>0.05146</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>variance part_to_part</td><td>1.086</td><td>1.08645</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>variance total</td><td>1.178</td><td>1.17788</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>% contribution gage_rr</td><td>7.76</td><td>7.762</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>% contribution repeatability</td><td>3.39</td><td>3.394</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>% contribution reproducibility</td><td>4.37</td><td>4.368</td><td class="ok">✓</td></tr><tr><td>ANOVA</td><td>% contribution part_to_part</td><td>92.24</td><td>92.238</td><td class="ok">✓</td></tr></tbody></table></div><p class="note">Average &amp; Range verdict: Conditionally acceptable (ndc 5)</p><p class="note">ANOVA verdict: Conditionally acceptable (ndc 4); Part x operator interaction p = 0.974; not significant, so it was pooled into repeatability.</p></section><section class="vcase"><h2>Hard-bake process flow width, x-bar and R charts and capability (Montgomery Example 6.1)</h2><p class="src">Source: Montgomery, D. C., Introduction to Statistical Quality Control, 6th ed. (Wiley, 2009), Example 6.1: Table 6.1 (Phase I, samples 1-25), Table 6.2 (Phase II, samples 26-45), pp. 232-237; capability on pp. 234 and 351.</p><div class="vscroll"><table class="vtable"><thead><tr><th scope="col">Quantity</th><th scope="col">Published</th><th scope="col">Mensuro</th><th scope="col">Match</th></tr></thead><tbody><tr><td>x-double-bar</td><td>1.5056</td><td>1.50561</td><td class="ok">✓</td></tr><tr><td>R-bar</td><td>0.32521</td><td>0.32521</td><td class="ok">✓</td></tr><tr><td>x-bar UCL / LCL</td><td>1.69325 / 1.31795</td><td>1.69326 / 1.31797</td><td class="ok">✓</td></tr><tr><td>R UCL</td><td>0.68749</td><td>0.68749</td><td class="ok">✓</td></tr><tr><td>Phase II points above UCL</td><td>43, 45</td><td>43, 45</td><td class="ok">✓</td></tr><tr><td>sigma within (R-bar/d2)</td><td>0.1398</td><td>0.13981</td><td class="ok">✓</td></tr><tr><td>Cp</td><td>1.192</td><td>1.1921</td><td class="ok">✓</td></tr><tr><td>Fraction nonconforming</td><td>0.00035</td><td>0.000353</td><td class="ok">✓</td></tr></tbody></table></div></section><section class="vcase"><h2>Glass container bursting strength, overall capability (Montgomery Examples 8.1 and 8.2)</h2><p class="src">Source: Montgomery, D. C., Introduction to Statistical Quality Control, 6th ed. (Wiley, 2009), Example 8.1 and Table 8.1 (p. 348), Example 8.2 (p. 352).</p><div class="vscroll"><table class="vtable"><thead><tr><th scope="col">Quantity</th><th scope="col">Published</th><th scope="col">Mensuro</th><th scope="col">Match</th></tr></thead><tbody><tr><td>Mean / s</td><td>264.06 / 32.02</td><td>264.060 / 32.018</td><td class="ok">✓</td></tr><tr><td>Cpl (overall)</td><td>0.67</td><td>0.6669</td><td class="ok">✓</td></tr><tr><td>Fraction below LSL</td><td>0.0228</td><td>0.02271</td><td class="ok">✓</td></tr></tbody></table></div></section><section class="vcase"><h2>Type 1 gage study, outer diameter, two-sided tolerance (Bosch Booklet No. 10, Procedure 1)</h2><p class="src">Source: Robert Bosch GmbH, Quality Management in the Bosch Group, Booklet No. 10: Capability of Measurement and Test Processes, edition 11.2019, chapter 4.1 example printout (p. 11) and Appendix B manual form (p. 35).</p><div class="vscroll"><table class="vtable"><thead><tr><th scope="col">Quantity</th><th scope="col">Published</th><th scope="col">Mensuro</th><th scope="col">Match</th></tr></thead><tbody><tr><td>Mean / s</td><td>6.0009 / 0.00099488</td><td>6.00090 / 0.00099488</td><td class="ok">✓</td></tr><tr><td>abs(bias)</td><td>0.0011</td><td>0.001100</td><td class="ok">✓</td></tr><tr><td>Cg (95% CI)</td><td>2.01 (1.61 - 2.41)</td><td>2.0103 (1.61 - 2.41)</td><td class="ok">✓</td></tr><tr><td>Cgk (95% CI)</td><td>1.64 (1.3 - 1.98)</td><td>1.6417 (1.30 - 1.98)</td><td class="ok">✓</td></tr><tr><td>%RE</td><td>1.67</td><td>1.667</td><td class="ok">✓</td></tr><tr><td>Tmin(Cg) / Tmin(Cgk)</td><td>0.039701 / 0.050696</td><td>0.039696 / 0.050696</td><td class="ok">✓</td></tr><tr><td>Bias significant</td><td>yes</td><td>yes</td><td class="ok">✓</td></tr></tbody></table></div></section><section class="vcase"><h2>Type 1 study with a one-sided limit and no natural limit, pull-off force (Bosch Booklet No. 10, Appendix B)</h2><p class="src">Source: Robert Bosch GmbH, Quality Management in the Bosch Group, Booklet No. 10: Capability of Measurement and Test Processes, edition 11.2019, Appendix B form 'Procedure 1 in case of a one-sided limit' (p. 42); formulas in chapter 4.1 (p. 9) and Appendix C.3 (pp. 44-45).</p><div class="vscroll"><table class="vtable"><thead><tr><th scope="col">Quantity</th><th scope="col">Published</th><th scope="col">Mensuro</th><th scope="col">Match</th></tr></thead><tbody><tr><td>Mean / s</td><td>80.524 / 0.4182</td><td>80.524 / 0.41824</td><td class="ok">✓</td></tr><tr><td>LSL0</td><td>72.3968</td><td>72.39695</td><td class="ok">✓</td></tr></tbody></table></div></section><section class="vcase"><h2>Gauge capability, one operator, 20 parts measured twice (Montgomery Example 8.7)</h2><p class="src">Source: Montgomery, D. C., Introduction to Statistical Quality Control, 6th ed. (Wiley, 2009), Example 8.7, Table 8.6 and Figure 8.14 (pp. 369-370).</p><div class="vscroll"><table class="vtable"><thead><tr><th scope="col">Quantity</th><th scope="col">Published</th><th scope="col">Mensuro</th><th scope="col">Match</th></tr></thead><tbody><tr><td>x-double-bar / R-bar</td><td>22.3 / 1.0</td><td>22.3000 / 1.0000</td><td class="ok">✓</td></tr><tr><td>Average chart UCL / LCL</td><td>24.2 / 20.42</td><td>24.180 / 20.420</td><td class="ok">✓</td></tr><tr><td>Range chart UCL</td><td>3.267</td><td>3.2670</td><td class="ok">✓</td></tr></tbody></table></div></section>
+    <h2>Also checked</h2>
+    <ul><li><b>Montgomery Examples 8.4 and 8.5</b>: confidence intervals for Cp and Cpk.</li><li><b>Montgomery Table 8.7 (thermal impedance)</b>: Gage R&amp;R with a significant part × operator interaction kept in the model.</li><li><b>NIST/SEMATECH e-Handbook 6.1.6</b>: capability index definitions and reject rates for a centered process.</li><li><b>Bosch Booklet No. 10, Appendix C.2</b>: bias significance criteria for different numbers of readings.</li></ul>
+    <h2>What this does and doesn't mean</h2>
+    <p>Matching published examples shows the formulas, constants and decision rules are implemented correctly. It doesn't make a study valid on its own: the data still has to come from a sound study (the right parts, operators and readings), and your customer's own requirements apply where they differ. Every Mensuro result and report shows its receipt (method, constants, sample size and settings) so anyone can check how a number was made.</p>
+  </main>
+</div>
+<div class="band band-ink">
+  <div class="wrap">
+    <footer class="footer" style="border-top: 0">
+      <img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148">
+      <nav aria-label="Footer"><a href="index.html">Home</a><a href="privacy.html">Privacy</a><span>nick@mensuro.tech</span><span>© 2026 Mensuro</span></nav>
+    </footer>
+  </div>
+</div>
+<script src="assets/site.js?v=20261027a"></script>
+</body>
+</html>

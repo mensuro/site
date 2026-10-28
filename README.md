@@ -22,11 +22,11 @@ The product itself (stats engine and app) lives in the private `mensuro/mensuro`
 - On a local preview (not the live host), the forms send nothing.
 - **Cp/Cpk calculator:** runs entirely in the browser; it makes no network requests and stores nothing. Run its tests with `node --test "tests/*.test.js"` (Node 22). They check it against NIST and Montgomery reference results and against the Mensuro engine (`tests/reference/engine_parity.json`, generated from the engine). If the engine's capability math changes, regenerate that file.
 - **Caching:** CSS and JS revalidate on every visit, so deploys show up at once. Pages link them with `?v=...`; bump that value when you want browsers that cached an older copy to refetch.
-- **No third-party requests:** fonts are self-hosted (`assets/fonts`, SIL Open Font License). Keep it that way, or update the privacy page.
+- **Third-party requests:** fonts are self-hosted (`assets/fonts`, SIL Open Font License). The only third-party script is Cloudflare Web Analytics (cookie-free), loaded by `assets/site.js` when `MENSURO_CONFIG.analyticsToken` is set, on the live hosts only. Anything else needs a privacy page update first.
 
 ## Tracking which posts bring signups
 
-There's no analytics tool yet. Instead, tag every link you post:
+Visit counts are in Cloudflare Web Analytics. To see which posts bring signups, tag every link you post:
 
 ```
 https://mensuro.tech/cpk-calculator.html?utm_source=linkedin&utm_campaign=post-01
@@ -44,7 +44,6 @@ Open `index.html` in a browser, or run `python3 -m http.server` in this folder a
 - The site lives at https://mensuro.tech. Netlify redirects `www.mensuro.tech` and `mensuro.netlify.app` to it once the domain is set as primary.
 - Contact address: `nick@mensuro.tech` (footer and privacy page). Keep the mailbox working; the privacy page promises a reply within 30 days.
 - If the domain ever changes: update the canonical, `og:url` and `og:image` URLs in `index.html` and `cpk-calculator.html`, the URLs in `sitemap.xml` and `robots.txt`, and `liveHosts` in `assets/site.js`. Then re-check link previews with LinkedIn's Post Inspector.
-- Add the analytics script tag to each page's `<head>` if you use Plausible or similar.
 
 ## App preview (private)
 
@@ -57,3 +56,10 @@ only works with an access code checked by the API (see `api/README.md` in the en
   `http://localhost:8000/app/gage-rr.html?api=http://localhost:8000` (adjust ports).
 - Pages: `gage-rr.html` and `capability.html`, both built on `core.js` (access code, upload, drag-and-drop mapping, chart helpers, the PDF report form).
 - Sample files in `app/samples/`: the published AIAG MSA 4th edition worked example (Gage R&R) and the calculator's simulated bore-diameter data (capability).
+
+## Netlify credits
+
+The free plan has 300 credits a month and pauses the site when they run out. Each production
+deploy (every merge to `main` that changes the site) costs 15 credits; deploy previews are free.
+Batch site changes into one PR where possible. Merges that only touch `README.md` or `tests/`
+skip the deploy (`ignore` in `netlify.toml`).
