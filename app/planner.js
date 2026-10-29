@@ -41,7 +41,7 @@
     if (!p || !o || !t) { out.innerHTML = '<p class="hint">Enter whole numbers for parts, operators and trials.</p>'; return; }
     var n = p * o * t;
     out.innerHTML = big(n, "readings") + "<ul>" +
-      line(p >= 10 && o >= 3 && t >= 3, p + " × " + o + " × " + t + (p >= 10 && o >= 3 && t >= 3 ? " meets Ford's 10 × 3 × 3 minimum" : " is below Ford's 10 × 3 × 3 minimum")) +
+      line(p >= 10 && o >= 3 && t >= 3, p + " × " + o + " × " + t + (p >= 10 && o >= 3 && t >= 3 ? " matches or exceeds the AIAG example (10 × 3 × 3)" : " is smaller than the AIAG example (10 × 3 × 3), which many customers treat as the minimum")) +
       line(o >= 2 && t >= 2 ? true : false, o >= 2 && t >= 2 ? "Enough repeats to separate repeatability from reproducibility" : "Needs at least 2 operators and 2 trials") +
       line(null, "Each operator measures " + p * t + " times; randomise the part order every trial") +
       time(n, sec) + "</ul>";
@@ -61,8 +61,8 @@
     if (!p || !o || !t) { out.innerHTML = '<p class="hint">Enter whole numbers for parts, appraisers and trials.</p>'; return; }
     var parts = split(p), ok = p >= 50 && o >= 3 && t >= 3;
     out.innerHTML = big(p * o * t, "judgements") + "<ul>" +
-      line(ok, p + " × " + o + " × " + t + (ok ? " meets Ford's 50 × 3 × 3 minimum" : " is below Ford's 50 × 3 × 3 minimum")) + "</ul>" +
-      '<table class="num mix"><caption class="hint">Part mix (Ford §2.2.8)</caption><tbody>' +
+      line(ok, p + " × " + o + " × " + t + (ok ? " matches or exceeds the AIAG example (50 × 3 × 3)" : " is smaller than the AIAG example (50 × 3 × 3), which many customers treat as the minimum")) + "</ul>" +
+      '<table class="num mix"><caption class="hint">One way to split it: the Ford mix (customer example below)</caption><tbody>' +
       MIX.map(function (m, i) { return "<tr><td>" + m[0] + "</td><td>" + m[1] + "%</td><td><b>" + parts[i] + "</b> parts</td></tr>"; }).join("") +
       "</tbody></table>";
   }
@@ -109,7 +109,7 @@
     if (!k || !n || !c) { out.innerHTML = '<p class="hint">Enter whole numbers for subgroups, subgroup size and cavities.</p>'; return; }
     var per = k * n, ok = k >= 25 && n >= 5;
     var html = big(per * c, c > 1 ? "measurements in all" : "measurements") + "<ul>" +
-      line(ok, k + " subgroups of " + n + (ok ? " meets Ford's 25 × 5 (125) minimum" : " is below Ford's 25 subgroups of 5 (125)")) +
+      line(k >= 25, k >= 25 ? k + " subgroups: enough to set control limits and judge stability" : "Only " + k + " subgroups; 25 or more is the usual basis for control limits") +
       line(n >= 2 && n <= 25 ? null : false, n >= 2 && n <= 25 ? "Subgroups of " + n + " work for an x̄–R chart" : "x̄–R charts need subgroups of 2 to 25");
     if (c > 1) {
       html += line(null, per + " measurements per cavity × " + c + " cavities, each cavity judged on its own") +

@@ -55,7 +55,7 @@ only works with an access code checked by the API (see `api/README.md` in the en
 - Local testing: run the API with `MENSURO_DEV=1`, serve this folder, and open
   `http://localhost:8000/app/gage-rr.html?api=http://localhost:8000` (adjust ports).
 - Pages: `gage-rr.html` (with the reuse recheck), `capability.html` (with capability by cavity when a cavity column is mapped) and `type1.html`, built on `core.js` (access code, upload, drag-and-drop mapping, chart helpers, the PDF report form with the engineering justification note).
-- `planner.html` is the study planner: sample sizes and acceptance criteria with their sources (AIAG, Ford Specifics for PPAP, Bosch Booklet 10, or general practice). It is static and needs no API or access code.
+- `planner.html` is the study planner: sample sizes and acceptance criteria with their sources (IATF 16949, AIAG, ISO 22514 / VDA 5, Bosch Booklet 10, or general practice), with Ford's published PPAP minimums as a collapsed customer example on each tab. It is static and needs no API or access code.
 - Sample files in `app/samples/`: the published AIAG MSA 4th edition worked example (Gage R&R) the calculator's simulated bore-diameter data (capability), a simulated 4-cavity mold file (capability by cavity) and a Type 1 example.
 
 ## Netlify credits

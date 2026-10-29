@@ -35,12 +35,13 @@
         <p class="lede">How many parts, operators and readings each study needs, and where each number comes from. Nothing here is sent anywhere.</p>
       </div>
       <div class="src-key">
+        <span><span class="src iatf">IATF</span> IATF 16949, the automotive quality standard most OEMs require of suppliers</span>
         <span><span class="src aiag">AIAG</span> The AIAG reference manuals (MSA 4th ed., PPAP 4th ed.)</span>
-        <span><span class="src ford">Ford</span> A customer-specific requirement: Ford's Specifics for PPAP (Jan 2025)</span>
+        <span><span class="src iso">ISO / VDA</span> ISO 22514 and VDA Volume 5, used by German OEMs</span>
         <span><span class="src bosch">Bosch</span> Bosch Booklet No. 10, measurement and test process capability</span>
         <span><span class="src gen">Practice</span> Common practice that no manual makes a requirement</span>
       </div>
-      <p class="hint">Your customer's requirements win where they differ. Ford's are shown because they are public and specific; many customers set similar ones.</p>
+      <p class="hint">Your customer's requirements win where they differ. Each tab ends with one OEM's published minimums (Ford's) as a worked example of customer-specific requirements.</p>
       <div class="seg plan-tabs" role="tablist" aria-label="Study type">
         <button type="button" role="tab" id="tab-grr" aria-controls="p-grr" aria-selected="true">Gage R&amp;R</button>
         <button type="button" role="tab" id="tab-attr" aria-controls="p-attr" aria-selected="false">Attribute gage</button>
@@ -66,13 +67,19 @@
         <div class="plan-out" id="g-out" aria-live="polite"></div>
       </div>
       <ul class="rules">
-        <li><span class="src aiag">AIAG</span> The MSA manual's worked example uses <b>10 parts, 3 appraisers and 3 trials</b>. Parts should come from the process and cover its whole operating range.</li>
-        <li><span class="src ford">Ford</span> At a minimum <b>10 parts, 3 operators, 3 trials</b>, using the <b>ANOVA</b> method. Parts must represent a production run with all known sources of variation and use the full range of part-to-part variation. <span class="cite">§2.2.8</span></li>
-        <li><span class="src aiag">AIAG</span> <b>%GRR</b> under 10% acceptable; 10% to 30% may be acceptable depending on the application; over 30% not acceptable. <b>ndc</b> of 5 or more.</li>
-        <li><span class="src ford">Ford</span> Report %GRR as both % of study variation and % of tolerance. Under 10% of tolerance acceptable; 10% to 30% needs the site STA engineer; over 30% unacceptable. <span class="cite">§2.2.8</span></li>
-        <li><span class="src ford">Ford</span> Rule of thumb: the gage resolution should be at least one-tenth of the range. Hold parts in production-intent fixtures. <span class="cite">§2.2.8</span></li>
+        <li><span class="src iatf">IATF</span> Every type of measurement system in the control plan needs a statistical study, with methods and acceptance criteria from the MSA reference manuals unless the customer approves others. <span class="cite">IATF 16949, 7.1.5.1.1</span></li>
+        <li><span class="src aiag">AIAG</span> The MSA manual's worked example uses <b>10 parts, 3 appraisers and 3 trials</b>, the design most customers expect. Parts should come from the process and cover its whole operating range.</li>
+        <li><span class="src aiag">AIAG</span> <b>%GRR</b> under 10% acceptable; 10% to 30% may be acceptable depending on the application; over 30% not acceptable. <b>ndc</b> of 5 or more. Gage resolution of one-tenth of the process variation or tolerance or finer.</li>
+        <li><span class="src iso">ISO / VDA</span> VDA Volume 5 (3rd ed., 2021) and ISO 22514-7:2021 judge measurement processes by measurement uncertainty (Q<sub>MS</sub>, Q<sub>MP</sub>) instead of %GRR. If your customer works to VDA 5, ask which studies they want; Mensuro doesn't calculate these yet.</li>
         <li><span class="src gen">Practice</span> Pick parts by measuring a batch first and choosing ones spread across it. Ten parts bunched in the middle make ndc and %study variation look worse than the gage really is.</li>
       </ul>
+      <details class="cust"><summary>Customer example: Ford <span class="hint">(Specifics for PPAP, Jan 2025)</span></summary>
+        <p class="hint">One OEM's published minimums, for comparison. Other customers set their own; check yours.</p>
+        <ul class="rules">
+          <li>At a minimum <b>10 parts, 3 operators, 3 trials</b>, using the <b>ANOVA</b> method. Parts must represent a production run with all known sources of variation and use the full range of part-to-part variation. <span class="cite">§2.2.8</span></li>
+          <li>Report %GRR as both % of study variation and % of tolerance. Under 10% of tolerance acceptable; 10% to 30% needs the site STA engineer; over 30% unacceptable. Hold parts in production-intent fixtures. <span class="cite">§2.2.8</span></li>
+        </ul>
+      </details>
       <p class="plan-next">Then: <a href="gage-rr.html">run the Gage R&amp;R →</a></p>
     </section>
 
@@ -95,11 +102,18 @@
         <div class="plan-out" id="a-out" aria-live="polite"></div>
       </div>
       <ul class="rules" data-design="mix">
-        <li><span class="src ford">Ford</span> At a minimum <b>50 parts, 3 operators, 3 trials</b>. Part mix: <b>25% near the lower limit</b> and <b>25% near the upper limit</b> (on both sides of each), <b>30%</b> across the expected process variation, and <b>10% outside each gauge limit</b>. Measure every part independently with a variable gage (a CMM or other known standard) first. <span class="cite">§2.2.8</span></li>
-        <li><span class="src ford">Ford</span> All kappa values (between appraisers, within each appraiser, and each appraiser against the standard) should be greater than <b>0.75</b>, and the gauge must reject every part outside the specification. <span class="cite">§2.2.8</span></li>
-        <li><span class="src aiag">AIAG</span> The MSA manual's attribute example uses 50 parts, 3 appraisers and 3 trials. Kappa above 0.75 is read as good to excellent agreement, below 0.40 as poor. For each appraiser, effectiveness of 90% or more, a miss rate of 2% or less and a false alarm rate of 5% or less are acceptable.</li>
+        <li><span class="src aiag">AIAG</span> The MSA manual's attribute example uses <b>50 parts, 3 appraisers and 3 trials</b>. Kappa above <b>0.75</b> is read as good to excellent agreement, below 0.40 as poor. For each appraiser, effectiveness of 90% or more, a miss rate of 2% or less and a false alarm rate of 5% or less are acceptable.</li>
+        <li><span class="src gen">Practice</span> Include parts close to both limits, on both sides of each, plus some clearly good and a few clearly bad. Measure every part with a variable gage first, so each has a known reference answer.</li>
         <li><span class="src gen">Practice</span> The out-of-spec parts usually come from setup scrap or quarantined stock, measured and labeled first. Code the parts so appraisers can't recognise them, and randomise the order each trial.</li>
       </ul>
+      <details class="cust" data-design="mix"><summary>Customer example: Ford <span class="hint">(Specifics for PPAP, Jan 2025)</span></summary>
+        <p class="hint">One OEM's published minimums, for comparison. Other customers set their own; check yours.</p>
+        <ul class="rules">
+          <li>At a minimum <b>50 parts, 3 operators, 3 trials</b>. Part mix: <b>25% near the lower limit</b> and <b>25% near the upper limit</b> (on both sides of each), <b>30%</b> across the expected process variation, and <b>10% outside each gauge limit</b>. Measure every part independently with a variable gage first. <span class="cite">§2.2.8</span></li>
+          <li>All kappa values (between appraisers, within each appraiser, and each appraiser against the standard) should be greater than <b>0.75</b>, and the gauge must reject every part outside the specification. <span class="cite">§2.2.8</span></li>
+        </ul>
+      </details>
+
       <div class="plan-grid" data-design="analytic" hidden>
         <div class="plan-in">
           <fieldset class="reuse-spec"><legend class="label">Limits to study</legend>
@@ -113,9 +127,9 @@
       </div>
       <ul class="rules" data-design="analytic" hidden>
         <li><span class="src aiag">AIAG</span> At least <b>8 parts</b> with known reference values at roughly equal steps across the region around the limit, each checked <b>20 times</b>. The part furthest outside is accepted 0 times and the part furthest inside 20 times; the 6 or more parts between are accepted 1 to 19 times. Each limit is studied separately. <span class="cite">MSA 4th ed., as summarised by Minitab</span></li>
-        <li><span class="src gen">Practice</span> This answers "can I avoid making bad parts?" partly: you still need a part or two just beyond the limit, but not gross rejects, and not 10% of a 50-part sample on each side.</li>
+        <li><span class="src gen">Practice</span> This answers "can I avoid making bad parts?" partly: you still need a part or two just beyond the limit, but not gross rejects, and far fewer than a 50-part agreement study.</li>
         <li><span class="src gen">Practice</span> If the feature can be measured with a variable gage at all, a variable Gage R&amp;R needs no bad parts and tells you more.</li>
-        <li><span class="src gen">Practice</span> Check with your customer first: some (Ford among them) name the 50 × 3 × 3 agreement study as their minimum.</li>
+        <li><span class="src gen">Practice</span> Check with your customer first: some name the 50 × 3 × 3 agreement study as their minimum.</li>
       </ul>
       <p class="plan-next">Attribute studies aren't in Mensuro yet. The variable Gage R&amp;R and Type 1 studies are.</p>
     </section>
@@ -137,6 +151,7 @@
       <ul class="rules">
         <li><span class="src bosch">Bosch</span> <b>50 repeated readings</b> of one reference part (at least 25), by one operator, in a short time.</li>
         <li><span class="src bosch">Bosch</span> <b>Cg and Cgk of 1.33 or more</b>, using 20% of the tolerance (Cg = 0.2T / 6s, Cgk = (0.1T − |bias|) / 3s). The bias is tested with a t-test. Resolution should be <b>5% of the tolerance or finer</b>.</li>
+        <li><span class="src iso">ISO / VDA</span> VDA Volume 5 and ISO 22514-7 also start from repeated readings of a reference standard, but judge them through measurement uncertainty rather than Cg and Cgk.</li>
         <li><span class="src gen">Practice</span> Choose a reference part close to the middle of the tolerance and use its calibration certificate value as the reference. Load and unload it between readings, as in normal use.</li>
       </ul>
       <p class="plan-next">Then: <a href="type1.html">run the Type 1 study →</a></p>
@@ -157,12 +172,19 @@
         <div class="plan-out" id="c-out" aria-live="polite"></div>
       </div>
       <ul class="rules">
-        <li><span class="src ford">Ford</span> At least <b>25 subgroups of at least 5</b> consecutive parts, for a minimum of <b>125 measurements</b> from a run of at least 300 parts, spaced evenly through it. Complete the MSA first. <span class="cite">§2.2.11.1</span></li>
-        <li><span class="src ford">Ford</span> The data must include the full range of expected variation: <b>all tools, all cavities, all streams, all shifts</b>. Parts are measured from every cavity. <b>Ppk of 1.67 or more</b>, from a statistically stable data set. <span class="cite">§2.2.9, §2.2.11.1</span></li>
-        <li><span class="src aiag">AIAG</span> PPAP acceptance for initial process studies: index above 1.67 acceptable; 1.33 to 1.67 may be acceptable with customer approval; below 1.33 not acceptable.</li>
+        <li><span class="src aiag">AIAG</span> PPAP acceptance for initial process studies: index above <b>1.67</b> acceptable; 1.33 to 1.67 may be acceptable with customer approval; below 1.33 not acceptable. The process should be stable (in statistical control) first.</li>
+        <li><span class="src iso">ISO / VDA</span> ISO 22514-2 defines Cp, Cpk, Pp and Ppk and the process models behind them.</li>
+        <li><span class="src gen">Practice</span> Collect <b>25 or more subgroups</b>, commonly of 5 consecutive parts, spread over the run (control chart texts such as Montgomery base limits on 20 to 25 subgroups).</li>
         <li><span class="src gen">Practice</span> For a multi-cavity tool, judge each cavity on its own: one cavity running off-center can hide inside a combined number that looks fine. Plan enough readings per cavity to judge it, and record the cavity number with every reading.</li>
         <li><span class="src gen">Practice</span> If a cavity sits off-center but tool wear can only move it away from the near limit, write that up as an engineering justification on the report rather than leaving the reviewer to guess.</li>
       </ul>
+      <details class="cust"><summary>Customer example: Ford <span class="hint">(Specifics for PPAP, Jan 2025)</span></summary>
+        <p class="hint">One OEM's published minimums, for comparison. Other customers set their own; check yours.</p>
+        <ul class="rules">
+          <li>At least <b>25 subgroups of at least 5</b> consecutive parts, for a minimum of <b>125 measurements</b> from a run of at least 300 parts, spaced evenly through it. Complete the MSA first. <span class="cite">§2.2.11.1</span></li>
+          <li>The data must include the full range of expected variation: <b>all tools, all cavities, all streams, all shifts</b>. Parts are measured from every cavity. <b>Ppk of 1.67 or more</b>, from a statistically stable data set. <span class="cite">§2.2.9, §2.2.11.1</span></li>
+        </ul>
+      </details>
       <p class="plan-next">Then: <a href="capability.html">run capability (map a cavity column for per-cavity results) →</a></p>
     </section>
 
@@ -171,7 +193,7 @@
       <div class="head"><h3>Reusing a Gage R&amp;R on another part</h3>
         <p class="hint">Common, and often fine. The trouble starts when the other part's tolerance is tighter, or the gage was set up differently.</p></div>
       <ul class="rules">
-        <li><span class="src ford">Ford</span> %GRR is reported against each characteristic's tolerance, and the parts must represent a production run. Ford's PPAP specifics don't describe reusing a study across parts. <span class="cite">§2.2.8</span></li>
+        <li><span class="src iatf">IATF</span> Measurement systems are studied as they are used in the control plan. Whether a study carries over to another part is the customer's call, so give the reviewer the evidence. <span class="cite">IATF 16949, 7.1.5.1.1</span></li>
         <li><span class="src gen">Practice</span> <b>Recheck the verdict at the new tolerance.</b> Only %GRR of tolerance changes: halve the tolerance and the same gage error takes up twice as much of it.</li>
         <li><span class="src gen">Practice</span> %GRR of study variation and ndc describe the parts in the original study. They only carry over if the new part's process varies about as much.</li>
       </ul>
@@ -192,13 +214,17 @@
     <section class="panel" aria-labelledby="src-title">
       <h3 id="src-title">Sources</h3>
       <ul class="sources">
-        <li>Ford Motor Company, <a href="https://www.iatfglobaloversight.org/wp/wp-content/uploads/2025/02/Ford-Specifics-for-PPAP_Jan-2025-FINAL.pdf" rel="noopener" target="_blank">Customer Specific Requirements for PPAP, 4th edition</a> ("Ford Specifics for PPAP"), effective 6 February 2025, sections 2.2.8, 2.2.9 and 2.2.11.1. Published by the IATF.</li>
+        <li>IATF, <i>IATF 16949:2016</i>, clause 7.1.5.1.1, Measurement systems analysis.</li>
+        <li>ISO 22514-7:2021, <a href="https://www.iso.org/standard/80624.html" rel="noopener" target="_blank">Capability of measurement processes</a>; ISO 22514-2:2026, process capability and performance of time-dependent process models.</li>
+        <li>VDA, <a href="https://webshop.vda.de/QMC/en/volume-05-measurement-and-inspprocesses_072021" rel="noopener" target="_blank">Volume 5: Measurement and Inspection Processes</a>, 3rd edition (July 2021).</li>
+        <li>D. C. Montgomery, <i>Introduction to Statistical Quality Control</i>, 6th edition (Wiley, 2009).</li>
         <li>AIAG, <i>Measurement Systems Analysis</i> reference manual, 4th edition (2010): variable and attribute studies, kappa and effectiveness guidelines, analytic method.</li>
         <li>AIAG, <i>Production Part Approval Process</i> manual, 4th edition (2006): initial process study acceptance criteria.</li>
         <li>Minitab Support, <a href="https://support.minitab.com/en-us/minitab/help-and-how-to/quality-and-process-improvement/measurement-system-analysis/supporting-topics/other-gage-studies-and-measures/data-requirements-for-an-attribute-gage-study/" rel="noopener" target="_blank">Data requirements for the AIAG method for an attribute gage study</a>.</li>
         <li>Robert Bosch GmbH, <i>Booklet No. 10: Capability of Measurement and Test Processes</i> (Quality Management in the Bosch Group), Procedure 1.</li>
+        <li>Customer example: Ford Motor Company, <a href="https://www.iatfglobaloversight.org/wp/wp-content/uploads/2025/02/Ford-Specifics-for-PPAP_Jan-2025-FINAL.pdf" rel="noopener" target="_blank">Customer Specific Requirements for PPAP, 4th edition</a> ("Ford Specifics for PPAP"), effective 6 February 2025, sections 2.2.8, 2.2.9 and 2.2.11.1. Published by the IATF.</li>
       </ul>
-      <p class="hint">The AIAG manuals are sold by AIAG and aren't quoted at length here. Ford's text is quoted from the published PDF.</p>
+      <p class="hint">The AIAG, ISO and VDA documents are sold by their publishers and are summarised here, not quoted. Ford's text is quoted from its published PDF.</p>
     </section>
 
   </div>
