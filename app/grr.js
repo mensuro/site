@@ -525,6 +525,7 @@
       dd("Engine", "Mensuro engine " + rc.engine_version + ", checked against the AIAG MSA 4th edition worked example") +
       "</dl></section>";
 
+    html += reusePanel();
     html += M.reportPanel([
       { key: "part_number", label: "Part number", max: 80 },
       { key: "part_name", label: "Part name" },
@@ -544,15 +545,146 @@
     drawCharts();
     M.bindReport({
       path: "/v1/grr/report",
-      body: function () { return { filename: S.file.name, content: S.file.content, sheet: S.sheet, mapping: mappingBody(), settings: S.settings }; },
+      body: function () {
+        var b = { filename: S.file.name, content: S.file.content, sheet: S.sheet, mapping: mappingBody(), settings: S.settings };
+        if (S.reuse && S.reuse.on && S.reuse.out) { b.reuse = reuseBody(); }
+        return b;
+      },
       filename: function (v) { return "Gage R&R" + (v.part_number ? " " + M.safeName(v.part_number) : "") + (v.characteristic ? " " + M.safeName(v.characteristic) : "") + ".pdf"; }
     });
+    bindReuse();
     $("#res-map").addEventListener("click", function () { setStep(2); });
     $("#res-settings").addEventListener("click", function () { setStep(3); });
     $("#res-new").addEventListener("click", function () { S.file = null; S.insp = null; S.result = null; setStep(1); });
 
     function kpi(k, val, s) { return '<div class="kpi"><div class="k">' + esc(k) + '</div><div class="v">' + esc(val) + '</div><div class="s">' + esc(s) + "</div></div>"; }
     function dd(k, val) { return "<dt>" + esc(k) + "</dt><dd>" + esc(val) + "</dd>"; }
+  }
+
+  // ------------------------------------------------- reusing the study for another part
+  // Courtney's case: a study run on one part is offered for another with a tighter tolerance.
+  // The engine judges the same readings at both tolerances; the checklist is the author's.
+  function reusePanel() {
+    var R = S.reuse = S.reuse && S.reuse.fileKey === reuseKey() ? S.reuse : { fileKey: reuseKey(), mode: "limits", on: false, answers: {} };
+    var tolText = S.result.tolerance != null ? specText() : "none given (judged against study variation)";
+    return '<section class="panel reuse" aria-labelledby="reuse-title"><div class="head"><span class="eyebrow">Reviewing a reused study</span><h3 id="reuse-title">Using this study for another part?</h3>' +
+      '<p class="hint">A Gage R&amp;R only holds for the tolerance it is judged against. Enter the other part\'s tolerance to see whether the same readings still pass there. This study was run at: <b>' + esc(tolText) + "</b>.</p></div>" +
+      '<div class="reuse-grid">' +
+      field("ru-part", "Original part number", R.part || "", "The part the study was run on") +
+      field("ru-char", "Original characteristic", R.char || "", "e.g. Bore diameter") +
+      "</div>" +
+      '<fieldset class="reuse-spec"><legend class="label">Other part\'s tolerance</legend>' +
+      '<div class="seg" role="radiogroup" aria-label="How to give the other part\'s tolerance">' +
+      '<label><input type="radio" name="ru-mode" value="limits"' + (R.mode === "limits" ? " checked" : "") + '>Spec limits</label>' +
+      '<label><input type="radio" name="ru-mode" value="width"' + (R.mode === "width" ? " checked" : "") + ">Tolerance width</label></div>" +
+      '<div class="reuse-grid">' +
+      field("ru-lsl", "Lower spec (LSL)", R.lsl != null ? R.lsl : "", "", "limits", true) +
+      field("ru-usl", "Upper spec (USL)", R.usl != null ? R.usl : "", "", "limits", true) +
+      field("ru-tol", "Tolerance (USL − LSL)", R.tol != null ? R.tol : "", "", "width", true) +
+      '<div class="field" style="align-self:end"><button type="button" class="btn btn-dark" id="ru-run">Recheck at this tolerance</button></div>' +
+      "</div></fieldset>" +
+      '<p class="error-box" id="ru-error" role="alert" hidden></p><span class="busy" id="ru-busy" hidden>Rechecking…</span>' +
+      '<div id="ru-out" aria-live="polite"></div></section>';
+
+    function field(id, label, value, ph, mode, num) {
+      return '<div class="field"' + (mode ? ' data-ru-mode="' + mode + '"' + (R.mode !== mode ? " hidden" : "") : "") + '><label for="' + id + '">' + esc(label) + "</label>" +
+        '<input id="' + id + '" value="' + esc(value) + '"' + (ph ? ' placeholder="' + esc(ph) + '"' : "") + (num ? ' inputmode="decimal"' : ' maxlength="120"') + ' autocomplete="off"></div>';
+    }
+  }
+  function reuseKey() { return S.file ? S.file.name + "|" + JSON.stringify(S.settings) + "|" + JSON.stringify(mappingBody()) : ""; }
+
+  function reuseSpec() {
+    var R = S.reuse;
+    if (R.mode === "width") {
+      var t = parseNum($("#ru-tol").value);
+      if (t == null || isNaN(t) || t <= 0) { throw new Error("Enter the other part's tolerance width as a positive number."); }
+      return { tolerance: t };
+    }
+    var lsl = parseNum($("#ru-lsl").value), usl = parseNum($("#ru-usl").value);
+    if (lsl == null || usl == null || isNaN(lsl) || isNaN(usl)) { throw new Error("Enter both of the other part's spec limits as numbers."); }
+    if (usl <= lsl) { throw new Error("The upper spec limit must be above the lower one."); }
+    return { lsl: lsl, usl: usl };
+  }
+
+  function reuseBody() {
+    var R = S.reuse, sp = R.spec;
+    return {
+      original_part: R.part || null, original_characteristic: R.char || null,
+      lsl: sp.lsl != null ? sp.lsl : null, usl: sp.usl != null ? sp.usl : null, tolerance: sp.tolerance != null ? sp.tolerance : null,
+      checks: R.out.checks.map(function (st, k) { return { statement: st, answer: R.answers[k] || "unknown" }; })
+    };
+  }
+
+  function bindReuse() {
+    var R = S.reuse;
+    $("#ru-part").addEventListener("input", function () { R.part = this.value.trim(); });
+    $("#ru-char").addEventListener("input", function () { R.char = this.value.trim(); });
+    $$('input[name="ru-mode"]').forEach(function (r) {
+      r.addEventListener("change", function () {
+        R.mode = r.value;
+        $$("[data-ru-mode]").forEach(function (f) { f.hidden = f.dataset.ruMode !== R.mode; });
+      });
+    });
+    ["ru-lsl", "ru-usl", "ru-tol"].forEach(function (id) {
+      $("#" + id).addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $("#ru-run").click(); } });
+    });
+    $("#ru-run").addEventListener("click", function () {
+      var spec;
+      M.showError($("#ru-error"), "");
+      try { spec = reuseSpec(); } catch (e) { M.showError($("#ru-error"), e.message); return; }
+      R.lsl = spec.lsl; R.usl = spec.usl; R.tol = spec.tolerance;
+      var btn = this; btn.disabled = true; $("#ru-busy").hidden = false; M.busy($(".panel.reuse"), true);
+      M.api("POST", "/v1/grr/recheck", { filename: S.file.name, content: S.file.content, sheet: S.sheet, mapping: mappingBody(), settings: S.settings, recheck: spec })
+        .then(function (out) { R.out = out; R.spec = spec; renderReuseOut(); M.replay($("#ru-out"), "m-fresh"); },
+          function (err) { if (!M.handleAuth(err)) { M.showError($("#ru-error"), err.message); } })
+        .then(function () { btn.disabled = false; $("#ru-busy").hidden = true; M.busy($(".panel.reuse"), false); });
+    });
+    if (R.out) { renderReuseOut(); }
+  }
+
+  function renderReuseOut() {
+    var R = S.reuse, o = R.out.original, n = R.out.recheck, u = S.settings.unit ? " " + S.settings.unit : "";
+    function card(title, x, tolText) {
+      var pct = x.pct_tolerance != null ? fmtFixed(x.pct_tolerance, 1) + "%" : fmtFixed(x.pct_study_var, 1) + "%";
+      var what = x.pct_tolerance != null ? "%GRR of tolerance" : "%GRR of study variation";
+      return '<div class="cmp ' + x.verdict.key + '"><div class="k">' + esc(title) + '</div><div class="t">' + esc(tolText) + '</div>' +
+        '<div class="v">' + pct + '</div><div class="s">' + what + " · ndc " + x.ndc + '</div><span class="pill ' + x.verdict.key + '">' + esc(x.verdict.label) + "</span></div>";
+    }
+    var tolO = o.tolerance != null ? "Tolerance " + fmt(o.tolerance, 6) + u : "No tolerance";
+    var tolN = "Tolerance " + fmt(n.tolerance, 6) + u + (R.spec.lsl != null ? " (LSL " + fmt(R.spec.lsl, 8) + ", USL " + fmt(R.spec.usl, 8) + ")" : "");
+    var same = o.verdict.key === n.verdict.key && o.tolerance != null;
+    var msg = same ? "Same verdict at both tolerances." :
+      "The verdict changes: " + o.verdict.label.toLowerCase() + " at the study's tolerance, " + n.verdict.label.toLowerCase() + " at the other part's.";
+    if (o.tolerance != null && n.tolerance < o.tolerance) { msg += " The other part's tolerance is " + Math.round(100 * n.tolerance / o.tolerance) + "% of the original, so the same gage error takes up more of it."; }
+    var html = '<div class="cmp-row">' + card("Study's own tolerance", o, tolO) + '<div class="cmp-arrow" aria-hidden="true">→</div>' + card("Other part's tolerance", n, tolN) + "</div>" +
+      '<p class="cmp-msg">' + esc(msg) + "</p>" +
+      '<p class="hint">Only %GRR of tolerance changes with the tolerance. %GRR of study variation and ndc describe the parts in the original study, so they carry over only if the other part\'s process varies about as much.</p>' +
+      '<fieldset class="checklist"><legend class="label">Reuse checklist <span class="hint">(your answers; Mensuro can\'t check these)</span></legend>' +
+      R.out.checks.map(function (st, k) {
+        var a = R.answers[k] || "unknown";
+        return '<div class="chk"><span>' + esc(st) + '</span><span class="seg seg-sm" role="radiogroup" aria-label="' + esc(st) + '">' +
+          [["yes", "Yes"], ["no", "No"], ["unknown", "Not sure"]].map(function (x) {
+            return '<label><input type="radio" name="ru-chk-' + k + '" value="' + x[0] + '"' + (a === x[0] ? " checked" : "") + ">" + x[1] + "</label>";
+          }).join("") + "</span></div>";
+      }).join("") + '</fieldset><p class="cmp-warn" id="ru-warn" hidden></p>' +
+      '<label class="ru-toggle"><input type="checkbox" id="ru-on"' + (R.on ? " checked" : "") + '> <span><b>Make the PDF for the other part, with a reuse record.</b> The report is judged at the other part\'s tolerance and adds a page with both verdicts and your checklist. Fill in the other part\'s details below.</span></label>';
+    $("#ru-out").innerHTML = html;
+    function warn() {
+      var vals = R.out.checks.map(function (_, k) { return R.answers[k] || "unknown"; });
+      var w = vals.indexOf("no") >= 0 ? "You answered no to at least one check, so this study may not represent the measurement process for the other part. A new study is the usual remedy." : "";
+      $("#ru-warn").textContent = w; $("#ru-warn").hidden = !w;
+    }
+    $$('#ru-out input[type="radio"]').forEach(function (r) {
+      r.addEventListener("change", function () { R.answers[Number(r.name.split("-").pop())] = r.value; warn(); });
+    });
+    function placeholder() {
+      var box = $("#ri-specification"), u = S.settings.unit ? " " + S.settings.unit : "", sp = R.spec;
+      if (!box) { return; }
+      box.placeholder = !R.on ? specText() : sp.lsl != null ? fmt(sp.lsl, 8) + " to " + fmt(sp.usl, 8) + u : "Tolerance " + fmt(sp.tolerance, 8) + u;
+    }
+    $("#ru-on").addEventListener("change", function () { R.on = this.checked; placeholder(); });
+    placeholder();
+    warn();
   }
 
   function specText() {

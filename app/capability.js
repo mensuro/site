@@ -17,6 +17,7 @@
   S.layout = "column";
   S.col = { value: null, subgroup: null, group: false, size: 5 };
   S.rows = { cols: {}, label: null };
+  S.cavity = null;
 
   function applyGuess(g) {
     S.layout = g.suggested;
@@ -26,19 +27,26 @@
       g.rows.columns.forEach(function (c) { S.rows.cols[c] = true; });
       S.rows.label = g.rows.label;
     }
+    S.cavity = g.group != null ? g.group : null;
   }
 
   // ----------------------------------------------------------------- mapping
-  var LABELS = { column: { value: "Readings", subgroup: "Subgroup" }, rows: { value: "Reading", subgroup: "Subgroup label" } };
+  var LABELS = { column: { value: "Readings", subgroup: "Subgroup", cavity: "Cavity" }, rows: { value: "Reading", subgroup: "Subgroup label", cavity: "Cavity" } };
   function roleOf(col) {
+    if (S.cavity === col) { return "cavity"; }
     if (S.layout === "column") { return S.col.value === col ? "value" : (S.col.subgroup === col ? "subgroup" : null); }
     return S.rows.cols[col] ? "value" : (S.rows.label === col ? "subgroup" : null);
   }
-  function tint(role) { return role === "subgroup" ? "part" : role; }
+  function tint(role) { return role === "subgroup" ? "part" : role === "cavity" ? "operator" : role; }
   function readingCols() { return Object.keys(S.rows.cols).map(Number).filter(function (k) { return S.rows.cols[k]; }).sort(function (a, b) { return a - b; }); }
 
   function assign(role, col) {
-    if (S.layout === "column") {
+    if (S.cavity === col) { S.cavity = null; }
+    if (role === "cavity") {
+      if (S.layout === "column") { if (S.col.value === col) { S.col.value = null; } if (S.col.subgroup === col) { S.col.subgroup = null; } }
+      else { delete S.rows.cols[col]; if (S.rows.label === col) { S.rows.label = null; } }
+      S.cavity = col;
+    } else if (S.layout === "column") {
       if (S.col.value === col) { S.col.value = null; }
       if (S.col.subgroup === col) { S.col.subgroup = null; }
       if (role === "value") { S.col.value = col; } else if (role === "subgroup") { S.col.subgroup = col; S.col.group = false; }
@@ -53,10 +61,10 @@
 
   function renderPalette() {
     var p = $("#palette"), html = '<span class="hint">Roles:</span>';
-    ["value", "subgroup"].forEach(function (r) {
-      var placed = S.layout === "column" ? S.col[r] != null : (r === "value" ? readingCols().length > 0 : S.rows.label != null);
-      html += '<button type="button" class="role' + (placed && !(S.layout === "rows" && r === "value") ? " placed" : "") + (S.armed === r ? " armed" : "") + '" data-role="' + r + '" aria-pressed="' + (S.armed === r) + '" style="--c: var(--role-' + (r === "value" ? "value" : "part") + ')">' +
-        esc(LABELS[S.layout][r]) + (r === "subgroup" ? ' <span class="opt">optional</span>' : "") + "</button>";
+    ["value", "subgroup", "cavity"].forEach(function (r) {
+      var placed = r === "cavity" ? S.cavity != null : S.layout === "column" ? S.col[r] != null : (r === "value" ? readingCols().length > 0 : S.rows.label != null);
+      html += '<button type="button" class="role' + (placed && !(S.layout === "rows" && r === "value") ? " placed" : "") + (S.armed === r ? " armed" : "") + '" data-role="' + r + '" aria-pressed="' + (S.armed === r) + '" style="--c: var(--role-' + (r === "value" ? "value" : r === "cavity" ? "operator" : "part") + ')">' +
+        esc(LABELS[S.layout][r]) + (r !== "value" ? ' <span class="opt">optional</span>' : "") + "</button>";
     });
     if (S.layout === "column") {
       var disabled = S.col.subgroup != null;
@@ -77,7 +85,7 @@
 
   function colHeadControl(c) {
     var role = roleOf(c.index);
-    var opts = [["", "Not used"], ["value", LABELS[S.layout].value], ["subgroup", LABELS[S.layout].subgroup]];
+    var opts = [["", "Not used"], ["value", LABELS[S.layout].value], ["subgroup", LABELS[S.layout].subgroup], ["cavity", "Cavity"]];
     return '<select data-col="' + c.index + '" aria-label="Role of column ' + esc(c.name) + '">' +
       opts.map(function (o) { return '<option value="' + o[0] + '"' + ((role || "") === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select>";
   }
@@ -124,6 +132,14 @@
     var i = S.insp, out = { items: [], readout: [], ok: true, big: "", sub: "" };
     function item(cls, text) { out.items.push({ cls: cls, text: text }); if (cls === "err" || cls === "todo") { out.ok = false; } }
     var values = [], skipped = [], bad = [], missing = [], groups = [], index = {};
+    var CV = S.cavity, cavs = [], cavN = {}, noCav = [];
+    function cavOf(row, num) {
+      if (CV == null) { return ""; }
+      var c = row[CV];
+      if (c === "") { noCav.push(num); return null; }
+      if (!(c in cavN)) { cavN[c] = 0; cavs.push(c); }
+      return c;
+    }
 
     if (S.layout === "column") {
       var C = S.col;
@@ -134,19 +150,28 @@
         var tags = rowTags(row, [lab || "", v]);
         var sum = tags.filter(function (t) { return SUMMARY.test(t); })[0];
         if (sum) { skipped.push(sum); return; }
+        var cav = cavOf(row, num);
+        if (cav === null) { return; }
         if (!NUM.test(v)) { bad.push({ row: num, v: v }); }
         if (C.subgroup != null) {
           if (lab === "") { missing.push(num); return; }
-          if (!(lab in index)) { index[lab] = groups.length; groups.push({ label: lab, n: 0 }); }
-          groups[index[lab]].n += 1;
+          var key = cav + "\u0000" + lab;
+          if (!(key in index)) { index[key] = groups.length; groups.push({ label: lab, n: 0, c: cav }); }
+          groups[index[key]].n += 1;
         }
-        values.push({ row: num, v: v, g: lab });
+        if (CV != null) { cavN[cav] += 1; }
+        values.push({ row: num, v: v, g: lab, c: cav });
       });
       if (C.group && C.subgroup == null) {
         var size = Number(C.size);
         if (!(size >= 2 && size <= 25 && Math.floor(size) === size)) { item("err", "Readings per subgroup must be a whole number from 2 to 25"); }
-        else if (values.length % size) { item("err", values.length + " readings don't split into subgroups of " + size + ": " + (values.length % size) + " left over"); }
-        else { for (var g = 0; g < values.length / size; g++) { groups.push({ label: String(g + 1), n: size }); } values.forEach(function (x, k) { x.g = String(Math.floor(k / size) + 1); }); }
+        else {
+          var per = {}, left = null;
+          values.forEach(function (x) { per[x.c] = (per[x.c] || 0) + 1; x.g = String(Math.ceil(per[x.c] / size)); });
+          Object.keys(per).forEach(function (c) { if (per[c] % size && left == null) { left = c; } });
+          if (left != null) { item("err", (CV != null ? "Cavity " + left + ": " : "") + per[left] + " readings don't split into subgroups of " + size + ": " + (per[left] % size) + " left over"); }
+          else { Object.keys(per).forEach(function (c) { for (var g = 0; g < per[c] / size; g++) { groups.push({ label: String(g + 1), n: size, c: c }); } }); }
+        }
       }
     } else {
       var cols = readingCols(), L = S.rows.label;
@@ -157,13 +182,24 @@
         var lab = L != null ? row[L] : "";
         var sum = rowTags(row, [lab]).filter(function (t) { return SUMMARY.test(t); })[0];
         if (sum) { skipped.push(sum); return; }
+        var cav = cavOf(row, num);
+        if (cav === null) { return; }
         var label = lab || String(groups.length + 1);
-        groups.push({ label: label, n: cells.length });
-        cells.forEach(function (v) { if (!NUM.test(v)) { bad.push({ row: num, v: v }); } values.push({ row: num, v: v, g: label }); });
+        groups.push({ label: label, n: cells.length, c: cav });
+        if (CV != null) { cavN[cav] += cells.length; }
+        cells.forEach(function (v) { if (!NUM.test(v)) { bad.push({ row: num, v: v }); } values.push({ row: num, v: v, g: label, c: cav }); });
       });
     }
 
     var N = values.length, K = groups.length;
+    if (CV != null) {
+      if (noCav.length) { item("warn", "Skipping " + plural(noCav.length, "row") + " with no cavity (row " + noCav[0] + (noCav.length > 1 ? ", …" : "") + ")"); }
+      if (cavs.length < 2) { item("err", "The cavity column needs at least 2 different cavities"); }
+      else if (cavs.length > 64) { item("err", "The cavity column has " + cavs.length + " different values; the limit is 64. Is it the right column?"); }
+      else { item("ok", plural(cavs.length, "cavity", "cavities") + ": " + cavs.slice(0, 8).join(", ") + (cavs.length > 8 ? ", …" : "") + ". Each gets its own capability study"); }
+      var counts = cavs.map(function (c) { return cavN[c]; });
+      if (cavs.length >= 2 && Math.min.apply(null, counts) < 30) { item("warn", "Some cavities have fewer than 30 readings (fewest: " + Math.min.apply(null, counts) + ")"); }
+    }
     if (missing.length) { item("err", "Row " + missing[0] + " has a reading but no subgroup" + (missing.length > 1 ? " (and " + plural(missing.length - 1, "more row") + ")" : "")); }
     if (K) {
       var sizes = {};
@@ -178,13 +214,14 @@
       } else if (keys[0] > 25) {
         item("err", "Subgroups of " + keys[0] + " readings are too big for an x̄–R chart (2 to 25)");
       } else {
-        out.big = K + " subgroups × " + keys[0] + " readings";
-        if (K < 2) { item("err", "At least 2 subgroups are needed"); }
+        var kPer = CV != null && cavs.length ? Math.min.apply(null, cavs.map(function (c) { return groups.filter(function (g) { return g.c === c; }).length; })) : K;
+        out.big = CV != null && cavs.length >= 2 ? cavs.length + " cavities × " + Math.round(K / cavs.length) + " subgroups of " + keys[0] : K + " subgroups × " + keys[0] + " readings";
+        if (kPer < 2) { item("err", "At least 2 subgroups are needed" + (CV != null ? " in every cavity" : "")); }
         else { item("ok", "Every subgroup has " + keys[0] + " readings"); }
-        if (K >= 2 && K < 20) { item("warn", "Only " + K + " subgroups; control limits are usually based on 20 to 25."); }
+        if (kPer >= 2 && kPer < 20) { item("warn", "Only " + kPer + " subgroups" + (CV != null ? " in a cavity" : "") + "; control limits are usually based on 20 to 25."); }
       }
     } else if (N) {
-      out.big = N + " individual readings";
+      out.big = CV != null && cavs.length >= 2 ? cavs.length + " cavities · individual readings" : N + " individual readings";
       item("ok", "Within variation from moving ranges of consecutive readings");
     }
     out.sub = plural(N, "reading");
@@ -194,7 +231,7 @@
     if (skipped.length) { item("warn", "Skipping summary " + (skipped.length === 1 ? "row" : "rows") + ": " + skipped.filter(function (s, n) { return skipped.indexOf(s) === n; }).join(", ")); }
     if (i.truncated) { item("warn", "Checked the first " + i.rows.length + " rows here; the server checks all " + i.row_count + "."); }
     out.readout = values.slice(0, 3).map(function (x) {
-      return "Row " + x.row + (x.g ? " → subgroup <b>" + esc(x.g) + "</b> · " : " → ") + "<b>" + esc(x.v || "blank") + "</b>";
+      return "Row " + x.row + (x.c ? " → cavity <b>" + esc(x.c) + "</b>" : "") + (x.g ? " → subgroup <b>" + esc(x.g) + "</b> · " : " → ") + "<b>" + esc(x.v || "blank") + "</b>";
     });
     if (!N && out.ok) { item("err", "No readings found in that column"); }
     return out;
@@ -226,6 +263,7 @@
   $("#back-upload").addEventListener("click", function () { setStep(1); });
   $("#to-settings").addEventListener("click", function () {
     $("#settings-summary").textContent = S.summary.big + " · " + S.file.name;
+    $("#cavity-settings").hidden = S.cavity == null;
     setStep(3);
   });
 
@@ -237,26 +275,32 @@
     if (Number.isNaN(lsl) || Number.isNaN(usl)) { throw new Error("The spec limits must be numbers."); }
     if (lsl == null && usl == null) { throw new Error("Enter at least one spec limit."); }
     if (lsl != null && usl != null && usl <= lsl) { throw new Error("The upper spec limit must be above the lower one."); }
-    return { lsl: lsl, usl: usl, unit: $("#unit").value.trim() || null, verdict_index: $('input[name="vindex"]:checked').value };
+    var out = { lsl: lsl, usl: usl, unit: $("#unit").value.trim() || null, verdict_index: $('input[name="vindex"]:checked').value };
+    if (S.cavity != null) { out.group_name = $("#group-name").value; }
+    return out;
   }
 
   function mappingBody() {
-    if (S.layout === "column") {
-      return { layout: "column", value: S.col.value, subgroup: S.col.subgroup, subgroup_size: S.col.group && S.col.subgroup == null ? Number(S.col.size) : null };
-    }
-    return { layout: "rows", columns: readingCols(), label: S.rows.label };
+    var m = S.layout === "column"
+      ? { layout: "column", value: S.col.value, subgroup: S.col.subgroup, subgroup_size: S.col.group && S.col.subgroup == null ? Number(S.col.size) : null }
+      : { layout: "rows", columns: readingCols(), label: S.rows.label };
+    if (S.cavity != null) { m.group = S.cavity; }
+    return m;
   }
+  function byCavity() { return S.cavity != null; }
+  function ppm(x) { return x == null ? "–" : x === 0 ? "0" : x < 0.01 ? "< 0.01" : fmt(x, 3); }
 
   $("#run").addEventListener("click", function () {
     var settings;
     showError($("#run-error"), "");
     try { settings = readSettings(); } catch (err) { showError($("#run-error"), err.message); return; }
     $("#run").disabled = true; $("#run-busy").hidden = false; M.busy($("#s-settings"), true);
-    api("POST", "/v1/capability/analyze", { filename: S.file.name, content: S.file.content, sheet: S.sheet, mapping: mappingBody(), settings: settings })
+    var path = byCavity() ? "/v1/capability/groups/analyze" : "/v1/capability/analyze";
+    api("POST", path, { filename: S.file.name, content: S.file.content, sheet: S.sheet, mapping: mappingBody(), settings: settings })
       .then(function (res) {
         S.result = res; S.settings = settings;
         setStep(4);
-        renderResults();
+        if (res.analysis === "capability_groups") { renderGroupResults(); } else { renderResults(); }
       }, function (err) {
         if (!handleAuth(err)) { showError($("#run-error"), err.message); }
       })
@@ -342,8 +386,107 @@
     var r = S.result;
     $$("#s-results [data-chart]").forEach(function (el) {
       var W = Math.max(300, Math.round(el.clientWidth || 560)), k = el.dataset.chart;
-      el.innerHTML = k === "hist" ? histogram(r, W) : controlChart(r, k, W);
+      el.innerHTML = k === "spread" ? spreadChart(r, W) : k === "hist" ? histogram(r, W) : controlChart(r, k, W);
     });
+  }
+
+  // Capability by cavity: each cavity's mean and mean ± 3s (overall) against the spec limits.
+  var VCOLOR = { acceptable: "#1E7A46", conditional: "#8A5A00", not_acceptable: "#B42318" };
+  function spreadChart(r, W) {
+    var G = r.groups, rowH = G.length > 12 ? 18 : 26, L = 64, R = 18, T = 30, B = 40, H = T + B + rowH * G.length;
+    var los = G.map(function (g) { return g.mean - 3.4 * g.overall.sigma; }), his = G.map(function (g) { return g.mean + 3.4 * g.overall.sigma; });
+    if (r.lsl != null) { los.push(r.lsl); } if (r.usl != null) { his.push(r.usl); }
+    var lo = Math.min.apply(null, los), hi = Math.max.apply(null, his), pad = (hi - lo) * 0.05 || 1; lo -= pad; hi += pad;
+    var sx = function (v) { return L + (W - L - R) * (v - lo) / (hi - lo); }, sy = function (k) { return T + rowH * (k + 0.5); };
+    var name = r.group_name;
+    var svg = '<svg class="plot" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="For each ' + esc(name.toLowerCase()) + ', its mean and mean plus or minus 3 standard deviations against the specification limits">';
+    niceTicks(lo, hi, Math.max(4, Math.round(W / 110))).forEach(function (t) {
+      if (t < lo || t > hi) { return; }
+      svg += '<line x1="' + sx(t) + '" x2="' + sx(t) + '" y1="' + T + '" y2="' + (H - B) + '" stroke="#EDF1F5"/><text class="tick" x="' + sx(t) + '" y="' + (H - B + 16) + '" text-anchor="middle">' + fmt(t, 6) + "</text>";
+    });
+    svg += '<text class="tick" x="' + (L + (W - L - R) / 2) + '" y="' + (H - 6) + '" text-anchor="middle" style="font-weight:600">Mean and mean ± 3s' + (S.settings.unit ? " (" + esc(S.settings.unit) + ")" : "") + "</text>";
+    [[r.lsl, "LSL"], [r.usl, "USL"]].forEach(function (s) {
+      if (s[0] == null) { return; }
+      svg += '<line x1="' + sx(s[0]) + '" x2="' + sx(s[0]) + '" y1="' + (T - 6) + '" y2="' + (H - B) + '" stroke="#B42318" stroke-width="1.6"/><text class="tick" x="' + sx(s[0]) + '" y="' + (T - 10) + '" text-anchor="middle" style="fill:#B42318;font-weight:600">' + s[1] + " " + fmt(s[0], 6) + "</text>";
+    });
+    G.forEach(function (g, k) {
+      var c = VCOLOR[g.verdict.key], y = sy(k), a = sx(g.mean - 3 * g.overall.sigma), b = sx(g.mean + 3 * g.overall.sigma);
+      svg += '<text class="tick" x="' + (L - 10) + '" y="' + (y + 4) + '" text-anchor="end" style="font-weight:600;fill:#14263D">' + esc(g.label) + "</text>";
+      svg += '<line class="hbar-line" style="--i:' + k + '" x1="' + a.toFixed(1) + '" x2="' + b.toFixed(1) + '" y1="' + y + '" y2="' + y + '" stroke="' + c + '" stroke-width="3" stroke-opacity=".85"/>';
+      svg += '<line x1="' + a.toFixed(1) + '" x2="' + a.toFixed(1) + '" y1="' + (y - 6) + '" y2="' + (y + 6) + '" stroke="' + c + '" stroke-width="1.4"/><line x1="' + b.toFixed(1) + '" x2="' + b.toFixed(1) + '" y1="' + (y - 6) + '" y2="' + (y + 6) + '" stroke="' + c + '" stroke-width="1.4"/>';
+      svg += '<circle cx="' + sx(g.mean).toFixed(1) + '" cy="' + y + '" r="4.5" fill="#fff" stroke="' + c + '" stroke-width="2"/>';
+    });
+    svg += "</svg>";
+    return svg + '<div class="legend"><span><svg width="18" height="12" aria-hidden="true"><line x1="1" x2="17" y1="6" y2="6" stroke="#14263D" stroke-width="3"/><circle cx="9" cy="6" r="3.5" fill="#fff" stroke="#14263D" stroke-width="1.6"/></svg>Mean ± 3s (overall)</span>' +
+      '<span><svg width="12" height="12" aria-hidden="true"><rect width="12" height="12" rx="2" fill="#1E7A46"/></svg>Acceptable</span><span><svg width="12" height="12" aria-hidden="true"><rect width="12" height="12" rx="2" fill="#8A5A00"/></svg>Conditionally acceptable</span>' +
+      '<span><svg width="12" height="12" aria-hidden="true"><rect width="12" height="12" rx="2" fill="#B42318"/></svg>Not acceptable</span>' +
+      '<span><svg width="12" height="12" aria-hidden="true"><line x1="6" x2="6" y1="0" y2="12" stroke="#B42318" stroke-width="2"/></svg>Spec limits</span></div>';
+  }
+
+  function renderGroupResults() {
+    var r = S.result, v = r.verdict, name = r.group_name, low = name.toLowerCase(), names = low === "cavity" ? "cavities" : low + "s";
+    var nOk = r.groups.filter(function (g) { return g.verdict.key === "acceptable"; }).length, mt = r.means_test;
+    var html = '<section class="panel" aria-labelledby="res-title"><div class="row spread"><div class="head"><span class="eyebrow">Capability by ' + esc(low) + " · verdict on the lowest " + esc(v.index) + '</span><h2 id="res-title">Results</h2></div>' +
+      '<span class="hint">' + esc(S.file.name) + (S.sheet ? " · " + esc(S.sheet) : "") + "</span></div>";
+    html += '<div class="verdict ' + v.key + '"><div><span class="pill ' + v.key + '">' + esc(v.label) + "</span><ul>" +
+      v.reasons.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + '</ul></div><div class="headline"><div class="v">' + fmtFixed(v.value, 2) + "</div><small>Lowest " + esc(v.index) + " · " + esc(name) + " " + esc(r.worst) + "</small></div></div>";
+    html += '<div class="kpis">' +
+      kpi(names.charAt(0).toUpperCase() + names.slice(1) + " acceptable", nOk + " / " + r.groups.length, v.index + " above 1.67") +
+      kpi("All combined · Ppk", fmtFixed(r.combined.overall.cpk, 2), "for reference only; not the verdict") +
+      kpi("Averages differ?", mt ? (mt.significant ? "Yes" : "No") : "–", mt ? "one-way ANOVA, " + (mt.p < 0.001 ? "p < 0.001" : "p = " + fmtP(mt.p)) : "not tested") +
+      kpi("Readings", String(r.combined.n), plural(r.groups.length, low, names)) + "</div>";
+    var notes = r.notes.concat(r.receipt.notes);
+    if (notes.length) { html += '<div class="hint" style="display:flex;flex-direction:column;gap:4px">' + notes.map(function (n) { return "<span>• " + esc(n) + "</span>"; }).join("") + "</div>"; }
+    html += "</section>";
+
+    html += '<section class="panel" aria-labelledby="sp-title"><h3 id="sp-title">Each ' + esc(low) + ' against the spec</h3><div class="chart" style="border:0;padding:0"><div data-chart="spread"></div></div>' +
+      '<p class="hint">An off-center ' + esc(low) + " shows as a bar shifted toward a limit; a wide one as a long bar. The verdict follows the lowest " + esc(low) + ", because a good combined number can hide one bad " + esc(low) + ".</p></section>";
+
+    var unit = S.settings.unit ? " (" + esc(S.settings.unit) + ")" : "";
+    html += '<section class="panel" aria-labelledby="gt-title"><h3 id="gt-title">By ' + esc(low) + '</h3><div class="scroll-x"><table class="num"><thead><tr><th scope="col">' + esc(name) + '</th><th scope="col">n</th><th scope="col">Mean' + unit + '</th><th scope="col">Std dev</th><th scope="col">Pp</th><th scope="col">Ppk</th><th scope="col">Cpk</th><th scope="col">Exp. PPM</th><th scope="col">Verdict</th></tr></thead><tbody>';
+    r.groups.forEach(function (g) {
+      html += "<tr" + (g.label === r.worst ? ' class="hl"' : "") + "><td>" + esc(g.label) + (g.label === r.worst ? ' <span class="tagl">lowest</span>' : "") + "</td><td>" + g.n + "</td><td>" + fmt(g.mean, 6) + "</td><td>" + fmt(g.overall.sigma, 4) + "</td><td>" + fmtFixed(g.overall.cp, 2) + "</td><td>" + fmtFixed(g.overall.cpk, 2) + "</td><td>" + (g.within ? fmtFixed(g.within.cpk, 2) : "–") + "</td><td>" + ppm(g.overall.ppm_total) + '</td><td><span class="vt ' + g.verdict.key + '">' + esc(g.verdict.label) + "</span></td></tr>";
+    });
+    var cb = r.combined.overall;
+    html += '<tr class="total"><td>All combined</td><td>' + r.combined.n + "</td><td>" + fmt(r.combined.mean, 6) + "</td><td>" + fmt(cb.sigma, 4) + "</td><td>" + fmtFixed(cb.cp, 2) + "</td><td>" + fmtFixed(cb.cpk, 2) + "</td><td>–</td><td>" + ppm(cb.ppm_total) + '</td><td class="hint">reference only</td></tr>';
+    html += "</tbody></table></div></section>";
+
+    var rc = r.receipt;
+    html += '<section class="panel" aria-labelledby="rc-title"><h3 id="rc-title">How this was calculated</h3><dl class="receipt">' +
+      dd("Method", rc.method + " (" + rc.standard + ")") +
+      dd("Sample", Object.keys(rc.sample).map(function (k) { return rc.sample[k] + " " + k; }).join(", ")) +
+      dd("Settings", Object.keys(rc.settings).map(function (k) { return k + " = " + (rc.settings[k] == null ? "none" : rc.settings[k]); }).join("; ")) +
+      dd("Each " + low, "The same capability study as a single study, on that " + low + "'s readings only") +
+      (mt ? dd("Averages test", "One-way ANOVA, F(" + mt.df_between + ", " + mt.df_within + ") = " + fmtFixed(mt.f, 2) + ", " + (mt.p < 0.001 ? "p < 0.001" : "p = " + fmtP(mt.p)) + ". Informational; it doesn't change the verdict.") : "") +
+      dd("Verdict rule", "PPAP-style criteria on each " + low + "'s " + v.index + ": above 1.67 acceptable, 1.33 to 1.67 acceptable with customer approval, below 1.33 not acceptable. The study takes the lowest " + low + "'s verdict.") +
+      dd("Engine", "Mensuro engine " + rc.engine_version + ", checked against Montgomery's capability examples and the NIST/SEMATECH one-way ANOVA example") +
+      "</dl></section>";
+
+    html += M.reportPanel([
+      { key: "part_number", label: "Part number", max: 80 },
+      { key: "part_name", label: "Part name" },
+      { key: "characteristic", label: "Characteristic", placeholder: "e.g. Bore diameter" },
+      { key: "specification", label: "Specification", placeholder: specText() },
+      { key: "gage", label: "Gage", placeholder: "Gage used for the readings" },
+      { key: "customer", label: "Customer" },
+      { key: "company", label: "Your company" },
+      { key: "prepared_by", label: "Prepared by", max: 80 },
+      { key: "study_id", label: "Study ID", max: 60 }
+    ]);
+    html += '<div class="row spread"><span class="row"><button type="button" class="btn btn-ghost" id="res-map">← Columns</button><button type="button" class="btn btn-ghost" id="res-settings">Settings</button></span>' +
+      '<button type="button" class="btn btn-dark" id="res-new">New study</button></div>';
+    $("#s-results").innerHTML = html;
+    drawCharts();
+    $("#res-map").addEventListener("click", function () { setStep(2); });
+    $("#res-settings").addEventListener("click", function () { setStep(3); });
+    $("#res-new").addEventListener("click", function () { S.file = null; S.insp = null; S.result = null; setStep(1); });
+    M.bindReport({
+      path: "/v1/capability/groups/report",
+      body: function () { return { filename: S.file.name, content: S.file.content, sheet: S.sheet, mapping: mappingBody(), settings: S.settings }; },
+      filename: function (val) { return "Capability by " + low + (val.part_number ? " " + M.safeName(val.part_number) : "") + (val.characteristic ? " " + M.safeName(val.characteristic) : "") + ".pdf"; }
+    });
+    function kpi(k, val, s2) { return '<div class="kpi"><div class="k">' + esc(k) + '</div><div class="v">' + esc(val) + '</div><div class="s">' + esc(s2) + "</div></div>"; }
+    function dd(k, val) { return "<dt>" + esc(k) + "</dt><dd>" + esc(val) + "</dd>"; }
   }
 
   // ----------------------------------------------------------------- results

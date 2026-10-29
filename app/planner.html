@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Study planner · Mensuro preview</title>
+<meta name="theme-color" content="#14263D">
+<link rel="icon" href="../assets/mensuro-favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="stylesheet" href="../assets/fonts.css?v=20261027a">
+<link rel="stylesheet" href="app.css?v=20261029a">
+</head>
+<body>
+
+<div class="band band-ink">
+  <div class="wrap">
+    <header class="app-top">
+      <div class="row" style="gap:18px">
+        <a class="brand" href="../index.html" aria-label="Mensuro home"><img src="../assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148"></a>
+        <nav class="app-nav" aria-label="Studies"><a href="gage-rr.html">Gage R&amp;R</a><a href="capability.html">Capability</a><a href="type1.html">Type 1</a><a href="planner.html" aria-current="page">Planner</a></nav>
+      </div>
+      <div class="right"><span class="badge">Private preview</span></div>
+    </header>
+  </div>
+</div>
+
+<main class="band band-paper">
+  <div class="wrap app-main">
+
+    <section class="panel" aria-labelledby="pl-title">
+      <div class="head">
+        <span class="eyebrow">Before you measure anything</span>
+        <h2 id="pl-title">Study planner</h2>
+        <p class="lede">How many parts, operators and readings each study needs, and where each number comes from. Nothing here is sent anywhere.</p>
+      </div>
+      <div class="src-key">
+        <span><span class="src aiag">AIAG</span> The AIAG reference manuals (MSA 4th ed., PPAP 4th ed.)</span>
+        <span><span class="src ford">Ford</span> A customer-specific requirement: Ford's Specifics for PPAP (Jan 2025)</span>
+        <span><span class="src bosch">Bosch</span> Bosch Booklet No. 10, measurement and test process capability</span>
+        <span><span class="src gen">Practice</span> Common practice that no manual makes a requirement</span>
+      </div>
+      <p class="hint">Your customer's requirements win where they differ. Ford's are shown because they are public and specific; many customers set similar ones.</p>
+      <div class="seg plan-tabs" role="tablist" aria-label="Study type">
+        <button type="button" role="tab" id="tab-grr" aria-controls="p-grr" aria-selected="true">Gage R&amp;R</button>
+        <button type="button" role="tab" id="tab-attr" aria-controls="p-attr" aria-selected="false">Attribute gage</button>
+        <button type="button" role="tab" id="tab-t1" aria-controls="p-t1" aria-selected="false">Type 1</button>
+        <button type="button" role="tab" id="tab-cap" aria-controls="p-cap" aria-selected="false">Capability</button>
+        <button type="button" role="tab" id="tab-reuse" aria-controls="p-reuse" aria-selected="false">Reusing a study</button>
+      </div>
+    </section>
+
+    <!-- variable Gage R&R -->
+    <section class="panel plan" id="p-grr" role="tabpanel" aria-labelledby="tab-grr">
+      <div class="head"><h3>Variable Gage R&amp;R (crossed)</h3>
+        <p class="hint">Each operator measures each part several times, in random order, without seeing earlier readings.</p></div>
+      <div class="plan-grid">
+        <div class="plan-in">
+          <div class="spec">
+            <div class="field"><label for="g-parts">Parts</label><input id="g-parts" inputmode="numeric" value="10"></div>
+            <div class="field"><label for="g-ops">Operators</label><input id="g-ops" inputmode="numeric" value="3"></div>
+            <div class="field"><label for="g-trials">Trials</label><input id="g-trials" inputmode="numeric" value="3"></div>
+          </div>
+          <div class="field" style="max-width:210px"><label for="g-sec">Seconds per reading <span class="hint">(optional)</span></label><input id="g-sec" inputmode="decimal" placeholder="e.g. 30"></div>
+        </div>
+        <div class="plan-out" id="g-out" aria-live="polite"></div>
+      </div>
+      <ul class="rules">
+        <li><span class="src aiag">AIAG</span> The MSA manual's worked example uses <b>10 parts, 3 appraisers and 3 trials</b>. Parts should come from the process and cover its whole operating range.</li>
+        <li><span class="src ford">Ford</span> At a minimum <b>10 parts, 3 operators, 3 trials</b>, using the <b>ANOVA</b> method. Parts must represent a production run with all known sources of variation and use the full range of part-to-part variation. <span class="cite">§2.2.8</span></li>
+        <li><span class="src aiag">AIAG</span> <b>%GRR</b> under 10% acceptable; 10% to 30% may be acceptable depending on the application; over 30% not acceptable. <b>ndc</b> of 5 or more.</li>
+        <li><span class="src ford">Ford</span> Report %GRR as both % of study variation and % of tolerance. Under 10% of tolerance acceptable; 10% to 30% needs the site STA engineer; over 30% unacceptable. <span class="cite">§2.2.8</span></li>
+        <li><span class="src ford">Ford</span> Rule of thumb: the gage resolution should be at least one-tenth of the range. Hold parts in production-intent fixtures. <span class="cite">§2.2.8</span></li>
+        <li><span class="src gen">Practice</span> Pick parts by measuring a batch first and choosing ones spread across it. Ten parts bunched in the middle make ndc and %study variation look worse than the gage really is.</li>
+      </ul>
+      <p class="plan-next">Then: <a href="gage-rr.html">run the Gage R&amp;R →</a></p>
+    </section>
+
+    <!-- attribute -->
+    <section class="panel plan" id="p-attr" role="tabpanel" aria-labelledby="tab-attr" hidden>
+      <div class="head"><h3>Attribute gage (go/no-go, visual)</h3>
+        <p class="hint">Two common designs. The analytic method needs far fewer bad parts, but only parts close to the limit and a variable gage to measure them.</p></div>
+      <div class="methods" role="radiogroup" aria-label="Attribute study design">
+        <label class="method"><input type="radio" name="a-design" value="mix" checked><b>Agreement study (50 × 3 × 3)</b><span>Many parts, judged by several appraisers. Kappa and effectiveness. Needs a known mix of good, borderline and bad parts.</span></label>
+        <label class="method"><input type="radio" name="a-design" value="analytic"><b>Analytic method (8 parts × 20 trials)</b><span>A few parts with known values near one limit, each checked 20 times. Estimates the gage's bias and repeatability at that limit.</span></label>
+      </div>
+      <div class="plan-grid" data-design="mix">
+        <div class="plan-in">
+          <div class="spec">
+            <div class="field"><label for="a-parts">Parts</label><input id="a-parts" inputmode="numeric" value="50"></div>
+            <div class="field"><label for="a-ops">Appraisers</label><input id="a-ops" inputmode="numeric" value="3"></div>
+            <div class="field"><label for="a-trials">Trials</label><input id="a-trials" inputmode="numeric" value="3"></div>
+          </div>
+        </div>
+        <div class="plan-out" id="a-out" aria-live="polite"></div>
+      </div>
+      <ul class="rules" data-design="mix">
+        <li><span class="src ford">Ford</span> At a minimum <b>50 parts, 3 operators, 3 trials</b>. Part mix: <b>25% near the lower limit</b> and <b>25% near the upper limit</b> (on both sides of each), <b>30%</b> across the expected process variation, and <b>10% outside each gauge limit</b>. Measure every part independently with a variable gage (a CMM or other known standard) first. <span class="cite">§2.2.8</span></li>
+        <li><span class="src ford">Ford</span> All kappa values (between appraisers, within each appraiser, and each appraiser against the standard) should be greater than <b>0.75</b>, and the gauge must reject every part outside the specification. <span class="cite">§2.2.8</span></li>
+        <li><span class="src aiag">AIAG</span> The MSA manual's attribute example uses 50 parts, 3 appraisers and 3 trials. Kappa above 0.75 is read as good to excellent agreement, below 0.40 as poor. For each appraiser, effectiveness of 90% or more, a miss rate of 2% or less and a false alarm rate of 5% or less are acceptable.</li>
+        <li><span class="src gen">Practice</span> The out-of-spec parts usually come from setup scrap or quarantined stock, measured and labeled first. Code the parts so appraisers can't recognise them, and randomise the order each trial.</li>
+      </ul>
+      <div class="plan-grid" data-design="analytic" hidden>
+        <div class="plan-in">
+          <fieldset class="reuse-spec"><legend class="label">Limits to study</legend>
+            <div class="seg" role="radiogroup" aria-label="Limits to study">
+              <label><input type="radio" name="a-limits" value="1" checked>One limit</label>
+              <label><input type="radio" name="a-limits" value="2">Both limits</label>
+            </div>
+          </fieldset>
+        </div>
+        <div class="plan-out" id="an-out" aria-live="polite"></div>
+      </div>
+      <ul class="rules" data-design="analytic" hidden>
+        <li><span class="src aiag">AIAG</span> At least <b>8 parts</b> with known reference values at roughly equal steps across the region around the limit, each checked <b>20 times</b>. The part furthest outside is accepted 0 times and the part furthest inside 20 times; the 6 or more parts between are accepted 1 to 19 times. Each limit is studied separately. <span class="cite">MSA 4th ed., as summarised by Minitab</span></li>
+        <li><span class="src gen">Practice</span> This answers "can I avoid making bad parts?" partly: you still need a part or two just beyond the limit, but not gross rejects, and not 10% of a 50-part sample on each side.</li>
+        <li><span class="src gen">Practice</span> If the feature can be measured with a variable gage at all, a variable Gage R&amp;R needs no bad parts and tells you more.</li>
+        <li><span class="src gen">Practice</span> Check with your customer first: some (Ford among them) name the 50 × 3 × 3 agreement study as their minimum.</li>
+      </ul>
+      <p class="plan-next">Attribute studies aren't in Mensuro yet. The variable Gage R&amp;R and Type 1 studies are.</p>
+    </section>
+
+    <!-- Type 1 -->
+    <section class="panel plan" id="p-t1" role="tabpanel" aria-labelledby="tab-t1" hidden>
+      <div class="head"><h3>Type 1 gage study</h3>
+        <p class="hint">One operator measures one reference part (with a calibrated value) repeatedly. It checks the gage's bias and repeatability before a Gage R&amp;R.</p></div>
+      <div class="plan-grid">
+        <div class="plan-in">
+          <div class="spec">
+            <div class="field"><label for="t-n">Readings</label><input id="t-n" inputmode="numeric" value="50"></div>
+            <div class="field"><label for="t-tol">Tolerance</label><input id="t-tol" inputmode="decimal" placeholder="e.g. 0.06"></div>
+            <div class="field"><label for="t-res">Gage resolution</label><input id="t-res" inputmode="decimal" placeholder="e.g. 0.001"></div>
+          </div>
+        </div>
+        <div class="plan-out" id="t-out" aria-live="polite"></div>
+      </div>
+      <ul class="rules">
+        <li><span class="src bosch">Bosch</span> <b>50 repeated readings</b> of one reference part (at least 25), by one operator, in a short time.</li>
+        <li><span class="src bosch">Bosch</span> <b>Cg and Cgk of 1.33 or more</b>, using 20% of the tolerance (Cg = 0.2T / 6s, Cgk = (0.1T − |bias|) / 3s). The bias is tested with a t-test. Resolution should be <b>5% of the tolerance or finer</b>.</li>
+        <li><span class="src gen">Practice</span> Choose a reference part close to the middle of the tolerance and use its calibration certificate value as the reference. Load and unload it between readings, as in normal use.</li>
+      </ul>
+      <p class="plan-next">Then: <a href="type1.html">run the Type 1 study →</a></p>
+    </section>
+
+    <!-- capability -->
+    <section class="panel plan" id="p-cap" role="tabpanel" aria-labelledby="tab-cap" hidden>
+      <div class="head"><h3>Initial process capability</h3>
+        <p class="hint">Run the measurement system study first: capability numbers from an unproven gage can't be trusted.</p></div>
+      <div class="plan-grid">
+        <div class="plan-in">
+          <div class="spec">
+            <div class="field"><label for="c-k">Subgroups</label><input id="c-k" inputmode="numeric" value="25"></div>
+            <div class="field"><label for="c-n">Parts per subgroup</label><input id="c-n" inputmode="numeric" value="5"></div>
+            <div class="field"><label for="c-cav">Cavities / streams</label><input id="c-cav" inputmode="numeric" value="1"></div>
+          </div>
+        </div>
+        <div class="plan-out" id="c-out" aria-live="polite"></div>
+      </div>
+      <ul class="rules">
+        <li><span class="src ford">Ford</span> At least <b>25 subgroups of at least 5</b> consecutive parts, for a minimum of <b>125 measurements</b> from a run of at least 300 parts, spaced evenly through it. Complete the MSA first. <span class="cite">§2.2.11.1</span></li>
+        <li><span class="src ford">Ford</span> The data must include the full range of expected variation: <b>all tools, all cavities, all streams, all shifts</b>. Parts are measured from every cavity. <b>Ppk of 1.67 or more</b>, from a statistically stable data set. <span class="cite">§2.2.9, §2.2.11.1</span></li>
+        <li><span class="src aiag">AIAG</span> PPAP acceptance for initial process studies: index above 1.67 acceptable; 1.33 to 1.67 may be acceptable with customer approval; below 1.33 not acceptable.</li>
+        <li><span class="src gen">Practice</span> For a multi-cavity tool, judge each cavity on its own: one cavity running off-center can hide inside a combined number that looks fine. Plan enough readings per cavity to judge it, and record the cavity number with every reading.</li>
+        <li><span class="src gen">Practice</span> If a cavity sits off-center but tool wear can only move it away from the near limit, write that up as an engineering justification on the report rather than leaving the reviewer to guess.</li>
+      </ul>
+      <p class="plan-next">Then: <a href="capability.html">run capability (map a cavity column for per-cavity results) →</a></p>
+    </section>
+
+    <!-- reuse -->
+    <section class="panel plan" id="p-reuse" role="tabpanel" aria-labelledby="tab-reuse" hidden>
+      <div class="head"><h3>Reusing a Gage R&amp;R on another part</h3>
+        <p class="hint">Common, and often fine. The trouble starts when the other part's tolerance is tighter, or the gage was set up differently.</p></div>
+      <ul class="rules">
+        <li><span class="src ford">Ford</span> %GRR is reported against each characteristic's tolerance, and the parts must represent a production run. Ford's PPAP specifics don't describe reusing a study across parts. <span class="cite">§2.2.8</span></li>
+        <li><span class="src gen">Practice</span> <b>Recheck the verdict at the new tolerance.</b> Only %GRR of tolerance changes: halve the tolerance and the same gage error takes up twice as much of it.</li>
+        <li><span class="src gen">Practice</span> %GRR of study variation and ndc describe the parts in the original study. They only carry over if the new part's process varies about as much.</li>
+      </ul>
+      <div class="checkcard">
+        <h4>Before accepting a reused study, confirm</h4>
+        <ol>
+          <li>Same gage, fixture and measurement method as the original study.</li>
+          <li>Same type of feature, of a similar size, as the original part.</li>
+          <li>The study's parts cover the range the new part's process is expected to produce.</li>
+          <li>Same measurement location and conditions (temperature, operators, training).</li>
+          <li>The gage hasn't been repaired, modified or re-programmed since the study.</li>
+        </ol>
+        <p class="hint">Any "no" usually means a new study.</p>
+      </div>
+      <p class="plan-next">In Mensuro: run the original study in <a href="gage-rr.html">Gage R&amp;R</a>, then use "Using this study for another part?" on the results to recheck it at the new tolerance and print a reuse record.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="src-title">
+      <h3 id="src-title">Sources</h3>
+      <ul class="sources">
+        <li>Ford Motor Company, <a href="https://www.iatfglobaloversight.org/wp/wp-content/uploads/2025/02/Ford-Specifics-for-PPAP_Jan-2025-FINAL.pdf" rel="noopener" target="_blank">Customer Specific Requirements for PPAP, 4th edition</a> ("Ford Specifics for PPAP"), effective 6 February 2025, sections 2.2.8, 2.2.9 and 2.2.11.1. Published by the IATF.</li>
+        <li>AIAG, <i>Measurement Systems Analysis</i> reference manual, 4th edition (2010): variable and attribute studies, kappa and effectiveness guidelines, analytic method.</li>
+        <li>AIAG, <i>Production Part Approval Process</i> manual, 4th edition (2006): initial process study acceptance criteria.</li>
+        <li>Minitab Support, <a href="https://support.minitab.com/en-us/minitab/help-and-how-to/quality-and-process-improvement/measurement-system-analysis/supporting-topics/other-gage-studies-and-measures/data-requirements-for-an-attribute-gage-study/" rel="noopener" target="_blank">Data requirements for the AIAG method for an attribute gage study</a>.</li>
+        <li>Robert Bosch GmbH, <i>Booklet No. 10: Capability of Measurement and Test Processes</i> (Quality Management in the Bosch Group), Procedure 1.</li>
+      </ul>
+      <p class="hint">The AIAG manuals are sold by AIAG and aren't quoted at length here. Ford's text is quoted from the published PDF.</p>
+    </section>
+
+  </div>
+</main>
+
+<script src="planner.js?v=20261029a"></script>
+</body>
+</html>
