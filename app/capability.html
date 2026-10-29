@@ -9,7 +9,7 @@
 <link rel="icon" href="../assets/mensuro-favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="stylesheet" href="../assets/fonts.css?v=20261027a">
-<link rel="stylesheet" href="app.css?v=20261027a">
+<link rel="stylesheet" href="app.css?v=20261029a">
 </head>
 <body>
 
@@ -18,7 +18,7 @@
     <header class="app-top">
       <div class="row" style="gap:18px">
         <a class="brand" href="../index.html" aria-label="Mensuro home"><img src="../assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148"></a>
-        <nav class="app-nav" aria-label="Studies"><a href="gage-rr.html">Gage R&amp;R</a><a href="capability.html" aria-current="page">Capability</a><a href="type1.html">Type 1</a></nav>
+        <nav class="app-nav" aria-label="Studies"><a href="gage-rr.html">Gage R&amp;R</a><a href="capability.html" aria-current="page">Capability</a><a href="type1.html">Type 1</a><a href="planner.html">Planner</a></nav>
       </div>
       <div class="right">
         <span class="badge">Private preview</span>
@@ -64,9 +64,10 @@
         <input id="file" type="file" accept=".csv,.tsv,.txt,.xlsx,.xlsm,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </label>
       <div class="samples">
-        <span>No file handy? Try the example (simulated bore diameters, 20 subgroups of 5):</span>
+        <span>No file handy? Try an example (simulated bore diameters):</span>
         <button type="button" class="chip-btn" data-sample="samples/capability-example-subgroups.xlsx">x̄–R sheet (.xlsx)</button>
         <button type="button" class="chip-btn" data-sample="samples/capability-example-column.csv">One column (.csv)</button>
+        <button type="button" class="chip-btn" data-sample="samples/capability-example-cavities.csv">4-cavity mold (.csv)</button>
       </div>
       <p class="busy" id="upload-busy" hidden>Reading your file…</p>
       <p class="error-box" id="upload-error" role="alert" hidden></p>
@@ -138,6 +139,14 @@
         </div>
         <p class="hint">Both are always calculated and shown; this only picks which one the verdict uses. Acceptance: above 1.67, 1.33 to 1.67 with customer approval, below 1.33 not acceptable.</p>
       </fieldset>
+      <fieldset id="cavity-settings" style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:10px" hidden>
+        <legend class="label" style="font-weight:700;font-size:16px;margin-bottom:10px">Capability by cavity</legend>
+        <div class="spec">
+          <div class="field"><label for="group-name">Each group is a</label>
+            <select id="group-name"><option>Cavity</option><option>Spindle</option><option>Nest</option><option>Fixture</option><option>Station</option><option>Die</option></select></div>
+        </div>
+        <p class="hint">Each group gets its own capability study and the verdict is the lowest one, so one off-center cavity can't hide behind a good combined number. All groups combined is shown for reference.</p>
+      </fieldset>
       <p class="error-box" id="run-error" role="alert" hidden></p>
       <div class="row spread">
         <button type="button" class="btn btn-ghost" id="back-map">← Columns</button>
@@ -152,8 +161,8 @@
   </div>
 </main>
 
-<script src="app-config.js?v=20261027a"></script>
-<script src="core.js?v=20261027a"></script>
-<script src="capability.js?v=20261027a"></script>
+<script src="app-config.js?v=20261029a"></script>
+<script src="core.js?v=20261029a"></script>
+<script src="capability.js?v=20261029a"></script>
 </body>
 </html>

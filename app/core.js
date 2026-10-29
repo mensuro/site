@@ -288,6 +288,9 @@ window.MensuroCore = function (opts) {
       '<div class="field logo-field"><span class="label">Your logo <span class="hint">(optional · PNG, JPG or SVG)</span></span>' +
       '<div class="row" style="gap:10px"><label class="btn btn-ghost btn-sm" for="ri-logo">Choose logo</label><input id="ri-logo" type="file" accept=".png,.jpg,.jpeg,.svg,image/png,image/jpeg,image/svg+xml" class="visually-hidden">' +
       '<span class="hint" id="ri-logo-name">' + (d.logo ? esc(d.logo_name || "Saved logo") + ' · <button type="button" class="linklike" id="ri-logo-clear">remove</button>' : "None") + "</span></div></div>" +
+      '<div class="field span-all"><label for="ri-justification">Engineering justification <span class="hint">(optional)</span></label>' +
+      '<textarea id="ri-justification" name="justification" rows="3" maxlength="2000" aria-describedby="ri-justification-help"></textarea>' +
+      '<small id="ri-justification-help">For anything a reviewer should know, e.g. why a conditional result is acceptable, or why a cavity sits off-center but tool wear moves it away from the limit. It prints after the summary, marked as your note, not a Mensuro calculation. <span id="ri-justification-count">0 / 2000</span></small></div>' +
       '</form><p class="error-box" id="report-error" role="alert" hidden></p>' +
       '<div class="row spread"><span class="hint">Remembered on this device: company, customer, prepared by, paper and logo.</span>' +
       '<span class="row"><span class="busy" id="report-busy" hidden>Building your report…</span>' +
@@ -305,9 +308,11 @@ window.MensuroCore = function (opts) {
     }
     function values() {
       var out = {};
-      $$("input[name], select[name]", form).forEach(function (el) { out[el.name] = el.value.trim(); });
+      $$("input[name], select[name], textarea[name]", form).forEach(function (el) { out[el.name] = el.value.trim(); });
       return out;
     }
+    var note = $("#ri-justification");
+    note.addEventListener("input", function () { $("#ri-justification-count").textContent = note.value.length + " / 2000"; });
     function save() {
       var v = values(), keep = {};
       KEEP.forEach(function (k) { if (v[k]) { keep[k] = v[k]; } });
