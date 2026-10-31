@@ -388,3 +388,60 @@ details.cust summary { cursor: pointer; font-weight: 700; font-size: 15px; }
 details.cust[open] summary { margin-bottom: 8px; }
 details.cust .rules { margin-top: 10px; font-size: 14.5px; }
 details.cust summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+
+/* ---- app home */
+.hub-hero { padding: 26px 0 40px; max-width: 720px; }
+.hub-hero h1 { font-size: clamp(30px, 4.2vw, 42px); line-height: 1.12; font-weight: 700; }
+.hub-hero p { margin-top: 10px; font-size: 17px; color: var(--on-dark-2); }
+.hub { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 720px) { .hub { grid-template-columns: 1fr; } }
+.hub-card { display: flex; flex-direction: column; gap: 8px; background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 24px; text-decoration: none; color: var(--text); transition: border-color .15s, box-shadow .15s, transform .15s; }
+.hub-card:hover { border-color: var(--teal-deep); box-shadow: 0 6px 22px rgba(20,38,61,.08); transform: translateY(-2px); }
+.hub-card:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.hub-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--teal-tint); color: var(--teal-deep); display: grid; place-items: center; }
+.hub-icon svg { width: 24px; height: 24px; }
+.hub-k { font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal-deep); margin-top: 6px; }
+.hub-card b { font-family: var(--display); font-size: 20px; line-height: 1.25; letter-spacing: -0.01em; }
+.hub-d { font-size: 15px; color: var(--muted); }
+.hub-go { margin-top: auto; padding-top: 8px; font-weight: 700; color: var(--teal-deep); }
+.hub-card.plan { background: var(--paper); border-style: dashed; }
+.hub-foot { display: flex; flex-direction: column; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { .hub-card { transition: none; } .hub-card:hover { transform: none; } }
+
+/* ---- Sigmi preview */
+.sigmi-fab { position: fixed; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); z-index: 50; display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 18px 0 8px; border: 0; border-radius: 26px; background: var(--ink); color: var(--on-dark); font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 8px 24px rgba(20,38,61,.25); }
+.sigmi-fab img { width: 36px; height: 36px; border-radius: 50%; }
+.sigmi-fab:hover { background: var(--ink-2); }
+.sigmi-fab:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+.sigmi { position: fixed; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); z-index: 51; width: min(400px, calc(100vw - 32px)); max-height: min(640px, calc(100vh - 36px)); display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 18px 48px rgba(20,38,61,.22); overflow: hidden; }
+.sigmi[hidden] { display: none; }
+@media (max-width: 520px) { .sigmi { right: 8px; left: 8px; bottom: 8px; width: auto; max-height: calc(100vh - 16px); } }
+.sigmi-head { display: flex; align-items: center; gap: 10px; padding: 12px 12px 12px 14px; background: var(--ink); color: var(--on-dark); }
+.sigmi-head img { border-radius: 50%; }
+.sigmi-head div { display: flex; flex-direction: column; line-height: 1.25; flex: 1; }
+.sigmi-head b { font-family: var(--display); font-size: 16px; }
+.sigmi-tag { font-size: 12px; color: var(--teal); font-weight: 600; }
+.sigmi-x { width: 36px; height: 36px; border: 0; border-radius: 10px; background: transparent; color: var(--on-dark); font-size: 24px; line-height: 1; cursor: pointer; }
+.sigmi-x:hover { background: var(--ink-2); }
+.sigmi-x:focus-visible { outline: 3px solid var(--teal); }
+.sigmi-log { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 120px; background: var(--paper); }
+.sigmi-msg { max-width: 88%; padding: 10px 13px; border-radius: 14px; font-size: 14.5px; line-height: 1.5; }
+.sigmi-msg.bot { align-self: flex-start; background: var(--white); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.sigmi-msg.you { align-self: flex-end; background: var(--ink); color: var(--on-dark); border-bottom-right-radius: 4px; }
+.sigmi-msg a { color: var(--teal-deep); font-weight: 700; }
+.sigmi-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); }
+.sigmi-chip { border: 1.5px solid var(--teal-deep); background: var(--white); color: var(--teal-deep); border-radius: 18px; padding: 7px 12px; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; text-align: left; }
+.sigmi-chip:hover { background: var(--teal-tint); }
+.sigmi-chip:focus-visible { outline: 3px solid var(--teal); outline-offset: 1px; }
+.sigmi-ask { display: flex; gap: 8px; padding: 10px 14px 6px; border-top: 1px solid var(--line); }
+.sigmi-ask textarea { flex: 1; resize: none; border: 1px solid #C9D3E0; border-radius: 10px; padding: 8px 10px; font: inherit; font-size: 14.5px; min-width: 0; }
+.sigmi-ask textarea:focus-visible { outline: 3px solid var(--teal); outline-offset: 1px; }
+.sigmi-send { border: 0; border-radius: 10px; background: var(--ink); color: var(--on-dark); font: inherit; font-weight: 700; font-size: 14px; padding: 0 14px; cursor: pointer; }
+.sigmi-send:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.sigmi-note { font-size: 12px; color: var(--muted); padding: 0 14px 12px; line-height: 1.4; }
+@media print { .sigmi, .sigmi-fab { display: none !important; } }
+@media (max-width: 520px) {
+  .sigmi-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
+  .sigmi-chip { flex: none; white-space: nowrap; }
+}
+.app-main { padding-bottom: 104px; }  /* room for the Ask Sigmi button */
