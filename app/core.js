@@ -38,6 +38,7 @@ window.MensuroCore = function (opts) {
   var params = new URLSearchParams(location.search);
   var apiBase = (params.get("api") || (window.MENSURO_APP && MENSURO_APP.apiBase) || "").replace(/\/+$/, "");
   var S = { code: store.get("mensuro_access"), step: 1, file: null, sheet: null, insp: null, armed: null, result: null };
+  window.MensuroState = S;  // read-only view for the Sigmi preview (sigmi.js)
 
   function request(method, path, body) {
     if (!apiBase) { return Promise.reject(new Error("The preview server isn't connected yet.")); }
@@ -79,6 +80,7 @@ window.MensuroCore = function (opts) {
   function setStep(n) {
     var prev = S.step;
     S.step = n;
+    setTimeout(function () { document.dispatchEvent(new CustomEvent("mensuro:step", { detail: n })); }, 0);
     var gateWasOpen = !$("#gate").hidden;
     $("#gate").hidden = true;
     Object.keys(sections).forEach(function (k) { $(sections[k]).hidden = Number(k) !== n; });
