@@ -39,5 +39,17 @@
   });
   $("#forget").addEventListener("click", function () { store.del("mensuro_access"); $("#code").value = ""; show(false); });
 
+  // An invite link can carry the code (mensuro.tech/app/?code=...): check it, keep it on this
+  // device, and take it out of the address bar so it isn't shared by accident.
+  var linkCode = (params.get("code") || "").trim();
+  if (linkCode) {
+    params.delete("code");
+    var rest = params.toString();
+    try { history.replaceState(null, "", location.pathname + (rest ? "?" + rest : "") + location.hash); } catch (e) { /* fine */ }
+    $("#code").value = linkCode;
+    show(false);
+    $("#gate-form").requestSubmit ? $("#gate-form").requestSubmit() : $("#gate-form").dispatchEvent(new Event("submit", { cancelable: true }));
+    return;
+  }
   show(!!store.get("mensuro_access"));
 })();
