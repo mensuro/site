@@ -423,16 +423,28 @@
       '<span><svg width="12" height="12" aria-hidden="true"><line x1="6" x2="6" y1="0" y2="12" stroke="#B42318" stroke-width="2"/></svg>Spec limits</span></div>';
   }
 
+  function stableCell(st) {
+    if (!st) { return "–"; }
+    if (!st.checked) { return '<span class="hint" title="' + esc(st.reason || "") + '">not checked</span>'; }
+    if (st.in_control) { return "Yes"; }
+    return '<b style="color:#B42318">No</b> <span class="hint">subgroup' + (st.out.length === 1 ? " " : "s ") + esc(st.out.join(", ")) + "</span>";
+  }
+
   function renderGroupResults() {
     var r = S.result, v = r.verdict, name = r.group_name, low = name.toLowerCase(), names = low === "cavity" ? "cavities" : low + "s";
     var nOk = r.groups.filter(function (g) { return g.verdict.key === "acceptable"; }).length, mt = r.means_test;
+    // Expected PPM uses the same spread as the verdict index (within σ for Cpk, overall σ for Ppk).
+    var basis = r.ppm_basis || "overall", oneCurve = r.combined.one_curve_valid !== false;
+    var gPpm = function (g) { return g.expected_ppm != null ? g.expected_ppm : g.overall.ppm_total; };
+    var cPpm = r.combined.expected_ppm != null ? r.combined.expected_ppm : r.combined.overall.ppm_total;
     var html = '<section class="panel" aria-labelledby="res-title"><div class="row spread"><div class="head"><span class="eyebrow">Capability by ' + esc(low) + " · verdict on the lowest " + esc(v.index) + '</span><h2 id="res-title">Results</h2></div>' +
       '<span class="hint">' + esc(S.file.name) + (S.sheet ? " · " + esc(S.sheet) : "") + "</span></div>";
     html += '<div class="verdict ' + v.key + '"><div><span class="pill ' + v.key + '">' + esc(v.label) + "</span><ul>" +
       v.reasons.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + '</ul></div><div class="headline"><div class="v">' + fmtFixed(v.value, 2) + "</div><small>Lowest " + esc(v.index) + " · " + esc(name) + " " + esc(r.worst) + "</small></div></div>";
     html += '<div class="kpis">' +
       kpi(names.charAt(0).toUpperCase() + names.slice(1) + " acceptable", nOk + " / " + r.groups.length, v.index + " above 1.67") +
-      kpi("All combined · Ppk", fmtFixed(r.combined.overall.cpk, 2), "for reference only; not the verdict") +
+      (oneCurve ? kpi("All combined · Ppk", fmtFixed(r.combined.overall.cpk, 2), "for reference only; not the verdict")
+        : kpi("All combined · Exp. PPM", ppm(cPpm), "mix of the " + names + "' curves; reference only")) +
       kpi("Averages differ?", mt ? (mt.significant ? "Yes" : "No") : "–", mt ? "one-way ANOVA, " + (mt.p < 0.001 ? "p < 0.001" : "p = " + fmtP(mt.p)) : "not tested") +
       kpi("Readings", String(r.combined.n), plural(r.groups.length, low, names)) + "</div>";
     var notes = r.notes.concat(r.receipt.notes);
@@ -443,13 +455,18 @@
       '<p class="hint">An off-center ' + esc(low) + " shows as a bar shifted toward a limit; a wide one as a long bar. The verdict follows the lowest " + esc(low) + ", because a good combined number can hide one bad " + esc(low) + ".</p></section>";
 
     var unit = S.settings.unit ? " (" + esc(S.settings.unit) + ")" : "";
-    html += '<section class="panel" aria-labelledby="gt-title"><h3 id="gt-title">By ' + esc(low) + '</h3><div class="scroll-x"><table class="num"><thead><tr><th scope="col">' + esc(name) + '</th><th scope="col">n</th><th scope="col">Mean' + unit + '</th><th scope="col">Std dev</th><th scope="col">Pp</th><th scope="col">Ppk</th><th scope="col">Cpk</th><th scope="col">Exp. PPM</th><th scope="col">Verdict</th></tr></thead><tbody>';
+    html += '<section class="panel" aria-labelledby="gt-title"><h3 id="gt-title">By ' + esc(low) + '</h3><div class="scroll-x"><table class="num"><thead><tr><th scope="col">' + esc(name) + '</th><th scope="col">n</th><th scope="col">Mean' + unit + '</th><th scope="col">Std dev</th><th scope="col">Pp</th><th scope="col">Ppk</th><th scope="col">Cpk</th><th scope="col">Exp. PPM <span class="th-sub">(' + basis + ' σ)</span></th><th scope="col">Stable?</th><th scope="col">Verdict</th></tr></thead><tbody>';
     r.groups.forEach(function (g) {
-      html += "<tr" + (g.label === r.worst ? ' class="hl"' : "") + "><td>" + esc(g.label) + (g.label === r.worst ? ' <span class="tagl">lowest</span>' : "") + "</td><td>" + g.n + "</td><td>" + fmt(g.mean, 6) + "</td><td>" + fmt(g.overall.sigma, 4) + "</td><td>" + fmtFixed(g.overall.cp, 2) + "</td><td>" + fmtFixed(g.overall.cpk, 2) + "</td><td>" + (g.within ? fmtFixed(g.within.cpk, 2) : "–") + "</td><td>" + ppm(g.overall.ppm_total) + '</td><td><span class="vt ' + g.verdict.key + '">' + esc(g.verdict.label) + "</span></td></tr>";
+      html += "<tr" + (g.label === r.worst ? ' class="hl"' : "") + "><td>" + esc(g.label) + (g.label === r.worst ? ' <span class="tagl">lowest</span>' : "") + "</td><td>" + g.n + "</td><td>" + fmt(g.mean, 6) + "</td><td>" + fmt(g.overall.sigma, 4) + "</td><td>" + fmtFixed(g.overall.cp, 2) + "</td><td>" + fmtFixed(g.overall.cpk, 2) + "</td><td>" + (g.within ? fmtFixed(g.within.cpk, 2) : "–") + "</td><td>" + ppm(gPpm(g)) + "</td><td>" + stableCell(g.stability) + '</td><td><span class="vt ' + g.verdict.key + '">' + esc(g.verdict.label) + "</span></td></tr>";
     });
     var cb = r.combined.overall;
-    html += '<tr class="total"><td>All combined</td><td>' + r.combined.n + "</td><td>" + fmt(r.combined.mean, 6) + "</td><td>" + fmt(cb.sigma, 4) + "</td><td>" + fmtFixed(cb.cp, 2) + "</td><td>" + fmtFixed(cb.cpk, 2) + "</td><td>–</td><td>" + ppm(cb.ppm_total) + '</td><td class="hint">reference only</td></tr>';
-    html += "</tbody></table></div></section>";
+    html += '<tr class="total"><td>All combined</td><td>' + r.combined.n + "</td><td>" + fmt(r.combined.mean, 6) + "</td><td>" + fmt(cb.sigma, 4) + "</td><td>" + (oneCurve ? fmtFixed(cb.cp, 2) : "–") + "</td><td>" + (oneCurve ? fmtFixed(cb.cpk, 2) : "–") + "</td><td>–</td><td>" + ppm(cPpm) + '</td><td></td><td class="hint">reference only</td></tr>';
+    html += "</tbody></table></div>";
+    var both = r.groups.map(function (g) { return esc(g.label) + ": within " + (g.within ? ppm(g.within.ppm_total) : "–") + ", overall " + ppm(g.overall.ppm_total); }).join(" · ");
+    html += '<p class="hint">Expected PPM uses ' + (basis === "within" ? "within-subgroup σ" : "overall σ") + ", the same spread as " + esc(v.index) + (r.groups.length <= 8 ? ". Both, per " + esc(low) + ": " + both + ". " : ". The PDF report shows both for each " + esc(low) + ". ") +
+      "All combined is reference only; its expected PPM mixes the " + esc(names) + "' fitted curves" +
+      (oneCurve ? "." : ". Its Pp and Ppk aren't shown because all readings together aren't normal (the " + esc(names) + " don't share one average).") +
+      " Stable? is the x-bar and R check of each " + esc(low) + "'s subgroups.</p></section>";
 
     var rc = r.receipt;
     html += '<section class="panel" aria-labelledby="rc-title"><h3 id="rc-title">How this was calculated</h3><dl class="receipt">' +

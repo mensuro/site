@@ -243,7 +243,11 @@
         return { text: "The verdict follows the lowest " + esc(name) + ": " + esc(r.group_name) + " " + esc(r.worst) + ", with " + esc(v.index) + " " + f(v.value, 2) + ", so the study is <b>" + esc(v.label) + "</b>. PPAP: above 1.67 acceptable, 1.33 to 1.67 with customer approval, below 1.33 not acceptable." };
       } },
       { label: "Why not use the combined number?", answer: function () {
-        return { text: "All " + esc(name) + "s combined gives Ppk " + f(r.combined.overall.cpk, 2) + ", but that mixes good and bad " + esc(name) + "s together. One off-center " + esc(name) + " can hide inside a combined number that looks fine, so it's shown for reference only." };
+        var names = /[^aeiou]y$/.test(name) ? name.slice(0, -1) + "ies" : /s$/.test(name) ? name : name + "s";
+        if (r.combined.one_curve_valid === false) {
+          return { text: "Here the " + esc(names) + " don't share one average, so all readings together form separate humps and a single normal curve can't describe them. That's why the combined Pp and Ppk aren't shown. The combined expected PPM (" + (r.combined.expected_ppm == null ? "–" : String(Number(r.combined.expected_ppm.toPrecision(3)))) + ") mixes each " + esc(name) + "'s own curve instead, and it's for reference only: the verdict follows the lowest " + esc(name) + "." };
+        }
+        return { text: "All " + esc(names) + " combined gives Ppk " + f(r.combined.overall.cpk, 2) + ", but that mixes good and bad " + esc(names) + " together. One off-center " + esc(name) + " can hide inside a combined number that looks fine, so it's shown for reference only." };
       } },
       { label: "A cavity is off-center, but tool wear moves it away", answer: function () {
         return { text: "Write that up in the <b>Engineering justification</b> box in the report section. It prints right after the summary, marked as your note, so the reviewer sees your reasoning next to the numbers." };
