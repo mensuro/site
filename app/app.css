@@ -345,6 +345,7 @@ details.more summary:focus-visible { outline: 3px solid var(--teal); outline-off
 .vt { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 5px; color: var(--white); white-space: nowrap; }
 .vt.acceptable { background: #1E7A46; } .vt.conditional { background: #8A5A00; } .vt.not_acceptable { background: #B42318; }
 .tagl { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #8A5A00; margin-left: 6px; }
+.th-sub { font-weight: 400; font-size: 11px; text-transform: none; letter-spacing: 0; white-space: nowrap; }
 
 /* ---- study planner */
 .src-key { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: var(--muted); }
