@@ -10,8 +10,11 @@
    - Cp = (USL - LSL) / 6 sigma; Cpk = min(USL - mean, mean - LSL) / 3 sigma (NIST e-Handbook 6.1.6).
    - Expected PPM assumes a normal distribution. Normality: Anderson-Darling with the
      D'Agostino-Stephens small-sample adjustment and p-value (same as statsmodels normal_ad).
-   - Verdict: PPAP-style initial process study criteria on Ppk (or Cpk): above 1.67 acceptable,
-     1.33 to 1.67 conditionally acceptable, below 1.33 not acceptable. */
+   - Verdict, by default: PPAP initial process study criteria on Ppk (or Cpk): above 1.67
+     acceptable, 1.33 to 1.67 conditionally acceptable, below 1.33 not acceptable. The page can
+     also judge against ongoing production (1.33 or more acceptable) or a customer's own minimum.
+   - explain() turns a result into plain-English statements. It only restates numbers already
+     computed above (and the normal tail beyond 3 x index, for the centred comparison). */
 (function (root) {
   "use strict";
 
@@ -134,8 +137,35 @@
     return { a2: a2, a2Adjusted: a2a, p: p };
   }
 
-  function classify(index, value) {
-    var v = value.toFixed(2);
+  var CRITERIA = {
+    initial: { key: "initial", label: "Launch (PPAP initial study)", source: "AIAG PPAP 4th ed., initial process study" },
+    ongoing: { key: "ongoing", label: "Ongoing production", source: "common customer requirement for ongoing production" },
+    custom: { key: "custom", label: "Your customer's minimum", source: "your customer's requirement" }
+  };
+
+  function criteria(opt) {
+    var key = opt && opt.key ? opt.key : "initial";
+    if (!CRITERIA[key]) { throw new CalcError("Unknown criteria."); }
+    if (key !== "custom") { return { key: key, label: CRITERIA[key].label, minimum: key === "ongoing" ? MINIMUM : null }; }
+    var m = opt.minimum;
+    if (typeof m !== "number" || !isFinite(m) || m < 0.5 || m > 3) {
+      throw new CalcError("Enter your customer's minimum as a number from 0.50 to 3.00, for example 1.33.");
+    }
+    return { key: "custom", label: CRITERIA.custom.label, minimum: m };
+  }
+
+  // Judge on the value as shown (2 decimals), so the verdict never contradicts the number on screen.
+  function classify(index, value, crit) {
+    var v = value.toFixed(2), shown = Number(v);
+    crit = crit || { key: "initial" };
+    if (crit.key === "ongoing" || crit.key === "custom") {
+      var min = crit.key === "ongoing" ? MINIMUM : crit.minimum, ms = min.toFixed(2);
+      var whose = crit.key === "ongoing" ? "the " + ms + " minimum for ongoing production" : "your customer's " + ms + " minimum";
+      if (shown >= min) {
+        return { verdict: "Acceptable", key: "pass", reason: index + " is " + v + ", at or above " + whose + "." };
+      }
+      return { verdict: "Not acceptable", key: "fail", reason: index + " is " + v + ", below " + whose + "." };
+    }
     if (value > TARGET) {
       return { verdict: "Acceptable", key: "pass", reason: index + " is " + v + ", above 1.67." };
     }
@@ -155,6 +185,7 @@
     var lsl = opts.lsl == null ? null : opts.lsl;
     var usl = opts.usl == null ? null : opts.usl;
     var index = opts.verdictIndex || "Ppk";
+    var crit = criteria(opts.criteria);
 
     if (lsl == null && usl == null) { throw new CalcError("Enter at least one specification limit (lower, upper, or both)."); }
     if (lsl != null && usl != null && !(lsl < usl)) { throw new CalcError("The lower specification limit must be below the upper one."); }
@@ -233,7 +264,8 @@
       outside: outside,
       normality: ad,
       verdictIndex: index,
-      verdict: classify(index, indexValue),
+      verdict: classify(index, indexValue, crit),
+      criteria: crit,
       notes: notes
     };
   }
@@ -259,6 +291,88 @@
     ]
   };
 
+  /* Plain-English reading of a result: [{ key, title, text, source }].
+     Every figure here is one the result already holds, restated in words. */
+  function fmt(v, d) { return v.toFixed(d); }
+  function ppmWords(ppm) {
+    if (ppm < 0.01) { return "practically none (under 0.01 parts per million)"; }
+    var oneIn = 1e6 / ppm;
+    var nice = oneIn >= 1e6 ? Math.round(oneIn / 1e5) / 10 + " million" : oneIn >= 1000
+      ? Math.round(oneIn).toLocaleString("en-US") : Math.round(oneIn);
+    var p = ppm < 1 ? ppm.toFixed(2) : ppm < 100 ? ppm.toFixed(1) : Math.round(ppm).toLocaleString("en-US");
+    return "about " + p + " parts per million, or 1 in " + nice;
+  }
+  function explain(r) {
+    var out = [], idx = r.verdictIndex, shortTerm = idx === "Cpk";
+    var ind = shortTerm ? r.within : r.overall, potName = shortTerm ? "Cp" : "Pp", spread = shortTerm ? "short-term" : "long-term";
+    var val = ind.cpk, both = r.lsl != null && r.usl != null;
+    var nearUpper = r.usl != null && (r.lsl == null || r.usl - r.mean <= r.mean - r.lsl);
+    var near = nearUpper ? "upper" : "lower";
+    var c = r.criteria || { key: "initial" };
+
+    // 1. What the verdict index means
+    var bar = c.key === "initial"
+      ? "At launch, PPAP asks for more than 1.67 (5 standard deviations) because a short study usually looks better than months of production; 1.33 to 1.67 needs your customer's approval."
+      : c.key === "ongoing" ? "For ongoing production, 1.33 (4 standard deviations) is the usual minimum."
+        : "Your customer's minimum of " + c.minimum.toFixed(2) + " means " + fmt(3 * c.minimum, 1) + " standard deviations.";
+    out.push({ key: "index", title: "What " + idx + " " + fmt(val, 2) + " means",
+      text: (val > 0 ? "Your average sits " + fmt(3 * val, 1) + " standard deviations (" + spread + " spread) inside the " + near +
+        " spec limit" + (both ? ", the nearer one" : "") + ". " : "Your average is outside the " + near + " spec limit, so most parts are out of spec. ") + bar,
+      source: c.key === "initial" ? "AIAG PPAP 4th ed." : c.key === "ongoing" ? "Common customer requirement" : "Your customer" });
+
+    // 2. Centering: the same spread, centred, would score the potential index (Cp or Pp).
+    if (both && ind.cp != null) {
+      var mid = (r.lsl + r.usl) / 2, off = r.mean - mid, tol = r.usl - r.lsl, gap = ind.cp - val;
+      if (gap >= 0.1) {
+        out.push({ key: "centering", title: "Centering is the quick win",
+          text: "Your spread fits the tolerance well (" + potName + " " + fmt(ind.cp, 2) + "), but the average is " +
+            Math.abs(off).toPrecision(2) + " " + (off > 0 ? "above" : "below") + " the middle of the tolerance (" +
+            Math.round(100 * Math.abs(off) / tol) + "% of the tolerance). Centred, " + idx + " would rise to " + fmt(ind.cp, 2) + ".",
+          source: "NIST/SEMATECH 6.1.6" });
+      } else {
+        out.push({ key: "centering", title: "Well centred, so spread is the lever",
+          text: idx + " (" + fmt(val, 2) + ") is close to " + potName + " (" + fmt(ind.cp, 2) + "), so the process is already near the middle of the tolerance. To raise " +
+            idx + ", reduce variation rather than move the average.", source: "NIST/SEMATECH 6.1.6" });
+      }
+    }
+
+    // 3. Expected PPM on the same spread as the verdict, and why it isn't the textbook figure.
+    var text = "On the " + spread + " spread, expect " + ppmWords(ind.ppmTotal) + " outside the limits.";
+    if (both && ind.ppmTotal >= 0.01) {
+      var upperShare = ind.ppmAbove / ind.ppmTotal;
+      if (upperShare > 0.9 || upperShare < 0.1) {
+        var centred = 2 * normSf(3 * val) * 1e6;
+        text += " Nearly all of it is beyond the " + (upperShare > 0.5 ? "upper" : "lower") +
+          " limit; the other is too far away to matter. That's why it's lower than the about " +
+          (centred < 100 ? centred.toFixed(1) : Math.round(centred).toLocaleString("en-US")) +
+          " PPM tables quote for " + idx + " " + fmt(val, 2) + ", which assume a centred process losing parts on both sides.";
+      }
+    }
+    text += " " + (r.outside === 0 ? "None" : r.outside) + " of your " + r.n + " measurements " + (r.outside === 1 ? "was" : "were") + " outside.";
+    out.push({ key: "ppm", title: "Parts out of spec", text: text, source: "Normal distribution tails" });
+
+    // 4. Short-term vs long-term
+    if (r.within && r.within.cpk != null) {
+      var ratio = r.overall.cpk / r.within.cpk, unit = r.subgroups ? "groups" : "readings";
+      if (ratio < 0.85) {
+        out.push({ key: "drift", title: "Something shifts over time",
+          text: "Ppk (" + fmt(r.overall.cpk, 2) + ") is clearly lower than Cpk (" + fmt(r.within.cpk, 2) + "): the process moves between " + unit +
+            " more than it varies within them. Look for tool wear, material lots, warm-up or shift changes. A control chart will show when it happens.",
+          source: "Montgomery, Intro to SQC, 8.3" });
+      } else if (ratio > 1.15) {
+        out.push({ key: "drift", title: "Ppk is higher than Cpk",
+          text: "Ppk (" + fmt(r.overall.cpk, 2) + ") is above Cpk (" + fmt(r.within.cpk, 2) + "). That usually means the measurements aren't in the order they were taken" +
+            (r.subgroups ? ", or the groups were mixed" : "") + ". Check the order before relying on Cp and Cpk.",
+          source: "Montgomery, Intro to SQC, 8.3" });
+      } else {
+        out.push({ key: "drift", title: "Short-term and long-term agree",
+          text: "Cpk (" + fmt(r.within.cpk, 2) + ") and Ppk (" + fmt(r.overall.cpk, 2) + ") are close, which suggests little drift during the study. A control chart is the proper check of stability.",
+          source: "Montgomery, Intro to SQC, 8.3" });
+      }
+    }
+    return out;
+  }
+
   var api = {
     EXAMPLE: EXAMPLE,
     CalcError: CalcError,
@@ -270,6 +384,9 @@
     indicesFromSummary: indicesFromSummary,
     andersonDarling: andersonDarling,
     classify: classify,
+    criteria: criteria,
+    CRITERIA: CRITERIA,
+    explain: explain,
     capability: capability
   };
   if (typeof module !== "undefined" && module.exports) { module.exports = api; } else { root.MensuroCpk = api; }

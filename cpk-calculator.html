@@ -21,7 +21,7 @@
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/fonts.css?v=20261021a">
-<link rel="stylesheet" href="assets/site.css?v=20261021a">
+<link rel="stylesheet" href="assets/site.css?v=20261114a">
 </head>
 <body>
 
@@ -36,19 +36,23 @@
       </nav>
     </header>
     <section class="calc-hero" aria-labelledby="calc-title">
-      <div class="eyebrow">Free tool</div>
+      <nav class="tool-switch" aria-label="Free tools">
+        <a href="cpk-calculator.html" aria-current="page">Cpk calculator</a>
+        <a href="study-planner.html">Study planner</a>
+      </nav>
       <h1 id="calc-title">Cp and Cpk calculator</h1>
-      <p class="sub">Paste your measurements and enter the spec limits. You get Cp, Cpk, Pp, Ppk, expected PPM and a normality check, with a plain-English verdict and the formulas behind it.</p>
+      <p class="sub">Paste your measurements and enter the spec limits. You get Cp, Cpk, Pp, Ppk, expected PPM and a normality check, with what each number means in plain English and the formulas behind it.</p>
       <ul class="trust">
         <li>Runs in your browser; nothing is uploaded</li>
         <li>Checked against NIST and Montgomery examples</li>
+        <li>Launch, ongoing or your customer's criteria</li>
         <li>No signup</li>
       </ul>
     </section>
   </div>
 </div>
 
-<div class="band band-paper">
+<div class="band band-paper band-overlap">
   <main class="wrap calc" id="top">
     <form class="calc-card calc-inputs" id="calc-form" novalidate>
       <h2>Your data</h2>
@@ -89,6 +93,19 @@
         </div>
         <p class="hint">Most initial PPAP studies use Ppk.</p>
       </fieldset>
+      <fieldset class="field">
+        <legend>Judge it against</legend>
+        <div class="seg">
+          <label><input type="radio" name="criteria" value="initial" checked><span>Launch (PPAP)</span></label>
+          <label><input type="radio" name="criteria" value="ongoing"><span>Ongoing production</span></label>
+          <label><input type="radio" name="criteria" value="custom"><span>Customer minimum</span></label>
+        </div>
+        <div class="group-size" id="custom-min" hidden>
+          <label for="minimum">Acceptable at or above</label>
+          <input id="minimum" type="text" inputmode="decimal" autocomplete="off" value="1.33">
+        </div>
+        <p class="hint" id="criteria-hint">PPAP initial study: above 1.67 acceptable, 1.33 to 1.67 with customer approval. Many customers accept 1.33 in ongoing production.</p>
+      </fieldset>
       <p class="calc-error" id="calc-error" role="alert" hidden></p>
       <div class="calc-actions">
         <button class="btn-deep" type="submit">Calculate</button>
@@ -108,10 +125,10 @@
           <span class="vpill" id="vpill"></span>
           <p id="vreason"></p>
           <div class="scale" id="scale" role="img">
-            <div class="zones"><span class="z-fail"></span><span class="z-cond"></span><span class="z-pass"></span></div>
+            <div class="zones" id="zones"><span class="z-fail"></span><span class="z-cond"></span><span class="z-pass"></span></div>
             <div class="marker" id="marker"><span id="marker-label"></span></div>
-            <div class="scale-ticks"><span style="left:41.5%">1.33</span><span style="left:58.5%">1.67</span></div>
-            <div class="scale-names"><span>Not acceptable</span><span>Conditional</span><span>Acceptable</span></div>
+            <div class="scale-ticks" id="scale-ticks"><span style="left:41.5%">1.33</span><span style="left:58.5%">1.67</span></div>
+            <div class="scale-names" id="scale-names"><span>Not acceptable</span><span>Conditional</span><span>Acceptable</span></div>
           </div>
         </div>
         <div class="idx">
@@ -120,6 +137,10 @@
           <div><span class="iv num" id="cpk"></span><span class="il">Cpk</span></div>
           <div><span class="iv num" id="cp"></span><span class="il">Cp</span></div>
         </div>
+        <section class="meaning" aria-labelledby="meaning-title">
+          <h3 id="meaning-title">What your numbers mean</h3>
+          <ul id="meaning"></ul>
+        </section>
         <figure class="hist">
           <svg id="hist" viewBox="0 0 640 260" role="img" aria-labelledby="hist-title"><title id="hist-title">Histogram of readings with specification limits</title></svg>
           <figcaption class="legend"><span class="k-bar">Your measurements</span><span class="k-curve">Normal curve (long-term)</span><span class="k-spec">Spec limits</span><span class="k-mean">Mean</span></figcaption>
@@ -145,14 +166,15 @@
   <div class="wrap">
     <section class="final cta-grid" aria-labelledby="report-title">
       <div class="cta-copy">
-        <div class="eyebrow">Get this as a full report</div>
-        <h2 class="h2" id="report-title" tabindex="-1">Turn these numbers into a customer-ready report, and get Sigmi.</h2>
-        <p class="lede">A screenshot shows the number. Your customer wants the full study, and you want to know what to do about it. That's what Mensuro is for.</p>
+        <div class="eyebrow">Early access</div>
+        <h2 class="h2" id="report-title" tabindex="-1">The free tools give you the numbers. Mensuro gives you the study.</h2>
+        <p class="lede">A screenshot shows a result. Your customer wants the whole study, traceable and signed off, and you want to know what to do about it.</p>
         <ul class="perks">
-          <li><img src="assets/sigmi-avatar.svg" alt="" width="28" height="28"><span><b>Sigmi, your statistics assistant.</b> Ask in plain English. Sigmi picks the right study, runs it on the validated engine and explains the result. Every number comes from the engine.</span></li>
-          <li><span class="pk" aria-hidden="true">PDF</span><span><b>A report built for your customer.</b> Your logo, the verdict, every chart and the method behind each number, tagged to its PPAP element.</span></li>
-          <li><span class="pk" aria-hidden="true">R&amp;R</span><span><b>Is your gage good enough to trust this Cpk?</b> Gage R&amp;R and Type 1 gage studies, in the same place.</span></li>
-          <li><span class="pk pk-plus" aria-hidden="true">+</span><span><b>More than one number.</b> Save studies to your library and rerun them as new data comes in. Control charts, non-normal capability and more are coming next.</span></li>
+          <li><img src="assets/sigmi-avatar.svg" alt="" width="28" height="28"><span><b>Sigmi, your study assistant.</b> Helps you pick the right study, explains every result in plain English and what to fix first, using the engine's numbers. It never makes one up.</span></li>
+          <li><span class="pk" aria-hidden="true">Aa</span><span><b>Your brand on every report.</b> Your logo, company and customer on a customer-ready PDF: verdict, charts, the method behind every number, and the raw data.</span></li>
+          <li><span class="pk" aria-hidden="true">R&amp;R</span><span><b>Is your gage good enough to trust this Cpk?</b> Gage R&amp;R with a recheck when you reuse it on another part, Type 1 gage studies, and capability for each cavity of a multi-cavity tool.</span></li>
+          <li><span class="pk" aria-hidden="true">XLS</span><span><b>Your spreadsheet as it is.</b> Upload Excel or CSV. Mensuro finds the columns and you confirm before anything runs.</span></li>
+          <li><span class="pk" aria-hidden="true">&#10003;</span><span><b>Validated, with a receipt.</b> Every analysis reproduces published reference results, and every report shows its method, constants and sample size, so reviewers don't come back with questions.</span></li>
         </ul>
         <form class="join join-form" name="early-access" action="thanks.html" method="POST" data-netlify="true" netlify-honeypot="company-website" novalidate>
           <input type="hidden" name="form-name" value="early-access">
@@ -233,7 +255,7 @@
             <li><span class="dot dot-cond"></span><b>1.33 to 1.67</b> may be acceptable with customer approval</li>
             <li><span class="dot dot-fail"></span><b>Below 1.33</b> not acceptable</li>
           </ul>
-          <p>Many automotive customers require 1.33 or more for ongoing production and 1.67 or more for initial studies. Your customer's limits apply if they differ.</p>
+          <p>That's the default, <b>Launch (PPAP)</b>. A short launch study usually looks better than months of production, so 1.67 up front leaves room for tool wear, material lots and shift changes. Once a process is approved, many customers accept <b>1.33 or more for ongoing production</b>: choose <b>Ongoing production</b>. If your customer sets its own minimum, choose <b>Customer minimum</b> and enter it.</p>
         </div></details>
         <details><summary>Expected and observed PPM</summary><div class="ans">
           <p>Expected PPM is the share of a normal distribution beyond each limit, in parts per million, shown for both sigmas:</p>
@@ -266,6 +288,7 @@
       <img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148">
       <nav aria-label="Footer">
         <a href="index.html">Home</a>
+        <a href="study-planner.html">Free study planner</a>
         <a href="validation.html">How we validate</a>
         <a href="privacy.html">Privacy</a>
         <span>nick@mensuro.tech</span>
@@ -275,8 +298,8 @@
   </div>
 </div>
 
-<script src="assets/cpk.js?v=20261021a"></script>
-<script src="assets/calculator.js?v=20261021a"></script>
+<script src="assets/cpk.js?v=20261114a"></script>
+<script src="assets/calculator.js?v=20261114a"></script>
 <script src="assets/site.js?v=20261028a"></script>
 </body>
 </html>

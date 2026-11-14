@@ -127,8 +127,8 @@
           ] };
         } },
         { label: "My process makes parts in spec", answer: function () { return { text: "That's a <b>capability study</b> (Cp, Cpk, Pp, Ppk). For a multi-cavity tool, map the cavity column and each cavity is judged on its own. " + link("capability.html", "Start a capability study →") }; } },
-        { label: "Pass/fail or visual inspection", answer: function () { return { text: "That's an <b>attribute agreement study</b>. It isn't in Mensuro yet, but the planner shows how to design one, including the analytic method that needs far fewer bad parts. " + link("planner.html#attr", "Open the planner →") }; } },
-        { label: "I'm planning and need requirements", answer: function () { return { text: "The <b>study planner</b> sizes each study and shows the source for every number. " + link("planner.html", "Open the planner →") }; } }
+        { label: "Pass/fail or visual inspection", answer: function () { return { text: "That's an <b>attribute agreement study</b>. It isn't in Mensuro yet, but the planner shows how to design one, including the analytic method that needs far fewer bad parts. " + link("../study-planner.html#attr", "Open the planner →") }; } },
+        { label: "I'm planning and need requirements", answer: function () { return { text: "The <b>study planner</b> sizes each study and shows the source for every number. " + link("../study-planner.html", "Open the planner →") }; } }
       ] };
     } };
   }
