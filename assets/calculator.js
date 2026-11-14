@@ -48,12 +48,15 @@
       var grouped = form.querySelector('input[name="sampling"]:checked').value === "groups";
       var size = grouped ? Number(sgEl.value) : 1;
       var idxChoice = form.querySelector('input[name="index"]:checked').value;
+      var critKey = form.querySelector('input[name="criteria"]:checked').value;
+      var minText = String($("minimum").value).trim().replace(",", ".");
       var res = C.capability({
         values: values,
         subgroupSize: size,
         lsl: C.parseLimit(lslEl.value, "lower spec limit"),
         usl: C.parseLimit(uslEl.value, "upper spec limit"),
-        verdictIndex: idxChoice
+        verdictIndex: idxChoice,
+        criteria: { key: critKey, minimum: minText === "" ? NaN : Number(minText) }
       });
       last = { res: res, values: values, dec: decimalsOf(readingsEl.value + " " + lslEl.value + " " + uslEl.value) };
       render();
@@ -75,7 +78,10 @@
     var pill = $("vpill");
     pill.textContent = r.verdict.verdict;
     pill.className = "vpill vpill-" + r.verdict.key;
-    $("vreason").textContent = r.verdict.reason + " Based on PPAP-style criteria; your customer's limits apply if different.";
+    $("vreason").textContent = r.verdict.reason + (r.criteria.key === "initial"
+      ? " Judged against PPAP initial study criteria; your customer's limits apply if different."
+      : r.criteria.key === "ongoing" ? " Judged against the usual minimum for ongoing production; your customer's limits apply if different."
+        : " Judged against your customer's minimum.");
     $("ppk").textContent = idx(r.overall.cpk);
     $("pp").textContent = idx(r.overall.cp);
     $("cpk").textContent = idx(r.within ? r.within.cpk : null);
@@ -105,6 +111,18 @@
       var th = document.createElement("th"); th.scope = "row"; th.textContent = row[0];
       var td = document.createElement("td"); td.textContent = row[1];
       tr.appendChild(th); tr.appendChild(td); tbody.appendChild(tr);
+    });
+
+    var meaning = $("meaning");
+    meaning.textContent = "";
+    C.explain(r).forEach(function (m) {
+      var li = document.createElement("li");
+      li.className = "m-" + m.key;
+      var h = document.createElement("b"); h.textContent = m.title;
+      var p = document.createElement("p"); p.textContent = m.text;
+      var src = document.createElement("span"); src.className = "m-src"; src.textContent = m.source;
+      li.appendChild(h); li.appendChild(p); li.appendChild(src);
+      meaning.appendChild(li);
     });
 
     var notes = $("notes");
@@ -198,7 +216,9 @@
       "Ppk " + idx(r.overall.cpk) + " | Pp " + idx(r.overall.cp) + " | Cpk " + idx(r.within ? r.within.cpk : null) + " | Cp " + idx(r.within ? r.within.cp : null)];
     Array.prototype.forEach.call($("stats").rows, function (row) { lines.push(row.cells[0].textContent + ": " + row.cells[1].textContent); });
     r.notes.forEach(function (n) { lines.push("Note: " + n); });
-    lines.push("Method: Montgomery, Introduction to SQC 6th ed.; NIST/SEMATECH e-Handbook 6.1.6. Verdict: PPAP-style criteria.");
+    C.explain(r).forEach(function (m) { lines.push(m.title + ": " + m.text); });
+    lines.push("Method: Montgomery, Introduction to SQC 6th ed.; NIST/SEMATECH e-Handbook 6.1.6. Verdict: " + r.criteria.label +
+      (r.criteria.minimum != null ? " (" + r.criteria.minimum.toFixed(2) + ")" : " (1.33 / 1.67)") + ".");
     return lines.join("\n");
   }
 
@@ -229,6 +249,20 @@
   Array.prototype.forEach.call(form.querySelectorAll('input[name="index"]'), function (radio) {
     radio.addEventListener("change", function () { if (last) { calculate(); } });
   });
+  var HINTS = {
+    initial: "PPAP initial study: above 1.67 acceptable, 1.33 to 1.67 with customer approval. Many customers accept 1.33 in ongoing production.",
+    ongoing: "Ongoing production: 1.33 or more acceptable, the usual minimum once a process is approved. Check your customer's requirements.",
+    custom: "Use the minimum from your customer's requirements, for example 1.33 or 1.67."
+  };
+  function syncCriteria() {
+    var key = form.querySelector('input[name="criteria"]:checked').value;
+    $("custom-min").hidden = key !== "custom";
+    $("criteria-hint").textContent = HINTS[key];
+  }
+  Array.prototype.forEach.call(form.querySelectorAll('input[name="criteria"]'), function (radio) {
+    radio.addEventListener("change", function () { syncCriteria(); if (last) { calculate(); } });
+  });
+  $("minimum").addEventListener("input", function () { if (last) { calculate(); } });
   $("load-example").addEventListener("click", function () {
     readingsEl.value = C.EXAMPLE.readings.join("\n");
     lslEl.value = C.EXAMPLE.lsl;
@@ -245,6 +279,7 @@
   $("clear").addEventListener("click", function () {
     form.reset();
     syncGroups();
+    syncCriteria();
     last = null;
     output.hidden = true;
     empty.hidden = false;
@@ -261,16 +296,32 @@
     radio.addEventListener("change", function () { syncGroups(); if (last) { calculate(); } });
   });
 
-  // Verdict scale: where the index sits against the 1.33 / 1.67 bands (the scale runs 0.5 to 2.5).
+  // Verdict scale: where the index sits against the criteria's bands (the scale runs 0.5 to 2.5).
   function drawScale(r) {
     var value = r.verdictIndex === "Cpk" ? r.within.cpk : r.overall.cpk;
-    var lo = 0.5, hi = 2.5, pos = (Math.min(hi, Math.max(lo, value)) - lo) / (hi - lo) * 100;
+    var lo = 0.5, hi = 2.5, at = function (v) { return (Math.min(hi, Math.max(lo, v)) - lo) / (hi - lo) * 100; };
+    var pos = at(value), c = r.criteria, cols, ticks, desc;
+    if (c.key === "initial") {
+      var a = at(1.33), b = at(1.67);
+      cols = a + "% " + (b - a) + "% " + (100 - b) + "%";
+      ticks = [[a, "1.33"], [b, "1.67"]];
+      desc = "below 1.33 is not acceptable, 1.33 to 1.67 is conditional and above 1.67 is acceptable";
+    } else {
+      var m = at(c.minimum);
+      cols = m + "% 0% " + (100 - m) + "%";
+      ticks = [[m, c.minimum.toFixed(2)]];
+      desc = "below " + c.minimum.toFixed(2) + " is not acceptable and " + c.minimum.toFixed(2) + " or more is acceptable";
+    }
+    $("zones").style.gridTemplateColumns = cols;
+    $("scale-names").style.gridTemplateColumns = cols;
+    $("scale-names").children[1].style.visibility = c.key === "initial" ? "" : "hidden";
+    $("scale-ticks").innerHTML = ticks.map(function (t) { return '<span style="left:' + t[0] + '%">' + t[1] + "</span>"; }).join("");
     var mk = $("marker");
     mk.style.left = pos + "%";
     mk.className = "marker" + (pos < 12 ? " at-start" : pos > 88 ? " at-end" : "");
     $("marker-label").textContent = r.verdictIndex + " " + value.toFixed(2);
     $("scale").className = "scale scale-" + r.verdict.key;
-    $("scale").setAttribute("aria-label", r.verdictIndex + " " + value.toFixed(2) + " on a scale where below 1.33 is not acceptable, 1.33 to 1.67 is conditional and above 1.67 is acceptable.");
+    $("scale").setAttribute("aria-label", r.verdictIndex + " " + value.toFixed(2) + " on a scale where " + desc + ".");
   }
 
   var resizeTimer;
@@ -278,5 +329,6 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () { if (last && !output.hidden) { drawHistogram(last.res, last.dec); } }, 150);
   });
+  syncCriteria();
   updateCount();
 })();

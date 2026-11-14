@@ -7,6 +7,7 @@ index.html      Landing page
 thanks.html     Post-signup questions and founding-member offer
 privacy.html    Privacy page
 cpk-calculator.html  Free Cp/Cpk calculator (math in assets/cpk.js, page logic in assets/calculator.js)
+study-planner.html   Free study planner (counts in assets/planner-core.js, page logic in assets/planner.js)
 assets/         Logos, favicon, images, self-hosted fonts, site.css, site.js
 tests/          Calculator tests and their reference data (run on every pull request)
 netlify.toml    Netlify settings
@@ -16,11 +17,12 @@ The product itself (stats engine and app) lives in the private `mensuro/mensuro`
 
 ## How it works
 
-- **Early-access forms** (home page and calculator): saved with Netlify Forms (form name `early-access`; the `source` field says which form). If `kitFormAction` is set in `assets/site.js`, signups go to Kit instead; in Kit, set "After subscribing" to redirect to `/thanks.html`.
+- **Early-access forms** (home page, calculator and planner): saved with Netlify Forms (form name `early-access`; the `source` field says which form). If `kitFormAction` is set in `assets/site.js`, signups go to Kit instead; in Kit, set "After subscribing" to redirect to `/thanks.html`.
 - **Thank-you questions:** saved with Netlify Forms (form name `signup-details`). Enable form detection under Netlify → Forms. Multi-select answers arrive joined with `; `.
 - **Founding pre-sale:** the "Reserve for $199" button uses `stripeLink` in `assets/site.js`.
 - On a local preview (not the live host), the forms send nothing.
-- **Cp/Cpk calculator:** runs entirely in the browser; it makes no network requests and stores nothing. Run its tests with `node --test "tests/*.test.js"` (Node 22). They check it against NIST and Montgomery reference results and against the Mensuro engine (`tests/reference/engine_parity.json`, generated from the engine). If the engine's capability math changes, regenerate that file.
+- **Cp/Cpk calculator:** runs entirely in the browser; it makes no network requests and stores nothing. Run its tests with `node --test "tests/*.test.js"` (Node 22). They check it against NIST and Montgomery reference results and against the Mensuro engine (`tests/reference/engine_parity.json`, generated from the engine). If the engine's capability math changes, regenerate that file. The verdict defaults to PPAP initial study criteria (1.33 / 1.67); visitors can switch to ongoing production (1.33) or a customer minimum. `explain()` turns a result into the plain-English "What your numbers mean" list, restating numbers the result already holds.
+- **Study planner:** also browser-only, no requests, no storage. It counts readings and compares them with cited minimums; it computes no statistics. `tests/planner.test.js` covers the counts. The old `/app/planner.html` redirects here (`netlify.toml`).
 - **Caching:** CSS and JS revalidate on every visit, so deploys show up at once. Pages link them with `?v=...`; bump that value when you want browsers that cached an older copy to refetch.
 - **Third-party requests:** fonts are self-hosted (`assets/fonts`, SIL Open Font License). The only third-party script is Cloudflare Web Analytics (cookie-free), loaded by `assets/site.js` when `MENSURO_CONFIG.analyticsToken` is set, on the live hosts only. Anything else needs a privacy page update first.
 
@@ -32,7 +34,7 @@ Visit counts are in Cloudflare Web Analytics. To see which posts bring signups, 
 https://mensuro.tech/cpk-calculator.html?utm_source=linkedin&utm_campaign=post-01
 ```
 
-The tag is kept for the visitor's tab and saved with their early-access signup in Netlify Forms (field `ref`, e.g. `source=linkedin; campaign=post-01`). The `source` field says which form they used (hero, final or calculator).
+The tag is kept for the visitor's tab and saved with their early-access signup in Netlify Forms (field `ref`, e.g. `source=linkedin; campaign=post-01`). The `source` field says which form they used (hero, final, calculator or planner).
 
 ## Local preview
 
@@ -43,7 +45,7 @@ Open `index.html` in a browser, or run `python3 -m http.server` in this folder a
 - Recheck the Minitab price line in the pricing section against minitab.com.
 - The site lives at https://mensuro.tech. Netlify redirects `www.mensuro.tech` and `mensuro.netlify.app` to it once the domain is set as primary.
 - Contact address: `nick@mensuro.tech` (footer and privacy page). Keep the mailbox working; the privacy page promises a reply within 30 days.
-- If the domain ever changes: update the canonical, `og:url` and `og:image` URLs in `index.html` and `cpk-calculator.html`, the URLs in `sitemap.xml` and `robots.txt`, and `liveHosts` in `assets/site.js`. Then re-check link previews with LinkedIn's Post Inspector.
+- If the domain ever changes: update the canonical, `og:url` and `og:image` URLs in `index.html`, `cpk-calculator.html` and `study-planner.html`, the URLs in `sitemap.xml` and `robots.txt`, and `liveHosts` in `assets/site.js`. Then re-check link previews with LinkedIn's Post Inspector.
 
 ## App preview (private)
 
@@ -57,7 +59,7 @@ only works with an access code checked by the API (see `api/README.md` in the en
 - Pages: `gage-rr.html` (with the reuse recheck), `capability.html` (with capability by cavity when a cavity column is mapped) and `type1.html`, built on `core.js` (access code, upload, drag-and-drop mapping, chart helpers, the PDF report form with the engineering justification note).
 - `index.html` (served at `/app/`) is the app home: the access code once, then a card per study. Existing links to the study pages still work.
 - `sigmi.js` is the Sigmi preview on every app page: scripted suggested questions per page and step (answers quote the engine's numbers already on screen; nothing is calculated), clearly labelled as a preview. A typed question is posted to the Netlify form `sigmi-questions` (question text and page only), declared in `app/index.html` so Netlify detects it.
-- `planner.html` is the study planner: sample sizes and acceptance criteria with their sources (IATF 16949, AIAG, ISO 22514 / VDA 5, Bosch Booklet 10, or general practice), with Ford's published PPAP minimums as a collapsed customer example on each tab. It is static and needs no API or access code.
+- The study planner moved out of the app to the public `/study-planner.html`; the app's nav and Sigmi link there.
 - Sample files in `app/samples/`: the published AIAG MSA 4th edition worked example (Gage R&R) the calculator's simulated bore-diameter data (capability), a simulated 4-cavity mold file (capability by cavity) and a Type 1 example.
 
 ## Netlify credits

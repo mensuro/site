@@ -141,3 +141,91 @@ test("notes for small samples and non-normal data", () => {
   const r = C.capability({ values: skew.values, usl: 200 });
   assert.ok(r.notes.some((n) => n.includes("may not be normal")));
 });
+
+// ------------------------------------------------------------ criteria and plain-English reading
+
+const ex = () => ({ values: C.EXAMPLE.readings.map(Number), subgroupSize: 5, lsl: 11.975, usl: 12.035 });
+
+test("criteria: launch (PPAP initial) is the default and unchanged", () => {
+  const r = C.capability(ex());
+  assert.equal(r.criteria.key, "initial");
+  assert.deepEqual(C.capability({ ...ex(), criteria: { key: "initial" } }).verdict, r.verdict);
+  assert.equal(r.verdict.verdict, "Conditionally acceptable");
+});
+
+test("criteria: ongoing production accepts 1.33 or more, on the value as shown", () => {
+  const ongoing = { key: "ongoing" };
+  assert.equal(C.classify("Ppk", 1.41, ongoing).verdict, "Acceptable");
+  assert.equal(C.classify("Ppk", 1.33, ongoing).verdict, "Acceptable");
+  assert.equal(C.classify("Ppk", 1.3349, ongoing).verdict, "Acceptable");
+  assert.equal(C.classify("Ppk", 1.32, ongoing).verdict, "Not acceptable");
+  assert.match(C.classify("Ppk", 1.41, ongoing).reason, /1\.33 minimum for ongoing production/);
+  assert.equal(C.capability({ ...ex(), criteria: ongoing }).verdict.verdict, "Acceptable");
+});
+
+test("criteria: a customer's own minimum, validated", () => {
+  const r = C.capability({ ...ex(), criteria: { key: "custom", minimum: 1.5 } });
+  assert.equal(r.verdict.verdict, "Not acceptable");
+  assert.match(r.verdict.reason, /your customer's 1\.50 minimum/);
+  assert.equal(C.capability({ ...ex(), criteria: { key: "custom", minimum: 1.0 } }).verdict.verdict, "Acceptable");
+  for (const bad of [NaN, 0.2, 4, undefined]) {
+    assert.throws(() => C.capability({ ...ex(), criteria: { key: "custom", minimum: bad } }), /0\.50 to 3\.00/);
+  }
+  assert.throws(() => C.capability({ ...ex(), criteria: { key: "nope" } }), /Unknown criteria/);
+});
+
+test("explain: centred example restates the result's own numbers", () => {
+  const r = C.capability(ex());
+  const m = Object.fromEntries(C.explain(r).map((x) => [x.key, x]));
+  assert.deepEqual(Object.keys(m), ["index", "centering", "ppm", "drift"]);
+  assert.match(m.index.title, new RegExp("Ppk " + r.overall.cpk.toFixed(2)));
+  assert.match(m.index.text, new RegExp((3 * r.overall.cpk).toFixed(1) + " standard deviations \\(long-term spread\\) inside the upper"));
+  assert.match(m.index.text, /PPAP asks for more than 1\.67/);
+  assert.equal(m.centering.title, "Well centred, so spread is the lever");
+  assert.match(m.ppm.text, new RegExp("about " + r.overall.ppmTotal.toFixed(1) + " parts per million"));
+  assert.doesNotMatch(m.ppm.text, /tables quote/); // both tails matter here
+  assert.match(m.ppm.text, /None of your 100 measurements were outside/);
+  assert.equal(m.drift.title, "Short-term and long-term agree");
+});
+
+test("explain: off-centre process, and the centred-table comparison", () => {
+  const shifted = ex();
+  shifted.values = shifted.values.map((v) => v + 0.012);
+  const r = C.capability({ ...shifted, verdictIndex: "Cpk" });
+  const m = Object.fromEntries(C.explain(r).map((x) => [x.key, x]));
+  const w = r.within;
+  assert.equal(m.centering.title, "Centering is the quick win");
+  assert.match(m.centering.text, new RegExp("Centred, Cpk would rise to " + w.cp.toFixed(2)));
+  assert.match(m.centering.text, /above the middle/);
+  // The textbook figure for this Cpk is a centred process with the same index: both tails at 3 x Cpk.
+  const sigma = w.sigma, mid = 12.005, half = 3 * w.cpk * sigma;
+  const centred = C.indicesFromSummary(mid, sigma, mid - half, mid + half).ppmTotal;
+  const quoted = centred < 100 ? centred.toFixed(1) : Math.round(centred).toLocaleString("en-US");
+  assert.match(m.ppm.text, new RegExp("about " + quoted.replace(",", "\\,") + " PPM tables quote for Cpk " + w.cpk.toFixed(2)));
+  assert.match(m.ppm.text, /beyond the upper limit/);
+});
+
+test("explain: ongoing and custom criteria change the bar, not the numbers", () => {
+  const on = C.explain(C.capability({ ...ex(), criteria: { key: "ongoing" } }))[0];
+  assert.match(on.text, /1\.33 \(4 standard deviations\) is the usual minimum/);
+  const cu = C.explain(C.capability({ ...ex(), criteria: { key: "custom", minimum: 1.5 } }))[0];
+  assert.match(cu.text, /minimum of 1\.50 means 4\.5 standard deviations/);
+});
+
+test("explain: drift and out-of-order flags", () => {
+  // Groups that step upward: within-group spread small, overall spread large.
+  const values = [];
+  for (let g = 0; g < 20; g++) { for (let i = 0; i < 5; i++) { values.push(10 + g * 0.01 + [0, 0.002, -0.002, 0.001, -0.001][i]); } }
+  const drift = C.explain(C.capability({ values, subgroupSize: 5, lsl: 9.5, usl: 10.7 })).find((x) => x.key === "drift");
+  assert.equal(drift.title, "Something shifts over time");
+  // Alternating readings: big moving ranges, modest overall spread.
+  const alt = Array.from({ length: 40 }, (_, i) => (i % 2 ? 10.01 : 9.99) + (i % 7) * 0.0003);
+  const flag = C.explain(C.capability({ values: alt, lsl: 9.9, usl: 10.1 })).find((x) => x.key === "drift");
+  assert.equal(flag.title, "Ppk is higher than Cpk");
+});
+
+test("explain: an average outside the limit says so", () => {
+  const values = Array.from({ length: 30 }, (_, i) => 10.2 + (i % 5) * 0.01);
+  const first = C.explain(C.capability({ values, lsl: 9.9, usl: 10.1 }))[0];
+  assert.match(first.text, /outside the upper spec limit/);
+});

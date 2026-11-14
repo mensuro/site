@@ -19,3 +19,9 @@
   for = "/app/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
+
+# The study planner is now a free public tool; keep old links working.
+[[redirects]]
+  from = "/app/planner.html"
+  to = "/study-planner.html"
+  status = 301

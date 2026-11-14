@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Free Study Planner: Gage R&amp;R, Type 1 and Cpk Sample Sizes · Mensuro</title>
+<meta name="description" content="How many parts, operators and readings your Gage R&amp;R, attribute, Type 1 or capability study needs, explained in plain English, with the source (AIAG, IATF, ISO/VDA, Bosch) for every number. Free, no signup, nothing uploaded.">
+<link rel="canonical" href="https://mensuro.tech/study-planner.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mensuro">
+<meta property="og:title" content="Free study planner for Gage R&amp;R, Type 1 and capability">
+<meta property="og:description" content="Sample sizes and acceptance criteria for each study, in plain English, with the source for every number.">
+<meta property="og:url" content="https://mensuro.tech/study-planner.html">
+<meta property="og:image" content="https://mensuro.tech/assets/og-planner.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mensuro study planner showing a Gage R&amp;R plan of 90 readings with its requirements">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#14263D">
+<link rel="icon" href="assets/mensuro-favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/fonts.css?v=20261021a">
+<link rel="stylesheet" href="assets/site.css?v=20261114a">
+</head>
+<body class="tool-page">
+
+<div class="band band-ink">
+  <div class="wrap">
+    <header class="nav">
+      <a href="index.html" aria-label="Mensuro home"><img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148"></a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="index.html#how">How it works</a>
+        <a href="#sources">Sources</a>
+        <a class="nav-cta" href="#report">Get early access</a>
+      </nav>
+    </header>
+    <section class="calc-hero" aria-labelledby="pl-title">
+      <nav class="tool-switch" aria-label="Free tools">
+        <a href="cpk-calculator.html">Cpk calculator</a>
+        <a href="study-planner.html" aria-current="page">Study planner</a>
+      </nav>
+      <h1 id="pl-title">Study planner</h1>
+      <p class="sub">How many parts, operators and readings your study needs, what each requirement means in plain English, and where every number comes from.</p>
+      <ul class="trust">
+        <li>Nothing to upload</li>
+        <li>Every number cited: AIAG, IATF, ISO/VDA, Bosch</li>
+        <li>No signup</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<div class="band band-paper band-overlap">
+  <main class="wrap planner" id="top">
+
+    <section class="calc-card pick" aria-labelledby="pick-title">
+      <h2 id="pick-title" class="step-title"><span class="n">1</span>Which study are you planning?</h2>
+      <div class="studies" role="tablist" aria-label="Study type">
+        <button type="button" role="tab" id="tab-grr" aria-controls="p-grr" aria-selected="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V9"/><path d="M8 21V5"/><path d="M13 21v-7"/><path d="M18 21V3"/><path d="M2 21h20"/></svg>
+          <b>Gage R&amp;R</b><span>Operators measure parts repeatedly</span></button>
+        <button type="button" role="tab" id="tab-attr" aria-controls="p-attr" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="5"/><path d="M5.8 12l1.6 1.6 3-3.2"/><circle cx="17.5" cy="12" r="4"/><path d="M16 10.5l3 3M19 10.5l-3 3"/></svg>
+          <b>Attribute gage</b><span>Go/no-go and visual checks</span></button>
+        <button type="button" role="tab" id="tab-t1" aria-controls="p-t1" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+          <b>Type 1 gage</b><span>One reference part, many readings</span></button>
+        <button type="button" role="tab" id="tab-cap" aria-controls="p-cap" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16"/><path d="M20 4v16"/><path d="M6 19c2.5 0 3-12 6-12s3.5 12 6 12"/></svg>
+          <b>Capability</b><span>Cp, Cpk, Pp, Ppk for PPAP</span></button>
+        <button type="button" role="tab" id="tab-reuse" aria-controls="p-reuse" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 21v-5h-5"/></svg>
+          <b>Reuse a study</b><span>One Gage R&amp;R, another part</span></button>
+      </div>
+    </section>
+
+    <!-- ===================== variable Gage R&R ===================== -->
+    <section class="study" id="p-grr" role="tabpanel" aria-labelledby="tab-grr" data-study="grr">
+      <div class="work">
+        <form class="calc-card set" novalidate>
+          <h2 class="step-title"><span class="n">2</span>Your study</h2>
+          <p class="hint">Variable Gage R&amp;R (crossed): each operator measures each part several times, in random order, without seeing earlier readings.</p>
+          <div class="field-row three">
+            <div class="field"><label for="g-parts">Parts</label><input id="g-parts" data-k="parts" type="text" inputmode="numeric" value="10"></div>
+            <div class="field"><label for="g-ops">Operators</label><input id="g-ops" data-k="operators" type="text" inputmode="numeric" value="3"></div>
+            <div class="field"><label for="g-trials">Trials</label><input id="g-trials" data-k="trials" type="text" inputmode="numeric" value="3"></div>
+          </div>
+          <div class="field narrow"><label for="g-sec">Seconds per reading <span class="opt">optional</span></label><input id="g-sec" data-k="seconds" type="text" inputmode="decimal" placeholder="e.g. 30"></div>
+        </form>
+        <section class="plan-card" aria-label="Your plan" data-out></section>
+      </div>
+      <h3 class="reqs-title">What each requirement means</h3>
+      <ul class="reqs">
+        <li><div class="rq-h"><b>Every gage in the control plan gets a study</b><span class="src iatf">IATF</span></div>
+          <p>If a measurement is in your control plan, your customer expects proof the gage can be trusted. The methods and acceptance criteria come from the AIAG MSA manual unless the customer agrees to others.</p>
+          <cite>IATF 16949:2016, clause 7.1.5.1.1</cite></li>
+        <li><div class="rq-h"><b>10 parts × 3 operators × 3 trials</b><span class="src aiag">AIAG</span></div>
+          <p>The MSA manual's worked example, and the design most customers expect. Repeat readings show how much one person disagrees with themselves (repeatability); several operators show how much people disagree with each other (reproducibility).</p>
+          <cite>AIAG MSA, 4th edition</cite></li>
+        <li><div class="rq-h"><b>%GRR under 10% passes, over 30% fails</b><span class="src aiag">AIAG</span></div>
+          <p>%GRR is the share of the variation you see that's really the gage. Under 10%, the gage is barely noticeable. 10% to 30% may be acceptable, depending on the application and cost. Over 30%, the gage is a big part of what you're measuring.</p>
+          <cite>AIAG MSA, 4th edition</cite></li>
+        <li><div class="rq-h"><b>ndc of 5 or more</b><span class="src aiag">AIAG</span></div>
+          <p>The number of distinct categories: how many groups of parts the gage can reliably tell apart across your process. Below 5, it can't sort parts finely enough to control the process.</p>
+          <cite>AIAG MSA, 4th edition</cite></li>
+        <li><div class="rq-h"><b>Resolution of one-tenth or finer</b><span class="src aiag">AIAG</span></div>
+          <p>The gage's smallest step should be no more than a tenth of the process variation or tolerance. Coarser, and readings bunch into a few values that hide real differences.</p>
+          <cite>AIAG MSA, 4th edition</cite></li>
+        <li><div class="rq-h"><b>Pick parts across the whole range</b><span class="src gen">Practice</span></div>
+          <p>Measure a batch first and choose parts spread across it. Ten parts bunched in the middle make ndc and %study variation look worse than the gage really is.</p>
+          <cite>Common practice</cite></li>
+        <li><div class="rq-h"><b>German OEMs may ask for uncertainty instead</b><span class="src iso">ISO / VDA</span></div>
+          <p>VDA Volume 5 and ISO 22514-7 judge measurement processes by measurement uncertainty (Q<sub>MS</sub>, Q<sub>MP</sub>) rather than %GRR. If your customer works to VDA 5, ask which studies they want.</p>
+          <cite>VDA Volume 5, 3rd edition (2021); ISO 22514-7:2021</cite></li>
+      </ul>
+      <details class="cust"><summary>Customer example: Ford <span>Specifics for PPAP, Jan 2025</span></summary>
+        <p class="hint">One OEM's published minimums, for comparison. Other customers set their own; check yours.</p>
+        <ul>
+          <li>At a minimum <b>10 parts, 3 operators, 3 trials</b>, using the <b>ANOVA</b> method. Parts must represent a production run with all known sources of variation and use the full range of part-to-part variation. <cite>§2.2.8</cite></li>
+          <li>Report %GRR as both % of study variation and % of tolerance. Under 10% of tolerance acceptable; 10% to 30% needs the site STA engineer; over 30% unacceptable. Hold parts in production-intent fixtures. <cite>§2.2.8</cite></li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- ===================== attribute ===================== -->
+    <section class="study" id="p-attr" role="tabpanel" aria-labelledby="tab-attr" data-study="attribute" hidden>
+      <div class="work">
+        <form class="calc-card set" novalidate>
+          <h2 class="step-title"><span class="n">2</span>Your study</h2>
+          <fieldset class="field">
+            <legend>Study design</legend>
+            <div class="choice">
+              <label><input type="radio" name="a-design" data-k="design" value="mix" checked><span><b>Agreement study</b><small>50 × 3 × 3. Several appraisers judge many parts. Needs a mix of good, borderline and bad parts.</small></span></label>
+              <label><input type="radio" name="a-design" data-k="design" value="analytic"><span><b>Analytic method</b><small>8 parts × 20 checks near one limit. Far fewer bad parts, but needs a variable gage too.</small></span></label>
+            </div>
+          </fieldset>
+          <div class="field-row three" data-design="mix">
+            <div class="field"><label for="a-parts">Parts</label><input id="a-parts" data-k="parts" type="text" inputmode="numeric" value="50"></div>
+            <div class="field"><label for="a-ops">Appraisers</label><input id="a-ops" data-k="appraisers" type="text" inputmode="numeric" value="3"></div>
+            <div class="field"><label for="a-trials">Trials</label><input id="a-trials" data-k="trials" type="text" inputmode="numeric" value="3"></div>
+          </div>
+          <fieldset class="field" data-design="analytic" hidden>
+            <legend>Limits to study</legend>
+            <div class="seg">
+              <label><input type="radio" name="a-limits" data-k="limits" value="1" checked><span>One limit</span></label>
+              <label><input type="radio" name="a-limits" data-k="limits" value="2"><span>Both limits</span></label>
+            </div>
+          </fieldset>
+        </form>
+        <section class="plan-card" aria-label="Your plan" data-out></section>
+      </div>
+      <h3 class="reqs-title">What each requirement means</h3>
+      <ul class="reqs" data-design="mix">
+        <li><div class="rq-h"><b>50 parts × 3 appraisers × 3 trials</b><span class="src aiag">AIAG</span></div>
+          <p>The MSA manual's attribute example. Enough judgements to tell whether appraisers agree with each other, with themselves and with the right answer.</p>
+          <cite>AIAG MSA, 4th edition</cite></li>
+        <li><div class="rq-h"><b>Kappa above 0.75</b><span class="src aiag">AIAG</span></div>
+          <p>Kappa measures how often appraisers agree beyond what luck alone would give. Above 0.75 is good agreement; below 0.40, the inspection is close to guessing.</p>
+          <cite>AIAG MSA, 4th edition</cite></li>
+        <li><div class="rq-h"><b>90% effective, ≤ 2% misses, ≤ 5% false alarms</b><span class="src aiag">AIAG</span></div>
+          <p>For each appraiser: the share of parts judged correctly, how often a bad part is passed (a miss, which reaches your customer) and how often a good part is rejected (a false alarm, which costs you scrap).</p>
+          <cite>AIAG MSA, 4th edition</cite></li>
+        <li><div class="rq-h"><b>Borderline parts on both sides of each limit</b><span class="src gen">Practice</span></div>
+          <p>Easy parts tell you nothing. Include parts just inside and just outside each limit, plus some clearly good and a few clearly bad, and measure each with a variable gage first so it has a known right answer.</p>
+          <cite>Common practice</cite></li>
+        <li><div class="rq-h"><b>Blind and shuffled</b><span class="src gen">Practice</span></div>
+          <p>Code the parts so appraisers can't recognise them, and change the order every trial. Otherwise people remember their earlier answers and agreement looks better than it is.</p>
+          <cite>Common practice</cite></li>
+      </ul>
+      <ul class="reqs" data-design="analytic" hidden>
+        <li><div class="rq-h"><b>8 parts × 20 checks per limit</b><span class="src aiag">AIAG</span></div>
+          <p>At least 8 parts with known values at roughly equal steps around the limit. The part furthest outside should be accepted 0 times out of 20, the one furthest inside 20 times, and the parts between 1 to 19 times. That pattern shows how sharply the gage switches from pass to fail.</p>
+          <cite>AIAG MSA 4th edition, analytic method, as summarised by Minitab</cite></li>
+        <li><div class="rq-h"><b>Each limit is studied on its own</b><span class="src aiag">AIAG</span></div>
+          <p>The method estimates the gage's bias and repeatability at one limit. A two-sided tolerance needs a set of parts around each limit.</p>
+          <cite>AIAG MSA, 4th edition</cite></li>
+        <li><div class="rq-h"><b>Fewer bad parts, not none</b><span class="src gen">Practice</span></div>
+          <p>You still need a part or two just beyond the limit, but no gross rejects. If the feature can be measured with a variable gage at all, a variable Gage R&amp;R needs no bad parts and tells you more.</p>
+          <cite>Common practice</cite></li>
+        <li><div class="rq-h"><b>Ask your customer first</b><span class="src gen">Practice</span></div>
+          <p>Some customers name the 50 × 3 × 3 agreement study as their minimum and won't accept the analytic method in its place.</p>
+          <cite>Common practice</cite></li>
+      </ul>
+      <details class="cust" data-design="mix"><summary>Customer example: Ford <span>Specifics for PPAP, Jan 2025</span></summary>
+        <p class="hint">One OEM's published minimums, for comparison. Other customers set their own; check yours.</p>
+        <ul>
+          <li>At a minimum <b>50 parts, 3 operators, 3 trials</b>. Part mix: <b>25% near the lower limit</b> and <b>25% near the upper limit</b> (on both sides of each), <b>30%</b> across the expected process variation, and <b>10% outside each gauge limit</b>. Measure every part independently with a variable gage first. <cite>§2.2.8</cite></li>
+          <li>All kappa values (between appraisers, within each appraiser, and each appraiser against the standard) should be greater than <b>0.75</b>, and the gauge must reject every part outside the specification. <cite>§2.2.8</cite></li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- ===================== Type 1 ===================== -->
+    <section class="study" id="p-t1" role="tabpanel" aria-labelledby="tab-t1" data-study="type1" hidden>
+      <div class="work">
+        <form class="calc-card set" novalidate>
+          <h2 class="step-title"><span class="n">2</span>Your study</h2>
+          <p class="hint">One operator measures one calibrated reference part again and again. It checks the gage's bias and repeatability before a Gage R&amp;R.</p>
+          <div class="field-row three">
+            <div class="field"><label for="t-n">Readings</label><input id="t-n" data-k="readings" type="text" inputmode="numeric" value="50"></div>
+            <div class="field"><label for="t-tol">Tolerance</label><input id="t-tol" data-k="tolerance" type="text" inputmode="decimal" placeholder="e.g. 0.06"></div>
+            <div class="field"><label for="t-res">Gage resolution</label><input id="t-res" data-k="resolution" type="text" inputmode="decimal" placeholder="e.g. 0.001"></div>
+          </div>
+          <p class="hint">Tolerance is USL − LSL. Resolution is the gage's smallest step, in the same unit.</p>
+        </form>
+        <section class="plan-card" aria-label="Your plan" data-out></section>
+      </div>
+      <h3 class="reqs-title">What each requirement means</h3>
+      <ul class="reqs">
+        <li><div class="rq-h"><b>50 readings, at least 25</b><span class="src bosch">Bosch</span></div>
+          <p>Repeated readings of one reference part, by one operator, in a short time. Fifty gives a steady estimate of the gage's scatter; fewer than 25 is too few to judge.</p>
+          <cite>Bosch Booklet No. 10, Procedure 1</cite></li>
+        <li><div class="rq-h"><b>Cg and Cgk of 1.33 or more</b><span class="src bosch">Bosch</span></div>
+          <p>Cg compares the gage's scatter with 20% of the tolerance. Cgk also counts how far the gage's average sits from the reference value (its bias). At 1.33 or more, the gage's own error uses only a small slice of the tolerance.</p>
+          <cite>Bosch Booklet No. 10: Cg = 0.2T / 6s, Cgk = (0.1T − |bias|) / 3s</cite></li>
+        <li><div class="rq-h"><b>Resolution of 5% of the tolerance or finer</b><span class="src bosch">Bosch</span></div>
+          <p>A gage that reads in big steps can't show small changes. With a 0.06 mm tolerance, that means steps of 0.003 mm or finer.</p>
+          <cite>Bosch Booklet No. 10</cite></li>
+        <li><div class="rq-h"><b>A reference part near the middle</b><span class="src gen">Practice</span></div>
+          <p>Choose a part close to the middle of the tolerance and use its calibration certificate value as the reference. Load and unload it between readings, just as in normal use.</p>
+          <cite>Common practice</cite></li>
+        <li><div class="rq-h"><b>ISO and VDA start the same way</b><span class="src iso">ISO / VDA</span></div>
+          <p>VDA Volume 5 and ISO 22514-7 also begin with repeated readings of a reference standard, but judge them through measurement uncertainty rather than Cg and Cgk.</p>
+          <cite>VDA Volume 5, 3rd edition (2021); ISO 22514-7:2021</cite></li>
+      </ul>
+    </section>
+
+    <!-- ===================== capability ===================== -->
+    <section class="study" id="p-cap" role="tabpanel" aria-labelledby="tab-cap" data-study="capability" hidden>
+      <div class="work">
+        <form class="calc-card set" novalidate>
+          <h2 class="step-title"><span class="n">2</span>Your study</h2>
+          <p class="hint">Initial process capability for PPAP. Run the gage study first: capability numbers from an unproven gage can't be trusted.</p>
+          <div class="field-row three">
+            <div class="field"><label for="c-k">Subgroups</label><input id="c-k" data-k="subgroups" type="text" inputmode="numeric" value="25"></div>
+            <div class="field"><label for="c-n">Parts each</label><input id="c-n" data-k="size" type="text" inputmode="numeric" value="5"></div>
+            <div class="field"><label for="c-cav">Cavities</label><input id="c-cav" data-k="cavities" type="text" inputmode="numeric" value="1"></div>
+          </div>
+          <p class="hint">A subgroup is a few consecutive parts taken together, for example 5 every hour. Use 1 cavity for a single-cavity tool or line.</p>
+        </form>
+        <section class="plan-card" aria-label="Your plan" data-out></section>
+      </div>
+      <h3 class="reqs-title">What each requirement means</h3>
+      <ul class="reqs">
+        <li><div class="rq-h"><b>At launch: above 1.67 passes, below 1.33 fails</b><span class="src aiag">AIAG</span></div>
+          <p>For an initial process study, an index above 1.67 is acceptable; 1.33 to 1.67 may be acceptable with your customer's approval; below 1.33 isn't. 1.67 means your average sits 5 standard deviations inside the nearer limit, 1.33 means 4.</p>
+          <cite>AIAG PPAP, 4th edition, initial process study</cite></li>
+        <li><div class="rq-h"><b>In ongoing production: 1.33 is the usual target</b><span class="src gen">Practice</span></div>
+          <p>A short launch study usually looks better than months of production, with its tool wear, material lots and shift changes. Asking 1.67 up front leaves room for that, so the process still holds 1.33 later. Many customers write 1.33 into their requirements for ongoing production.</p>
+          <cite>Common in customer-specific requirements</cite></li>
+        <li><div class="rq-h"><b>Stable first, capable second</b><span class="src aiag">AIAG</span></div>
+          <p>Capability predicts future parts only if the process is in statistical control. A control chart of the same data comes first; an unstable process needs fixing, not a capability index.</p>
+          <cite>AIAG PPAP, 4th edition</cite></li>
+        <li><div class="rq-h"><b>25 subgroups of 5</b><span class="src gen">Practice</span></div>
+          <p>Groups of consecutive parts, spread through the run. The scatter inside each group gives the short-term spread (Cp, Cpk); the differences between groups show drift (Pp, Ppk). Control chart texts base limits on 20 to 25 subgroups.</p>
+          <cite>D. C. Montgomery, Introduction to SQC, 6th edition</cite></li>
+        <li><div class="rq-h"><b>Each cavity judged on its own</b><span class="src gen">Practice</span></div>
+          <p>A multi-cavity tool is several processes sharing one press. One cavity running off-center can hide inside a combined number that looks fine, so plan enough readings per cavity and record the cavity with every reading.</p>
+          <cite>Common practice</cite></li>
+        <li><div class="rq-h"><b>Cp, Cpk, Pp and Ppk are defined in ISO 22514-2</b><span class="src iso">ISO / VDA</span></div>
+          <p>The international standard behind the indices and the process models they assume. Your customer may name it alongside, or instead of, the AIAG manuals.</p>
+          <cite>ISO 22514-2</cite></li>
+      </ul>
+      <details class="cust"><summary>Customer example: Ford <span>Specifics for PPAP, Jan 2025</span></summary>
+        <p class="hint">One OEM's published minimums, for comparison. Other customers set their own; check yours.</p>
+        <ul>
+          <li>At least <b>25 subgroups of at least 5</b> consecutive parts, for a minimum of <b>125 measurements</b> from a run of at least 300 parts, spaced evenly through it. Complete the MSA first. <cite>§2.2.11.1</cite></li>
+          <li>The data must include the full range of expected variation: <b>all tools, all cavities, all streams, all shifts</b>. Parts are measured from every cavity. <b>Ppk of 1.67 or more</b>, from a statistically stable data set. <cite>§2.2.9, §2.2.11.1</cite></li>
+        </ul>
+      </details>
+      <p class="tool-link">Already have the readings? <a href="cpk-calculator.html">Check them in the free Cpk calculator →</a></p>
+    </section>
+
+    <!-- ===================== reuse ===================== -->
+    <section class="study" id="p-reuse" role="tabpanel" aria-labelledby="tab-reuse" data-study="reuse" hidden>
+      <div class="work">
+        <form class="calc-card set" novalidate>
+          <h2 class="step-title"><span class="n">2</span>Can the study carry over?</h2>
+          <p class="hint">Reusing a Gage R&amp;R on another part is common and often fine. Answer for the new part:</p>
+          <ol class="yn" id="reuse-list"></ol>
+        </form>
+        <section class="plan-card" aria-label="Your plan" data-out></section>
+      </div>
+      <h3 class="reqs-title">What each requirement means</h3>
+      <ul class="reqs">
+        <li><div class="rq-h"><b>Reuse is the customer's call</b><span class="src iatf">IATF</span></div>
+          <p>Measurement systems are studied as they're used in the control plan. Whether a study carries over to another part is up to your customer, so give the reviewer the evidence rather than a bare claim.</p>
+          <cite>IATF 16949:2016, clause 7.1.5.1.1</cite></li>
+        <li><div class="rq-h"><b>Recheck the verdict at the new tolerance</b><span class="src gen">Practice</span></div>
+          <p>Only %GRR of tolerance changes. Halve the tolerance and the same gage error takes up twice as much of it, so a gage that passed at 8% can sit at 16% on the new part.</p>
+          <cite>Common practice</cite></li>
+        <li><div class="rq-h"><b>Study variation and ndc may not carry over</b><span class="src gen">Practice</span></div>
+          <p>%GRR of study variation and ndc describe the parts in the original study. They only hold for the new part if its process varies about as much.</p>
+          <cite>Common practice</cite></li>
+      </ul>
+    </section>
+
+    <aside class="next-strip" aria-label="Run the study">
+      <p><b>Collected the data?</b> Mensuro turns it into a customer-ready report with your logo, and Sigmi explains every result.</p>
+      <a class="btn-deep" href="#report">See what early access includes</a>
+    </aside>
+  </main>
+</div>
+
+<div class="band band-ink" id="report">
+  <div class="wrap">
+    <section class="final cta-grid" aria-labelledby="report-title">
+      <div class="cta-copy">
+        <div class="eyebrow">Early access</div>
+        <h2 class="h2" id="report-title" tabindex="-1">The free tools give you the numbers. Mensuro gives you the study.</h2>
+        <p class="lede">A screenshot shows a result. Your customer wants the whole study, traceable and signed off, and you want to know what to do about it.</p>
+        <ul class="perks">
+          <li><img src="assets/sigmi-avatar.svg" alt="" width="28" height="28"><span><b>Sigmi, your study assistant.</b> Helps you pick the right study, explains every result in plain English and what to fix first, using the engine's numbers. It never makes one up.</span></li>
+          <li><span class="pk" aria-hidden="true">Aa</span><span><b>Your brand on every report.</b> Your logo, company and customer on a customer-ready PDF: verdict, charts, the method behind every number, and the raw data.</span></li>
+          <li><span class="pk" aria-hidden="true">R&amp;R</span><span><b>The studies behind the number.</b> Gage R&amp;R with a recheck when you reuse it on another part, Type 1 gage studies, and capability for each cavity of a multi-cavity tool.</span></li>
+          <li><span class="pk" aria-hidden="true">XLS</span><span><b>Your spreadsheet as it is.</b> Upload Excel or CSV. Mensuro finds the columns and you confirm before anything runs.</span></li>
+          <li><span class="pk" aria-hidden="true">&#10003;</span><span><b>Validated, with a receipt.</b> Every analysis reproduces published reference results, and every report shows its method, constants and sample size, so reviewers don't come back with questions.</span></li>
+        </ul>
+        <form class="join join-form" name="early-access" action="thanks.html" method="POST" data-netlify="true" netlify-honeypot="company-website" novalidate>
+          <input type="hidden" name="form-name" value="early-access">
+          <input type="hidden" name="source" value="planner">
+          <input type="hidden" name="ref" value="">
+          <p hidden><label>Leave this empty <input name="company-website"></label></p>
+          <label class="join-label" for="email-planner">Join the early-access list <span class="when">Beta opens early 2027</span></label>
+          <div class="join-row">
+            <input id="email-planner" name="email_address" type="email" autocomplete="email" placeholder="you@company.com" required>
+            <button class="btn" type="submit">Get my early access
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+          <p class="form-error" role="alert" hidden></p>
+          <p class="micro"><b>Free to join.</b> Founding members get the first year for <b class="price">$199</b>. We only email you about Mensuro, and you can unsubscribe anytime. Nothing you entered in the planner is sent with this form.</p>
+        </form>
+      </div>
+      <figure class="cta-report">
+        <img src="assets/report-page.jpg" alt="Page one of a Mensuro capability report: verdict, key figures, chart and table" width="960" height="1242" loading="lazy">
+        <figcaption>Page one of a Mensuro report. Your logo goes top left.</figcaption>
+      </figure>
+    </section>
+  </div>
+</div>
+
+<div class="band band-white">
+  <section class="wrap section" id="sources" aria-labelledby="src-title">
+    <div class="method">
+      <div class="method-intro">
+        <div class="eyebrow">Sources</div>
+        <h2 class="h2" id="src-title">Where every number comes from.</h2>
+        <p class="lede">Your customer's requirements win where they differ. The AIAG, ISO and VDA documents are sold by their publishers and are summarised here, not quoted.</p>
+        <div class="checked">
+          <h3>The source tags</h3>
+          <ul class="srckey">
+            <li><span class="src iatf">IATF</span> IATF 16949, the automotive quality standard most OEMs require of suppliers</li>
+            <li><span class="src aiag">AIAG</span> The AIAG reference manuals: MSA 4th ed. and PPAP 4th ed.</li>
+            <li><span class="src iso">ISO / VDA</span> ISO 22514 and VDA Volume 5, used by German OEMs</li>
+            <li><span class="src bosch">Bosch</span> Bosch Booklet No. 10, capability of measurement and test processes</li>
+            <li><span class="src gen">Practice</span> Common practice that no manual makes a requirement</li>
+          </ul>
+        </div>
+      </div>
+      <ul class="sources">
+        <li>IATF, <i>IATF 16949:2016</i>, clause 7.1.5.1.1, Measurement systems analysis.</li>
+        <li>AIAG, <i>Measurement Systems Analysis</i> reference manual, 4th edition (2010): variable and attribute studies, kappa and effectiveness guidelines, analytic method.</li>
+        <li>AIAG, <i>Production Part Approval Process</i> manual, 4th edition (2006): initial process study acceptance criteria.</li>
+        <li>ISO 22514-7:2021, <a href="https://www.iso.org/standard/80624.html" rel="noopener" target="_blank">Capability of measurement processes</a>; ISO 22514-2, process capability and performance of time-dependent process models.</li>
+        <li>VDA, <a href="https://webshop.vda.de/QMC/en/volume-05-measurement-and-inspprocesses_072021" rel="noopener" target="_blank">Volume 5: Measurement and Inspection Processes</a>, 3rd edition (July 2021).</li>
+        <li>Robert Bosch GmbH, <i>Booklet No. 10: Capability of Measurement and Test Processes</i> (Quality Management in the Bosch Group), Procedure 1.</li>
+        <li>D. C. Montgomery, <i>Introduction to Statistical Quality Control</i>, 6th edition (Wiley, 2009).</li>
+        <li>Minitab Support, <a href="https://support.minitab.com/en-us/minitab/help-and-how-to/quality-and-process-improvement/measurement-system-analysis/supporting-topics/other-gage-studies-and-measures/data-requirements-for-an-attribute-gage-study/" rel="noopener" target="_blank">Data requirements for the AIAG method for an attribute gage study</a>.</li>
+        <li>Customer example: Ford Motor Company, <a href="https://www.iatfglobaloversight.org/wp/wp-content/uploads/2025/02/Ford-Specifics-for-PPAP_Jan-2025-FINAL.pdf" rel="noopener" target="_blank">Customer Specific Requirements for PPAP, 4th edition</a> ("Ford Specifics for PPAP"), effective 6 February 2025, sections 2.2.8, 2.2.9 and 2.2.11.1. Published by the IATF; quoted from its PDF.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<div class="band band-ink">
+  <div class="wrap">
+    <footer class="footer">
+      <img src="assets/mensuro-lockup-dark-bg.svg" alt="Mensuro" width="423" height="148">
+      <nav aria-label="Footer">
+        <a href="index.html">Home</a>
+        <a href="cpk-calculator.html">Free Cpk calculator</a>
+        <a href="study-planner.html">Free study planner</a>
+        <a href="validation.html">How we validate</a>
+        <a href="privacy.html">Privacy</a>
+        <span>nick@mensuro.tech</span>
+        <span>© 2026 Mensuro</span>
+      </nav>
+    </footer>
+  </div>
+</div>
+
+<script src="assets/planner-core.js?v=20261114a"></script>
+<script src="assets/planner.js?v=20261114a"></script>
+<script src="assets/site.js?v=20261028a"></script>
+</body>
+</html>
